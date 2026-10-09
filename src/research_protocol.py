@@ -13,8 +13,9 @@ from src.evaluation import bootstrap_intervals, ranking_metrics
 
 
 def digest_json(value):
-    return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":"),
-                                    allow_nan=False).encode()).hexdigest()
+    return hashlib.sha256(
+        json.dumps(value, sort_keys=True, separators=(",", ":"), allow_nan=False).encode()
+    ).hexdigest()
 
 
 def file_digest(path):
@@ -44,8 +45,10 @@ def targets(past, future, excluded, maximum, minimum_history=20):
     Future positives only establish eligibility and evaluation labels. They never
     enter a profile, background statistics, text fitting or seed selection.
     """
-    histories = {int(uid): group.sort_values(["timestamp", "movie_id"], kind="stable")
-                 for uid, group in latest_ratings(past).groupby("user_id")}
+    histories = {
+        int(uid): group.sort_values(["timestamp", "movie_id"], kind="stable")
+        for uid, group in latest_ratings(past).groupby("user_id")
+    }
     users = []
     for uid, group in future.groupby("user_id"):
         uid = int(uid)
@@ -56,8 +59,11 @@ def targets(past, future, excluded, maximum, minimum_history=20):
         relevant -= set(history.movie_id)
         if relevant:
             users.append(TargetUser(uid, history, relevant))
-    users.sort(key=lambda user: hashlib.sha256(
-        f"CineMatch-v12-2026-10-09:{user.user_id}".encode()).hexdigest())
+    users.sort(
+        key=lambda user: hashlib.sha256(
+            f"CineMatch-v12-2026-10-09:{user.user_id}".encode()
+        ).hexdigest()
+    )
     return users[:maximum]
 
 
@@ -111,23 +117,39 @@ def summarize(movie_ids, users, profiles, scores, genre_features, counts, full_h
         per_user.append(ranking_metrics(ids, user.relevant))
         features = genre_features[order]
         upper = np.triu_indices(len(order), 1)
-        distances.append(float((1 - features @ features.T)[upper].mean()) if len(order) > 1 else 0.)
-        novelties.append(float((-np.log2(probabilities[order])).mean()) if len(order) else 0.)
-    summary = {metric + "@10": float(np.mean([row[metric] for row in per_user]))
-               for metric in ("precision", "recall", "ndcg")}
-    summary.update(coverage=len({mid for row in recommendations for mid in row}) / len(movie_ids),
-                   diversity=float(np.mean(distances)), novelty_bits=float(np.mean(novelties)),
-                   evaluated_users=len(users))
-    summary["past_seen_fraction@10"] = float(np.mean([
-        len(set(row) & set(user.history.movie_id)) / 10
-        for row, user in zip(recommendations, users)]))
+        distances.append(
+            float((1 - features @ features.T)[upper].mean()) if len(order) > 1 else 0.0
+        )
+        novelties.append(float((-np.log2(probabilities[order])).mean()) if len(order) else 0.0)
+    summary = {
+        metric + "@10": float(np.mean([row[metric] for row in per_user]))
+        for metric in ("precision", "recall", "ndcg")
+    }
+    summary.update(
+        coverage=len({mid for row in recommendations for mid in row}) / len(movie_ids),
+        diversity=float(np.mean(distances)),
+        novelty_bits=float(np.mean(novelties)),
+        evaluated_users=len(users),
+    )
+    summary["past_seen_fraction@10"] = float(
+        np.mean(
+            [
+                len(set(row) & set(user.history.movie_id)) / 10
+                for row, user in zip(recommendations, users)
+            ]
+        )
+    )
     return summary, per_user, recommendations
 
 
 def paired_summary(per_user, resamples=2000, seed=20261009):
     intervals, differences = bootstrap_intervals(per_user, resamples=resamples, seed=seed)
-    return {"confidence_95": intervals, "paired_ndcg_vs_popularity_95": differences,
-            "resamples": resamples, "seed": seed}
+    return {
+        "confidence_95": intervals,
+        "paired_ndcg_vs_popularity_95": differences,
+        "resamples": resamples,
+        "seed": seed,
+    }
 
 
 def source_fingerprint(root, paths):
