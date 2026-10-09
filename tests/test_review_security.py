@@ -50,7 +50,7 @@ def test_changed_identity_requeries_instead_of_relabeling_old_metadata(sample, t
     monkeypatch.setattr(download_metadata, "fetch", fetch)
     monkeypatch.setattr(download_metadata.time, "sleep", lambda _: None)
     download_metadata.download()
-    changed = json.loads(path.read_text())["items"]["1"]
+    changed = json.loads(path.read_text(encoding="utf-8"))["items"]["1"]
     assert len(calls) == 2
     assert changed["title_uk"] == "Правильний фільм"
     assert "page" not in changed and "poster_url" not in changed
@@ -81,7 +81,7 @@ def test_wikipedia_soft_error_is_retried_and_normalized_title_is_matched(tmp_pat
     download_content.download()
     download_content.download()
     assert len(calls) == 1
-    assert json.loads((directory / "content.json").read_text())["items"]["1"]["summary_en"] == "Actual source description"
+    assert json.loads((directory / "content.json").read_text(encoding="utf-8"))["items"]["1"]["summary_en"] == "Actual source description"
 
 
 def test_image_soft_error_does_not_set_completion_flag(sample, tmp_path, monkeypatch):
@@ -105,14 +105,14 @@ def test_image_soft_error_does_not_set_completion_flag(sample, tmp_path, monkeyp
                         blob.getvalue() if raw else {"error": {"code": "maxlag"}})
     with pytest.raises(ValueError, match="retry"):
         download_metadata.download()
-    assert not json.loads(path.read_text())["items"]["1"]["image_queried"]
+    assert not json.loads(path.read_text(encoding="utf-8"))["items"]["1"]["image_queried"]
     monkeypatch.setattr(download_metadata, "fetch", lambda _, raw=False:
                         blob.getvalue() if raw else {"query": {
                             "normalized": [{"from": "test", "to": "Test"}],
                             "pages": {"1": {"title": "Test", "pageimage": "Test.jpg",
                                       "thumbnail": {"source": "https://upload.wikimedia.org/Test.jpg"}}}}})
     download_metadata.download()
-    saved = json.loads(path.read_text())["items"]["1"]
+    saved = json.loads(path.read_text(encoding="utf-8"))["items"]["1"]
     assert saved["image_queried"] and saved["poster_url"].endswith("Test.jpg")
 
 
