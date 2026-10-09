@@ -333,13 +333,12 @@ def _main(memory):
                                   placeholder=t("search_placeholder"), key="query")
             # Literal search finds the whole catalog, including watched titles.
             available = (movies if query.strip() else movies[~movies.movie_id.isin(watched)]).copy()
-            available["display_title"] = available.movie_id.map(lambda mid: engine.display_title(mid, language))
-            available["uk_title"] = available.movie_id.map(lambda mid: engine.display_title(mid, "uk"))
             if localized_only:
                 available = available[available.movie_id.map(engine.metadata.translated)]
             if media != "All":
                 available = available[available.media_type == media]
             if query.strip():
+                available["uk_title"] = available.movie_id.map(lambda mid: engine.display_title(mid, "uk"))
                 available = available[available.apply(lambda row: title_matches(query.strip(),
                     row.title, row.uk_title, getattr(row, "alternate_title", ""),
                     *engine.metadata.items.get(int(row.movie_id), {}).get("search_aliases", [])), axis=1)]

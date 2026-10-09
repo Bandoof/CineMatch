@@ -29,7 +29,7 @@ content require the explicit [full setup](#run-locally). Tests need no downloads
 
 [Development](docs/development.md) · [Architecture](docs/architecture.md) ·
 [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md) ·
-[Owner GitHub settings](docs/github-maintenance.md)
+[Owner GitHub settings](docs/github-maintenance.md) · [v1.1 engineering evidence](docs/engineering-v11.md)
 
 Українською: локальний застосунок радить фільми й серіали, зберігає оцінки,
 «Переглянути пізніше» та історію. [Повна українська інструкція](Почати.md).

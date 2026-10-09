@@ -70,3 +70,15 @@ strictly typed; UI session-state values remain an explicit dynamic boundary. Gen
 Ruff checks cover the repository; import-order/format checks grow incrementally.
 The local pre-commit hooks use tools pinned in requirements-dev, without fetching
 hook implementations. Install them in the active environment before committing.
+
+## Reproduce engineering timings
+
+```bash
+OPENBLAS_NUM_THREADS=1 python -m scripts.benchmark_performance --output performance.json
+```
+
+PowerShell: set `$env:OPENBLAS_NUM_THREADS='1'`, then run the Python command.
+This uses temporary synthetic files and disables profile storage in the AppTest
+session. It does not download data or contact a running server. The first render
+excludes interpreter/import time; warmed recommendation samples use 30 repetitions.
+See [engineering verification](engineering-v11.md) for the fixture, outputs and limits.
