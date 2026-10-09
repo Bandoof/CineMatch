@@ -1,0 +1,26 @@
+{
+  "generated_utc": "2026-10-09",
+  "base_commit": "9e5c334c85133668ecb1e39a81060f9fea21a351",
+  "python": "3.11.17",
+  "pytest_passed": 111,
+  "ruff": "passed",
+  "mypy": "passed (configured three modules)",
+  "pre_commit": "passed with virtualenv on PATH",
+  "pip_audit": "no known vulnerabilities in baseline environment",
+  "historical_evidence_sha256": {
+    "reports/benchmark.md": "df82f3cbe0c04e442dfd3cddc7d560a41160afb1b1773e91ccc546157a8fd520",
+    "reports/eda.json": "f4768a9587ecd4019510be0c2aedbe83b77b3e434f5bf4d5447a06f56bd7d4f3",
+    "reports/expanded_benchmark.md": "addb86373422f522f1fac7a87539db37bc76b894ab1564ccd59b6a8c6fd80c1e",
+    "reports/expanded_metrics.csv": "f6ce2fc8b44c901879c64e372d0d6b2ceaff96cfb2361a5703854e19d72b6f3c",
+    "reports/expanded_metrics.json": "e161fb237365226e98fa52da72b374d55174b6c2ad2dd0d356a87778082ae70d",
+    "reports/metrics.csv": "c601eb9e146fad26b701fce03ffd644b6160ef77109e381d5f22d3286856776e",
+    "reports/metrics.json": "3504f7257f4f1399e97f9b55f5236cddc7560f24176b015cdeccfc41b190e78b",
+    "reports/ml_v3.csv": "075f8fcddad88781dfa3f23f2b73005980b18491008a19035f05c3fab10a4979",
+    "reports/ml_v3.json": "c37f64e403f6d5d3d1da53a49ffb6afca105065eced1843c45751b82294024ff",
+    "reports/ml_v3.md": "d900f2c718f32aab69ba480ee3a2ea6b11748252d15c4da917ebd3379e13a1d6",
+    "reports/performance_v11.json": "a8b59cf3866064b96a4e4d8a2db85c47b3973543be8eb92fee4bf71080014feb"
+  },
+  "descriptions_available": false,
+  "private_profiles_or_database_used": false,
+  "deployment": false
+}
