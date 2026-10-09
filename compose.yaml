@@ -1,0 +1,12 @@
+services:
+  cinematch:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8501:8501"
+    volumes:
+      - cinematch-data:/app/data
+      - cinematch-models:/app/models
+volumes:
+  cinematch-data:
+  cinematch-models:

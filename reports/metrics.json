@@ -1,0 +1,468 @@
+{
+  "protocol_version": 2,
+  "dataset": "MovieLens 100K",
+  "canonical_films": 1664,
+  "source_rating_events": 100000,
+  "fingerprint": "1cf4aa355c878a5fd40d4360899e31b0e1b867850b8d8689e5bf522f41b829a2",
+  "generated_utc": "2026-10-08T18:54:53.662755+00:00",
+  "split": {
+    "train_rows": 80003,
+    "validation_rows": 9997,
+    "test_rows": 10000,
+    "train_cutoff": 889237269,
+    "validation_cutoff": 891382267,
+    "test_start": 891382309
+  },
+  "model": {
+    "factors": 24,
+    "epochs": 15,
+    "regularization": 5,
+    "seed": 42
+  },
+  "selected_alpha": 1.0,
+  "validation_trials": [
+    {
+      "alpha": 0.0,
+      "precision@10": 0.025714285714285717,
+      "recall@10": 0.032660641144243475,
+      "ndcg@10": 0.041998956090347726,
+      "coverage": 0.13786650031191516,
+      "diversity": 0.10830833312338609
+    },
+    {
+      "alpha": 0.25,
+      "precision@10": 0.05142857142857143,
+      "recall@10": 0.06667714916498106,
+      "ndcg@10": 0.08137920590529521,
+      "coverage": 0.17654398003742983,
+      "diversity": 0.23174554071857142
+    },
+    {
+      "alpha": 0.5,
+      "precision@10": 0.058571428571428566,
+      "recall@10": 0.06852032000222918,
+      "ndcg@10": 0.09638459479383671,
+      "coverage": 0.17404865876481598,
+      "diversity": 0.35293433315349027
+    },
+    {
+      "alpha": 0.75,
+      "precision@10": 0.06285714285714285,
+      "recall@10": 0.053911026035055966,
+      "ndcg@10": 0.09333411908657498,
+      "coverage": 0.17092950717404864,
+      "diversity": 0.5126121985093371
+    },
+    {
+      "alpha": 1.0,
+      "precision@10": 0.06571428571428571,
+      "recall@10": 0.0657483830589098,
+      "ndcg@10": 0.10263788382519463,
+      "coverage": 0.15907673112913287,
+      "diversity": 0.7307107634915422
+    }
+  ],
+  "validation_cohort": {
+    "evaluated_users": 70,
+    "excluded_new_users": 116,
+    "heldout_users": 197,
+    "relevant_items": 774,
+    "unavailable_relevant_items": 6,
+    "supported_catalog": 1603
+  },
+  "test_cohort": {
+    "evaluated_users": 77,
+    "excluded_new_users": 76,
+    "heldout_users": 166,
+    "relevant_items": 1544,
+    "unavailable_relevant_items": 37,
+    "supported_catalog": 1622
+  },
+  "metrics": {
+    "Hybrid": {
+      "precision@10": 0.08181818181818182,
+      "recall@10": 0.03933106706960823,
+      "ndcg@10": 0.10168460078449176,
+      "coverage": 0.16276202219482122,
+      "diversity": 0.6770011325964771
+    },
+    "Collaborative": {
+      "precision@10": 0.08311688311688312,
+      "recall@10": 0.03957610505049527,
+      "ndcg@10": 0.10724668572987228,
+      "coverage": 0.16276202219482122,
+      "diversity": 0.6767376299184844
+    },
+    "Item-KNN": {
+      "precision@10": 0.025974025974025976,
+      "recall@10": 0.025599409580102844,
+      "ndcg@10": 0.03223525712475831,
+      "coverage": 0.23242909987669544,
+      "diversity": 0.7608904484055616
+    },
+    "Content-based": {
+      "precision@10": 0.05584415584415584,
+      "recall@10": 0.039532594287800614,
+      "ndcg@10": 0.05453337792340055,
+      "coverage": 0.15228113440197288,
+      "diversity": 0.13455168295398
+    },
+    "Popularity": {
+      "precision@10": 0.10909090909090907,
+      "recall@10": 0.08282586762120166,
+      "ndcg@10": 0.12166819783920897,
+      "coverage": 0.027127003699136867,
+      "diversity": 0.7327185949617496
+    }
+  },
+  "confidence_95": {
+    "Hybrid": {
+      "precision@10": [
+        0.044155844155844164,
+        0.12597402597402596
+      ],
+      "recall@10": [
+        0.014482826000992684,
+        0.07331568157894361
+      ],
+      "ndcg@10": [
+        0.05901582144674239,
+        0.14847928873403926
+      ]
+    },
+    "Collaborative": {
+      "precision@10": [
+        0.045454545454545456,
+        0.12727272727272726
+      ],
+      "recall@10": [
+        0.014872950142182364,
+        0.07335447672878212
+      ],
+      "ndcg@10": [
+        0.06334317930797054,
+        0.15501967653394333
+      ]
+    },
+    "Item-KNN": {
+      "precision@10": [
+        0.01038961038961039,
+        0.044188311688311666
+      ],
+      "recall@10": [
+        0.0046382072216347905,
+        0.05704981323599982
+      ],
+      "ndcg@10": [
+        0.013179908334089583,
+        0.05464794637647241
+      ]
+    },
+    "Content-based": {
+      "precision@10": [
+        0.029870129870129873,
+        0.087012987012987
+      ],
+      "recall@10": [
+        0.019316574827904453,
+        0.06577049908520419
+      ],
+      "ndcg@10": [
+        0.029437451842217636,
+        0.08634416048100614
+      ]
+    },
+    "Popularity": {
+      "precision@10": [
+        0.06883116883116881,
+        0.15198051948051944
+      ],
+      "recall@10": [
+        0.04547812431962461,
+        0.12960245629591208
+      ],
+      "ndcg@10": [
+        0.08087002184631782,
+        0.16634321172649352
+      ]
+    }
+  },
+  "paired_ndcg_vs_popularity_95": {
+    "Hybrid": [
+      -0.048430368219838926,
+      0.0086547746007394
+    ],
+    "Collaborative": [
+      -0.044718209299066274,
+      0.015365675944936878
+    ],
+    "Item-KNN": [
+      -0.12702846104004503,
+      -0.0537304640395649
+    ],
+    "Content-based": [
+      -0.10621450423633558,
+      -0.030534934191913728
+    ],
+    "Popularity": [
+      0.0,
+      0.0
+    ]
+  },
+  "bootstrap_resamples": 1000,
+  "onboarding": {
+    "users": 76,
+    "training_users": 791,
+    "excluded_training_user_ids": [
+      7,
+      13,
+      14,
+      26,
+      43,
+      54,
+      58,
+      61,
+      85,
+      90,
+      92,
+      94,
+      102,
+      112,
+      116,
+      119,
+      125,
+      145,
+      159,
+      178,
+      186,
+      190,
+      195,
+      200,
+      207,
+      219,
+      233,
+      234,
+      276,
+      279,
+      294,
+      299,
+      328,
+      332,
+      379,
+      407,
+      411,
+      416,
+      428,
+      444,
+      450,
+      455,
+      472,
+      479,
+      483,
+      489,
+      499,
+      503,
+      514,
+      530,
+      532,
+      533,
+      548,
+      624,
+      625,
+      642,
+      650,
+      653,
+      655,
+      659,
+      660,
+      661,
+      669,
+      699,
+      708,
+      738,
+      741,
+      778,
+      810,
+      828,
+      829,
+      838,
+      851,
+      880,
+      891,
+      903
+    ],
+    "protocol": "Matched users with >=10 past ratings. Last N ratings before the test boundary are seeds. Entire target-user histories are removed from model training. Full supported candidates exclude seeds only; future positives exclude all previously seen titles.",
+    "results": [
+      {
+        "seed_ratings": 3,
+        "algorithm": "Hybrid",
+        "precision@10": 0.08026315789473683,
+        "recall@10": 0.04747692712218481,
+        "ndcg@10": 0.09064420597926937,
+        "coverage": 0.025883838383838384,
+        "diversity": 0.7263070951422311
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Collaborative",
+        "precision@10": 0.08026315789473683,
+        "recall@10": 0.04747692712218481,
+        "ndcg@10": 0.09064420597926937,
+        "coverage": 0.025883838383838384,
+        "diversity": 0.7263070951422311
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.04605263157894737,
+        "recall@10": 0.020836011477258113,
+        "ndcg@10": 0.0524915091369515,
+        "coverage": 0.11868686868686869,
+        "diversity": 0.6943765680042953
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Content-based",
+        "precision@10": 0.035526315789473684,
+        "recall@10": 0.007880600096695202,
+        "ndcg@10": 0.04016899658822546,
+        "coverage": 0.22348484848484848,
+        "diversity": 0.20987964646290203
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Popularity",
+        "precision@10": 0.07763157894736841,
+        "recall@10": 0.01837711258488499,
+        "ndcg@10": 0.07999821745013928,
+        "coverage": 0.006944444444444444,
+        "diversity": 0.7529837660820148
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Hybrid",
+        "precision@10": 0.08289473684210524,
+        "recall@10": 0.05941284356885621,
+        "ndcg@10": 0.09761298220757492,
+        "coverage": 0.03282828282828283,
+        "diversity": 0.7253229379689186
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Collaborative",
+        "precision@10": 0.08289473684210524,
+        "recall@10": 0.05941284356885621,
+        "ndcg@10": 0.09761298220757492,
+        "coverage": 0.03282828282828283,
+        "diversity": 0.7253229379689186
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.023684210526315787,
+        "recall@10": 0.007983227567236278,
+        "ndcg@10": 0.029429910970915303,
+        "coverage": 0.17866161616161616,
+        "diversity": 0.7106689715698518
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Content-based",
+        "precision@10": 0.034210526315789476,
+        "recall@10": 0.023871958817863324,
+        "ndcg@10": 0.038975294281231754,
+        "coverage": 0.19886363636363635,
+        "diversity": 0.15605176614031907
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Popularity",
+        "precision@10": 0.07763157894736841,
+        "recall@10": 0.01837711258488499,
+        "ndcg@10": 0.07999821745013928,
+        "coverage": 0.007575757575757576,
+        "diversity": 0.7502835482653507
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Hybrid",
+        "precision@10": 0.08421052631578947,
+        "recall@10": 0.05854317813242274,
+        "ndcg@10": 0.09623525759507079,
+        "coverage": 0.050505050505050504,
+        "diversity": 0.7229073700303349
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Collaborative",
+        "precision@10": 0.08421052631578947,
+        "recall@10": 0.05854317813242274,
+        "ndcg@10": 0.09670317087648474,
+        "coverage": 0.050505050505050504,
+        "diversity": 0.7236600527884511
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.01973684210526316,
+        "recall@10": 0.008344600543616892,
+        "ndcg@10": 0.02487609330644465,
+        "coverage": 0.28724747474747475,
+        "diversity": 0.7344749853294568
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Content-based",
+        "precision@10": 0.028947368421052628,
+        "recall@10": 0.026059661811975693,
+        "ndcg@10": 0.035363408733134226,
+        "coverage": 0.21464646464646464,
+        "diversity": 0.132145774432536
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Popularity",
+        "precision@10": 0.07763157894736841,
+        "recall@10": 0.01837711258488499,
+        "ndcg@10": 0.08024440404148542,
+        "coverage": 0.007575757575757576,
+        "diversity": 0.7477405706739706
+      }
+    ]
+  },
+  "diversity_analysis": [
+    {
+      "weight": 0,
+      "precision@10": 0.08181818181818182,
+      "recall@10": 0.03933106706960823,
+      "ndcg@10": 0.10168460078449176,
+      "coverage": 0.16276202219482122,
+      "diversity": 0.6770011325964771
+    },
+    {
+      "weight": 0.25,
+      "precision@10": 0.07272727272727272,
+      "recall@10": 0.043126039847619785,
+      "ndcg@10": 0.09121919272672573,
+      "coverage": 0.14241676942046855,
+      "diversity": 0.9427452812411924
+    },
+    {
+      "weight": 0.5,
+      "precision@10": 0.05194805194805195,
+      "recall@10": 0.014986864690188846,
+      "ndcg@10": 0.06956531675645959,
+      "coverage": 0.12885326757090013,
+      "diversity": 0.998933154063901
+    },
+    {
+      "weight": 0.75,
+      "precision@10": 0.04935064935064935,
+      "recall@10": 0.014767132936193904,
+      "ndcg@10": 0.06791282875129201,
+      "coverage": 0.12885326757090013,
+      "diversity": 1.0
+    }
+  ],
+  "protocol": "Global temporal split; full training-supported catalog; all seen items excluded; rating >=4 relevant; macro mean over warm users with positives; unavailable positives remain in recall/NDCG denominators; new user fold-in."
+}

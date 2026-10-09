@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+data/
+models/*.npz
+models/*.json
+.streamlit/secrets.toml
+.ipynb_checkpoints/

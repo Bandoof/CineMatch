@@ -1,0 +1,10 @@
+{
+  "movies": 1664,
+  "users": 943,
+  "ratings": 100000,
+  "distinct_user_title_pairs": 99693,
+  "mean_rating": 3.52986,
+  "density": 0.06353304205073823,
+  "min_timestamp": 874724710,
+  "max_timestamp": 893286638
+}

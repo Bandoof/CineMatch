@@ -1,0 +1,23 @@
+[theme]
+base = "light"
+primaryColor = "#e84f3e"
+backgroundColor = "#f7f5ef"
+secondaryBackgroundColor = "#eeece4"
+textColor = "#17253a"
+font = "sans serif"
+
+[server]
+headless = true
+runOnSave = true
+maxUploadSize = 1
+
+[client]
+showErrorDetails = false
+toolbarMode = "minimal"
+
+[browser]
+gatherUsageStats = false
+
+[global]
+# Restored preferences intentionally precede widget defaults; values are validated.
+disableWidgetStateDuplicationWarning = true

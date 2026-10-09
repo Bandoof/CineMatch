@@ -1,0 +1,1101 @@
+{
+  "protocol_version": 2,
+  "dataset": "MovieLens 100K + latest-small pinned development snapshot",
+  "canonical_films": 10123,
+  "source_rating_events": 200836,
+  "fingerprint": "b8e1f800dc1a6e64531f0242dce69fb63f3a014c90d2ce551d48d02f2bff8654",
+  "generated_utc": "2026-10-09T07:25:33.587843+00:00",
+  "split": {
+    "train_rows": 160668,
+    "validation_rows": 20084,
+    "test_rows": 20084,
+    "train_cutoff": 1258427557,
+    "validation_cutoff": 1458635883,
+    "test_start": 1458635887
+  },
+  "selected_alpha": 1.0,
+  "selected_popularity_weight": 0.4,
+  "model": {
+    "factors": 32,
+    "regularization": 10,
+    "epochs": 15,
+    "seed": 42
+  },
+  "validation_trials": [
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.25,
+      "popularity_weight": 0,
+      "precision@10": 0.04,
+      "recall@10": 0.047399012643731524,
+      "ndcg@10": 0.05853966459955074,
+      "coverage": 0.02835168149600362,
+      "diversity": 0.21172776720642467
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.25,
+      "popularity_weight": 0.2,
+      "precision@10": 0.06000000000000001,
+      "recall@10": 0.04887731706039012,
+      "ndcg@10": 0.07866635882849128,
+      "coverage": 0.02488312471723722,
+      "diversity": 0.24024388186775972
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.25,
+      "popularity_weight": 0.4,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.04876681982282105,
+      "ndcg@10": 0.07502713775231525,
+      "coverage": 0.019152465691449252,
+      "diversity": 0.30928050563055376
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.25,
+      "popularity_weight": 0.6,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.011526317011247653,
+      "ndcg@10": 0.08122389870926605,
+      "coverage": 0.012667772583320766,
+      "diversity": 0.40911781199408465
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.5,
+      "popularity_weight": 0,
+      "precision@10": 0.064,
+      "recall@10": 0.011649135103149598,
+      "ndcg@10": 0.06917105516036182,
+      "coverage": 0.02805006786306741,
+      "diversity": 0.338058797628514
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.5,
+      "popularity_weight": 0.2,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.009433374707685798,
+      "ndcg@10": 0.06735693679104848,
+      "coverage": 0.0242798974513648,
+      "diversity": 0.3837463569756154
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.5,
+      "popularity_weight": 0.4,
+      "precision@10": 0.06000000000000001,
+      "recall@10": 0.010175450892623282,
+      "ndcg@10": 0.06472240192079969,
+      "coverage": 0.019303272507917357,
+      "diversity": 0.4288375867173235
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.5,
+      "popularity_weight": 0.6,
+      "precision@10": 0.06,
+      "recall@10": 0.015874404158140013,
+      "ndcg@10": 0.062097323888368895,
+      "coverage": 0.013120193032725078,
+      "diversity": 0.561553290316711
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.75,
+      "popularity_weight": 0,
+      "precision@10": 0.06000000000000001,
+      "recall@10": 0.011050555320359288,
+      "ndcg@10": 0.06417612475609955,
+      "coverage": 0.02729603378072689,
+      "diversity": 0.4639283794107456
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.75,
+      "popularity_weight": 0.2,
+      "precision@10": 0.064,
+      "recall@10": 0.017987677130409274,
+      "ndcg@10": 0.07520727102949212,
+      "coverage": 0.023676670185492386,
+      "diversity": 0.5393441990296659
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.75,
+      "popularity_weight": 0.4,
+      "precision@10": 0.068,
+      "recall@10": 0.018492911210083597,
+      "ndcg@10": 0.06749363781129279,
+      "coverage": 0.018850852058513046,
+      "diversity": 0.5955721682616936
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 0.75,
+      "popularity_weight": 0.6,
+      "precision@10": 0.068,
+      "recall@10": 0.018476424320668535,
+      "ndcg@10": 0.06697141860568429,
+      "coverage": 0.014779068013874228,
+      "diversity": 0.689163577644544
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 1.0,
+      "popularity_weight": 0,
+      "precision@10": 0.064,
+      "recall@10": 0.017318097561492506,
+      "ndcg@10": 0.06616399573246422,
+      "coverage": 0.025033931533705322,
+      "diversity": 0.7298064155438405
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 1.0,
+      "popularity_weight": 0.2,
+      "precision@10": 0.08400000000000002,
+      "recall@10": 0.021268464080107314,
+      "ndcg@10": 0.07783985926276117,
+      "coverage": 0.022922636103151862,
+      "diversity": 0.7403332326680545
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 1.0,
+      "popularity_weight": 0.4,
+      "precision@10": 0.068,
+      "recall@10": 0.01758394762464942,
+      "ndcg@10": 0.06560976231463593,
+      "coverage": 0.020358920223194087,
+      "diversity": 0.7460604419108506
+    },
+    {
+      "factors": 24,
+      "regularization": 5,
+      "alpha": 1.0,
+      "popularity_weight": 0.6,
+      "precision@10": 0.06400000000000002,
+      "recall@10": 0.016886321612918764,
+      "ndcg@10": 0.0602455744181702,
+      "coverage": 0.015985522545619062,
+      "diversity": 0.7570309316013585
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0,
+      "precision@10": 0.06,
+      "recall@10": 0.05071237890769902,
+      "ndcg@10": 0.06900057335986501,
+      "coverage": 0.026089579248982055,
+      "diversity": 0.181644808297684
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.2,
+      "precision@10": 0.07600000000000001,
+      "recall@10": 0.05234071303321085,
+      "ndcg@10": 0.0898533146917914,
+      "coverage": 0.022319408837279446,
+      "diversity": 0.21792571852675
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.4,
+      "precision@10": 0.06,
+      "recall@10": 0.010162170538468367,
+      "ndcg@10": 0.06121052439778472,
+      "coverage": 0.017493590710300107,
+      "diversity": 0.3168059174483991
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.6,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.011298457402232733,
+      "ndcg@10": 0.07428743804073502,
+      "coverage": 0.011612124868044036,
+      "diversity": 0.4148202610590868
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0,
+      "precision@10": 0.076,
+      "recall@10": 0.012258658426432048,
+      "ndcg@10": 0.07751128733090484,
+      "coverage": 0.02669280651485447,
+      "diversity": 0.3541740795283633
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.2,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.01128410264678587,
+      "ndcg@10": 0.08248588778918149,
+      "coverage": 0.022017795204343237,
+      "diversity": 0.3802219162148592
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.4,
+      "precision@10": 0.068,
+      "recall@10": 0.011216962966599488,
+      "ndcg@10": 0.07349214005445981,
+      "coverage": 0.016739556627959583,
+      "diversity": 0.4108892564462758
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.6,
+      "precision@10": 0.076,
+      "recall@10": 0.016895710745752947,
+      "ndcg@10": 0.08006398206886053,
+      "coverage": 0.01176293168451214,
+      "diversity": 0.554326912427122
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0,
+      "precision@10": 0.08,
+      "recall@10": 0.014015860740773066,
+      "ndcg@10": 0.08325655420245599,
+      "coverage": 0.024430704267832906,
+      "diversity": 0.5269846850429328
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.2,
+      "precision@10": 0.064,
+      "recall@10": 0.017766746516383037,
+      "ndcg@10": 0.07383066870370404,
+      "coverage": 0.020358920223194087,
+      "diversity": 0.5714173583791052
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.4,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.018820867180334145,
+      "ndcg@10": 0.08180370277407097,
+      "coverage": 0.016739556627959583,
+      "diversity": 0.6152316376774773
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.6,
+      "precision@10": 0.068,
+      "recall@10": 0.017979597339064304,
+      "ndcg@10": 0.07443922803046849,
+      "coverage": 0.010858090785703513,
+      "diversity": 0.7079246297323141
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0,
+      "precision@10": 0.08,
+      "recall@10": 0.01908286730495733,
+      "ndcg@10": 0.08749689642867638,
+      "coverage": 0.02111295430553461,
+      "diversity": 0.7409307977211909
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.2,
+      "precision@10": 0.084,
+      "recall@10": 0.020901049123139153,
+      "ndcg@10": 0.08952145684274676,
+      "coverage": 0.019152465691449252,
+      "diversity": 0.7486803220293895
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.4,
+      "precision@10": 0.084,
+      "recall@10": 0.026360657347196136,
+      "ndcg@10": 0.08912003503436303,
+      "coverage": 0.015683908912682853,
+      "diversity": 0.7611084805186276
+    },
+    {
+      "factors": 16,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.6,
+      "precision@10": 0.076,
+      "recall@10": 0.02601062997992739,
+      "ndcg@10": 0.08165044079831091,
+      "coverage": 0.011159704418639723,
+      "diversity": 0.7716468939018403
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.009220871618978114,
+      "ndcg@10": 0.06865202124226027,
+      "coverage": 0.026089579248982055,
+      "diversity": 0.18251886600625003
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.2,
+      "precision@10": 0.068,
+      "recall@10": 0.049609146634324953,
+      "ndcg@10": 0.09484300088585776,
+      "coverage": 0.022621022470215652,
+      "diversity": 0.2332921208928858
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.4,
+      "precision@10": 0.06000000000000001,
+      "recall@10": 0.010398609336613154,
+      "ndcg@10": 0.07003423371666531,
+      "coverage": 0.017191977077363897,
+      "diversity": 0.3358347471823113
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.25,
+      "popularity_weight": 0.6,
+      "precision@10": 0.06,
+      "recall@10": 0.010049624535752808,
+      "ndcg@10": 0.07200261606255966,
+      "coverage": 0.011159704418639723,
+      "diversity": 0.4260374129812236
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.012589332461183328,
+      "ndcg@10": 0.09079290707190758,
+      "coverage": 0.025787965616045846,
+      "diversity": 0.37677352530731745
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.2,
+      "precision@10": 0.07600000000000001,
+      "recall@10": 0.012867110238961105,
+      "ndcg@10": 0.09317355230872225,
+      "coverage": 0.021565374754938922,
+      "diversity": 0.4117081732204092
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.4,
+      "precision@10": 0.068,
+      "recall@10": 0.013856443276008084,
+      "ndcg@10": 0.08481721869795512,
+      "coverage": 0.016437942995023377,
+      "diversity": 0.4588811174930942
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.5,
+      "popularity_weight": 0.6,
+      "precision@10": 0.08,
+      "recall@10": 0.019052991609053,
+      "ndcg@10": 0.08552244335884762,
+      "coverage": 0.011612124868044036,
+      "diversity": 0.554757868805297
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0,
+      "precision@10": 0.064,
+      "recall@10": 0.012471512589219809,
+      "ndcg@10": 0.08574752092050454,
+      "coverage": 0.02247021565374755,
+      "diversity": 0.5233852035533944
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.2,
+      "precision@10": 0.076,
+      "recall@10": 0.018660761032611897,
+      "ndcg@10": 0.09107733473226891,
+      "coverage": 0.020208113406725983,
+      "diversity": 0.5714918083564622
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.4,
+      "precision@10": 0.076,
+      "recall@10": 0.02431489637095776,
+      "ndcg@10": 0.0940511706450756,
+      "coverage": 0.015985522545619062,
+      "diversity": 0.6303552600736171
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 0.75,
+      "popularity_weight": 0.6,
+      "precision@10": 0.072,
+      "recall@10": 0.01886253816331844,
+      "ndcg@10": 0.08021821666747306,
+      "coverage": 0.011913738500980244,
+      "diversity": 0.6940642415205813
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0,
+      "precision@10": 0.08,
+      "recall@10": 0.026240126111976972,
+      "ndcg@10": 0.09179535369877038,
+      "coverage": 0.02247021565374755,
+      "diversity": 0.729391274049626
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.2,
+      "precision@10": 0.08,
+      "recall@10": 0.02569921582521034,
+      "ndcg@10": 0.09550129754530122,
+      "coverage": 0.01975569295732167,
+      "diversity": 0.7364317896753522
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.4,
+      "precision@10": 0.084,
+      "recall@10": 0.02629779560800065,
+      "ndcg@10": 0.09558179277460337,
+      "coverage": 0.016890363444427688,
+      "diversity": 0.7495983797937295
+    },
+    {
+      "factors": 32,
+      "regularization": 10,
+      "alpha": 1.0,
+      "popularity_weight": 0.6,
+      "precision@10": 0.076,
+      "recall@10": 0.025909520592653806,
+      "ndcg@10": 0.08876880677429448,
+      "coverage": 0.012064545317448348,
+      "diversity": 0.7679169820590205
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.25,
+      "popularity_weight": 0,
+      "precision@10": 0.032,
+      "recall@10": 0.0049631185807656394,
+      "ndcg@10": 0.025578834449631646,
+      "coverage": 0.030312170110088976,
+      "diversity": 0.19769932823500555
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.25,
+      "popularity_weight": 0.2,
+      "precision@10": 0.055999999999999994,
+      "recall@10": 0.00918551361612785,
+      "ndcg@10": 0.0529529418975861,
+      "coverage": 0.02669280651485447,
+      "diversity": 0.21053526025592412
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.25,
+      "popularity_weight": 0.4,
+      "precision@10": 0.072,
+      "recall@10": 0.011758119372944133,
+      "ndcg@10": 0.08534058989160932,
+      "coverage": 0.020208113406725983,
+      "diversity": 0.32012768031055316
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.25,
+      "popularity_weight": 0.6,
+      "precision@10": 0.068,
+      "recall@10": 0.01248342740299221,
+      "ndcg@10": 0.07477856358023559,
+      "coverage": 0.012969386216256975,
+      "diversity": 0.41786129710108083
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.5,
+      "popularity_weight": 0,
+      "precision@10": 0.036000000000000004,
+      "recall@10": 0.006884475002122061,
+      "ndcg@10": 0.030335436170370027,
+      "coverage": 0.02940732921128035,
+      "diversity": 0.30020892842731633
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.5,
+      "popularity_weight": 0.2,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.008606870037484272,
+      "ndcg@10": 0.050018844271744224,
+      "coverage": 0.02699442014779068,
+      "diversity": 0.324481330444738
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.5,
+      "popularity_weight": 0.4,
+      "precision@10": 0.068,
+      "recall@10": 0.014552284522796081,
+      "ndcg@10": 0.08141358224374662,
+      "coverage": 0.022017795204343237,
+      "diversity": 0.3931913672140483
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.5,
+      "popularity_weight": 0.6,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.020631714788121695,
+      "ndcg@10": 0.08470384585878149,
+      "coverage": 0.014929874830342332,
+      "diversity": 0.5475622905255443
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.75,
+      "popularity_weight": 0,
+      "precision@10": 0.032,
+      "recall@10": 0.006860665478312537,
+      "ndcg@10": 0.02752596337857942,
+      "coverage": 0.030010556477152766,
+      "diversity": 0.4090521789254762
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.75,
+      "popularity_weight": 0.2,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.015746325775660864,
+      "ndcg@10": 0.06355703679425584,
+      "coverage": 0.02593877243251395,
+      "diversity": 0.4583368787170099
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.75,
+      "popularity_weight": 0.4,
+      "precision@10": 0.05600000000000001,
+      "recall@10": 0.016622312534000563,
+      "ndcg@10": 0.07281395327010579,
+      "coverage": 0.021263761122002716,
+      "diversity": 0.6052671237625983
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 0.75,
+      "popularity_weight": 0.6,
+      "precision@10": 0.07200000000000001,
+      "recall@10": 0.02416126941833913,
+      "ndcg@10": 0.0871523043433233,
+      "coverage": 0.01523148846327854,
+      "diversity": 0.6904499896416517
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 1.0,
+      "popularity_weight": 0,
+      "precision@10": 0.04,
+      "recall@10": 0.013422909877804722,
+      "ndcg@10": 0.04035659525620968,
+      "coverage": 0.02593877243251395,
+      "diversity": 0.745213690654133
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 1.0,
+      "popularity_weight": 0.2,
+      "precision@10": 0.048,
+      "recall@10": 0.01664035005203808,
+      "ndcg@10": 0.06401716090282265,
+      "coverage": 0.023073442919619967,
+      "diversity": 0.7554670662443829
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 1.0,
+      "popularity_weight": 0.4,
+      "precision@10": 0.044000000000000004,
+      "recall@10": 0.016362572274260304,
+      "ndcg@10": 0.06980503179857273,
+      "coverage": 0.020358920223194087,
+      "diversity": 0.7684840601207642
+    },
+    {
+      "factors": 32,
+      "regularization": 2,
+      "alpha": 1.0,
+      "popularity_weight": 0.6,
+      "precision@10": 0.052000000000000005,
+      "recall@10": 0.018702614368446044,
+      "ndcg@10": 0.07552274889402909,
+      "coverage": 0.016437942995023377,
+      "diversity": 0.7587880319907901
+    }
+  ],
+  "validation_cohort": {
+    "evaluated_users": 25,
+    "excluded_new_users": 141,
+    "heldout_users": 166,
+    "relevant_items": 1385,
+    "unavailable_relevant_items": 627,
+    "supported_catalog": 6631
+  },
+  "test_cohort": {
+    "evaluated_users": 28,
+    "excluded_new_users": 88,
+    "heldout_users": 116,
+    "relevant_items": 897,
+    "unavailable_relevant_items": 300,
+    "supported_catalog": 8259
+  },
+  "metrics": {
+    "Hybrid": {
+      "precision@10": 0.06071428571428572,
+      "recall@10": 0.029794801759087473,
+      "ndcg@10": 0.0562711820476701,
+      "coverage": 0.012834483593655407,
+      "diversity": 0.7650583859448942
+    },
+    "Collaborative": {
+      "precision@10": 0.04642857142857143,
+      "recall@10": 0.021401686937401222,
+      "ndcg@10": 0.040840400363953734,
+      "coverage": 0.015861484441215642,
+      "diversity": 0.7428031294703127
+    },
+    "Item-KNN": {
+      "precision@10": 0.0035714285714285718,
+      "recall@10": 0.0017857142857142859,
+      "ndcg@10": 0.003930210112465718,
+      "coverage": 0.029785688339992736,
+      "diversity": 0.7369940377767311
+    },
+    "Content-based": {
+      "precision@10": 0.0035714285714285718,
+      "recall@10": 0.000510204081632653,
+      "ndcg@10": 0.007860420224931436,
+      "coverage": 0.02094684586511684,
+      "diversity": 0.08665451543474965
+    },
+    "Popularity": {
+      "precision@10": 0.06071428571428572,
+      "recall@10": 0.025066910602624892,
+      "ndcg@10": 0.06788443125690204,
+      "coverage": 0.0035113209831698754,
+      "diversity": 0.7818104218957888
+    }
+  },
+  "confidence_95": {
+    "Hybrid": {
+      "precision@10": [
+        0.028571428571428574,
+        0.10357142857142856
+      ],
+      "recall@10": [
+        0.014007644471930187,
+        0.04969770408163265
+      ],
+      "ndcg@10": [
+        0.02361880992426444,
+        0.09901607442642799
+      ]
+    },
+    "Collaborative": {
+      "precision@10": [
+        0.017857142857142856,
+        0.08571428571428572
+      ],
+      "recall@10": [
+        0.00873120018209304,
+        0.03612692400192399
+      ],
+      "ndcg@10": [
+        0.01642905199638379,
+        0.07418915124851554
+      ]
+    },
+    "Item-KNN": {
+      "precision@10": [
+        0.0,
+        0.010714285714285716
+      ],
+      "recall@10": [
+        0.0,
+        0.005357142857142858
+      ],
+      "ndcg@10": [
+        0.0,
+        0.011790630337397153
+      ]
+    },
+    "Content-based": {
+      "precision@10": [
+        0.0,
+        0.010714285714285716
+      ],
+      "recall@10": [
+        0.0,
+        0.001530612244897959
+      ],
+      "ndcg@10": [
+        0.0,
+        0.023581260674794307
+      ]
+    },
+    "Popularity": {
+      "precision@10": [
+        0.02142857142857143,
+        0.11437499999999995
+      ],
+      "recall@10": [
+        0.009346807788772074,
+        0.0448197235965093
+      ],
+      "ndcg@10": [
+        0.02254994755877575,
+        0.12768082551612855
+      ]
+    }
+  },
+  "paired_ndcg_vs_popularity_95": {
+    "Hybrid": [
+      -0.032405470898474405,
+      0.008040264135844997
+    ],
+    "Collaborative": [
+      -0.060415793173746735,
+      0.0007637889279639966
+    ],
+    "Item-KNN": [
+      -0.1255848035379249,
+      -0.015726451265610304
+    ],
+    "Content-based": [
+      -0.10926478118040049,
+      -0.020599050331383647
+    ],
+    "Popularity": [
+      0.0,
+      0.0
+    ]
+  },
+  "bootstrap_resamples": 1000,
+  "onboarding": {
+    "users": 28,
+    "training_users": 1437,
+    "excluded_training_user_ids": [
+      1000015,
+      1000018,
+      1000021,
+      1000068,
+      1000103,
+      1000105,
+      1000112,
+      1000119,
+      1000233,
+      1000249,
+      1000282,
+      1000285,
+      1000291,
+      1000292,
+      1000298,
+      1000318,
+      1000326,
+      1000341,
+      1000414,
+      1000424,
+      1000443,
+      1000448,
+      1000462,
+      1000495,
+      1000511,
+      1000537,
+      1000582,
+      1000601
+    ],
+    "protocol": "Matched users with >=10 past ratings. Last N ratings before the test boundary are seeds. Entire target-user histories are removed from model training. Full supported candidates exclude seeds only; future positives exclude all previously seen titles.",
+    "results": [
+      {
+        "seed_ratings": 3,
+        "algorithm": "Hybrid",
+        "precision@10": 0.03571428571428571,
+        "recall@10": 0.017067185460042603,
+        "ndcg@10": 0.032252773855200714,
+        "coverage": 0.0017735334242837653,
+        "diversity": 0.7912681108290812
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Collaborative",
+        "precision@10": 0.03214285714285715,
+        "recall@10": 0.016352899745756887,
+        "ndcg@10": 0.02819818903931625,
+        "coverage": 0.0024556616643929058,
+        "diversity": 0.7862376697519861
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.010714285714285716,
+        "recall@10": 0.0057467532467532475,
+        "ndcg@10": 0.008371661068689282,
+        "coverage": 0.016643929058663028,
+        "diversity": 0.7406894447102419
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Content-based",
+        "precision@10": 0.0,
+        "recall@10": 0.0,
+        "ndcg@10": 0.0,
+        "coverage": 0.033560709413369715,
+        "diversity": 0.14145216973795616
+      },
+      {
+        "seed_ratings": 3,
+        "algorithm": "Popularity",
+        "precision@10": 0.04642857142857143,
+        "recall@10": 0.02307247646533361,
+        "ndcg@10": 0.053340763928331356,
+        "coverage": 0.0016371077762619372,
+        "diversity": 0.7688008013633658
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Hybrid",
+        "precision@10": 0.04285714285714286,
+        "recall@10": 0.018900140864426578,
+        "ndcg@10": 0.03736422756571355,
+        "coverage": 0.0019099590723055935,
+        "diversity": 0.7942871054010362
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Collaborative",
+        "precision@10": 0.03571428571428571,
+        "recall@10": 0.017675651068508214,
+        "ndcg@10": 0.030430873308944475,
+        "coverage": 0.002319236016371078,
+        "diversity": 0.7847454778197271
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.0071428571428571435,
+        "recall@10": 0.0025,
+        "ndcg@10": 0.0056574697345893755,
+        "coverage": 0.01937244201909959,
+        "diversity": 0.7325198567049082
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Content-based",
+        "precision@10": 0.0,
+        "recall@10": 0.0,
+        "ndcg@10": 0.0,
+        "coverage": 0.031514324693042294,
+        "diversity": 0.11263725540934459
+      },
+      {
+        "seed_ratings": 5,
+        "algorithm": "Popularity",
+        "precision@10": 0.04642857142857143,
+        "recall@10": 0.02307247646533361,
+        "ndcg@10": 0.053340763928331356,
+        "coverage": 0.0016371077762619372,
+        "diversity": 0.7706985377364458
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Hybrid",
+        "precision@10": 0.03928571428571429,
+        "recall@10": 0.018185855150140866,
+        "ndcg@10": 0.03847003940382182,
+        "coverage": 0.00286493860845839,
+        "diversity": 0.7868091645709648
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Collaborative",
+        "precision@10": 0.024999999999999998,
+        "recall@10": 0.008641860784717927,
+        "ndcg@10": 0.022927246568150848,
+        "coverage": 0.0032742155525238743,
+        "diversity": 0.7741468003164573
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Item-KNN",
+        "precision@10": 0.0071428571428571435,
+        "recall@10": 0.0029464285714285716,
+        "ndcg@10": 0.004959372995484092,
+        "coverage": 0.026330150068212824,
+        "diversity": 0.7263161271866952
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Content-based",
+        "precision@10": 0.010714285714285716,
+        "recall@10": 0.004528061224489796,
+        "ndcg@10": 0.009170490262420007,
+        "coverage": 0.031105047748976808,
+        "diversity": 0.14650537369106348
+      },
+      {
+        "seed_ratings": 10,
+        "algorithm": "Popularity",
+        "precision@10": 0.04642857142857143,
+        "recall@10": 0.02307247646533361,
+        "ndcg@10": 0.053340763928331356,
+        "coverage": 0.0016371077762619372,
+        "diversity": 0.7693077301810293
+      }
+    ]
+  },
+  "diversity_analysis": [
+    {
+      "weight": 0,
+      "precision@10": 0.06071428571428572,
+      "recall@10": 0.029794801759087473,
+      "ndcg@10": 0.0562711820476701,
+      "coverage": 0.012834483593655407,
+      "diversity": 0.7650583859448942
+    },
+    {
+      "weight": 0.25,
+      "precision@10": 0.04285714285714286,
+      "recall@10": 0.014161730310986317,
+      "ndcg@10": 0.04181469224281285,
+      "coverage": 0.01186584332243613,
+      "diversity": 0.9513837936731305
+    },
+    {
+      "weight": 0.5,
+      "precision@10": 0.025,
+      "recall@10": 0.010031997609825044,
+      "ndcg@10": 0.02924881683114628,
+      "coverage": 0.010897203051216855,
+      "diversity": 0.9990874365759833
+    },
+    {
+      "weight": 0.75,
+      "precision@10": 0.025,
+      "recall@10": 0.010031997609825044,
+      "ndcg@10": 0.02924881683114628,
+      "coverage": 0.011018283085119264,
+      "diversity": 1.0
+    }
+  ],
+  "previous_model_same_cohort": {
+    "precision@10": 0.05357142857142857,
+    "recall@10": 0.021570552463409606,
+    "ndcg@10": 0.05816283265404826,
+    "coverage": 0.020825765831214434,
+    "diversity": 0.7295874302359461
+  },
+  "paired_improved_minus_previous_ndcg_95": [
+    -0.02601880267539613,
+    0.01837109187543708
+  ],
+  "snapshot": {
+    "source": "https://files.grouplens.org/datasets/movielens/ml-latest-small.zip",
+    "archive_sha256": "696d65a3dfceac7c45750ad32df2c259311949efec81f0f144fdfb91ebc9e436",
+    "scope": "Development snapshot; not a stable research benchmark."
+  },
+  "protocol": "Global chronological 80/10/10 split with timestamp ties. Validation-only ALS/Hybrid tuning. Full past-supported film catalog, all known titles excluded, unseen future rating >=4 relevant. User namespaces kept separate. App artifacts never used by evaluation. Series and not-interested feedback are not evaluated. Development snapshot; not comparable to the original 100K benchmark."
+}
