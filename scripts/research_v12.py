@@ -197,7 +197,7 @@ def blend_families(weights):
 
 def fit_content(movies, ratings, output, embedding_dir):
     started = time.perf_counter()
-    lsa = SemanticContent(movies, train_ids=set(ratings.movie_id), dimensions=64)
+    lsa = SemanticContent(movies, train_ids=set(ratings.movie_id), dimensions=64, retain_texts=True)
     models = {"tfidf": lsa.tfidf, "lsa64": lsa.features}
     costs = {
         "lexical_fit_seconds": time.perf_counter() - started,

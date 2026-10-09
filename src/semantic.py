@@ -18,7 +18,7 @@ from src.metadata import trusted_url
 
 
 class SemanticContent:
-    def __init__(self, movies, document=None, train_ids=None, dimensions=64):
+    def __init__(self, movies, document=None, train_ids=None, dimensions=64, *, retain_texts=False):
         records = document.get("items", {}) if isinstance(document, dict) else {}
         identities = {}
         for item in records.values():
@@ -48,6 +48,10 @@ class SemanticContent:
             genres = " ".join(g.replace("-", "") for g in row.genres)
             texts.append(f"{row.title} {clean['title_uk']} {genres} {genres} {genres} "
                          f"{clean['summary_en']} {clean['summary_uk']}")
+        # Research encoders can request the exact same corpus without rebuilding
+        # its identity checks. The ordinary app does not retain another text copy.
+        if retain_texts:
+            self.texts = tuple(texts)
         allowed = set(self.ids) if train_ids is None else set(train_ids)
         fit_indices = np.array([i for i, mid in enumerate(self.ids) if mid in allowed], dtype=int)
         if not len(fit_indices):

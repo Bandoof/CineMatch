@@ -12,6 +12,7 @@ from src.research_models import (
     fold_in_scores,
     preference_weights,
 )
+from src.semantic import SemanticContent
 
 
 def model():
@@ -99,3 +100,13 @@ def test_embedding_artifact_requires_exact_catalog_text_encoder_and_finite_vecto
         save_vectors(path, ids, vectors, texts)
     with pytest.raises(FileNotFoundError):
         CachedEncoder(tmp_path)  # No download or runtime/API dependency.
+
+
+def test_research_corpus_is_optional_and_does_not_change_lexical_scores(sample):
+    movies, _ = sample
+    baseline = SemanticContent(movies, dimensions=4)
+    research = SemanticContent(movies, dimensions=4, retain_texts=True)
+    assert not hasattr(baseline, "texts")
+    assert len(research.texts) == len(movies)
+    np.testing.assert_array_equal(baseline.features, research.features)
+    np.testing.assert_array_equal(baseline.scores({1: 5, 7: 1}), research.scores({1: 5, 7: 1}))

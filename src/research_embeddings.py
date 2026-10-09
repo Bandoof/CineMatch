@@ -61,7 +61,7 @@ class CachedEncoder:
             raise ValueError("Nonempty text batches are required.")
         vectors = []
         for start in range(0, len(texts), batch_size):
-            tokens = self.tokenizer.encode_batch(texts[start : start + batch_size])
+            tokens = self.tokenizer.encode_batch(list(texts[start : start + batch_size]))
             inputs = {
                 "input_ids": np.array([token.ids for token in tokens], dtype=np.int64),
                 "attention_mask": np.array(
