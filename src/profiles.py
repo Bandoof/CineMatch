@@ -8,13 +8,13 @@ from pathlib import Path
 MAX_PROFILE_BYTES = 1_000_000
 
 
-def parse_profile(payload):
+def parse_profile(payload, max_bytes=MAX_PROFILE_BYTES):
     """Reject ambiguous JSON and parser exhaustion without changing user state."""
     if isinstance(payload, bytes):
-        if len(payload) > MAX_PROFILE_BYTES:
+        if len(payload) > max_bytes:
             raise ValueError("Profile is too large.")
         payload = payload.decode("utf-8")
-    if not isinstance(payload, str) or len(payload.encode("utf-8")) > MAX_PROFILE_BYTES:
+    if not isinstance(payload, str) or len(payload.encode("utf-8")) > max_bytes:
         raise ValueError("Profile is too large or is not UTF-8 JSON.")
 
     def unique_object(pairs):

@@ -1,0 +1,24 @@
+repos:
+  - repo: local
+    hooks:
+      - id: ruff
+        name: Ruff lint
+        entry: python -m ruff check
+        language: system
+        types: [python]
+      - id: ruff-imports
+        name: Ruff imports (incremental scope)
+        entry: python -m ruff check --select I
+        language: system
+        files: ^src/(profile_actions|hybrid|ranking)\.py$
+      - id: ruff-format
+        name: Ruff format (incremental scope)
+        entry: python -m ruff format --check
+        language: system
+        files: ^(src/(profile_actions|hybrid|ranking)|tests/(test_profile_actions|test_state_reliability))\.py$
+      - id: mypy
+        name: Mypy (incremental scope)
+        entry: python -m mypy
+        language: system
+        pass_filenames: false
+        types: [python]

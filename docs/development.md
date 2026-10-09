@@ -54,3 +54,19 @@ Docker commands in the README provide another environment when Docker is availab
 
 Українською: спочатку запустіть тести на синтетичних даних. Каталоги для локального
 застосунку завантажуються окремо; особиста база для тестів не потрібна.
+
+## Incremental quality checks
+
+```bash
+python -m ruff check --select I src/profile_actions.py src/hybrid.py src/ranking.py
+python -m ruff format --check src/profile_actions.py src/hybrid.py src/ranking.py tests/test_profile_actions.py tests/test_state_reliability.py
+python -m mypy
+python -m pre_commit install
+python -m pre_commit run --all-files
+```
+
+Use `ruff format` on the listed files to apply formatting. These pure modules are
+strictly typed; UI session-state values remain an explicit dynamic boundary. General
+Ruff checks cover the repository; import-order/format checks grow incrementally.
+The local pre-commit hooks use tools pinned in requirements-dev, without fetching
+hook implementations. Install them in the active environment before committing.
