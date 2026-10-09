@@ -3,7 +3,7 @@
 import json
 import math
 
-from src.profiles import MAX_PROFILE_BYTES, ProfileStore
+from src.profiles import MAX_PROFILE_BYTES, ProfileStore, parse_profile
 
 
 class MemoryConflict(ValueError):
@@ -46,7 +46,7 @@ class MemoryStore(ProfileStore):
             return 0, None
         if len(row[1].encode("utf-8")) > MAX_PROFILE_BYTES + 20000:
             raise ValueError("Invalid local memory size.")
-        document = json.loads(row[1])
+        document = parse_profile(row[1], max_bytes=MAX_PROFILE_BYTES + 20000)
         if (not isinstance(document, dict) or document.get("version") != 1
                 or type(document.get("enabled")) is not bool
                 or not isinstance(document.get("profile"), str)

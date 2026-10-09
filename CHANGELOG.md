@@ -9,6 +9,9 @@ Changes are recorded by engineering milestone; these headings are not published 
 - Linux/Windows test matrix and measured coverage reporting without a forced threshold.
 - Pinned action revisions, read-only default workflow permissions and PR/issue templates.
 
+- Extracted typed profile state transitions; strict incremental Mypy and local hooks.
+- Hardened corrupt autosave JSON handling and added transactional/isolation regressions.
+
 ## 2026-10-09 — review and security fixes (PR #1)
 
 - Retry Wikipedia soft errors and clear stale metadata when source identity changes.

@@ -20,25 +20,12 @@ from src.profiles import ProfileStore, export_profile, import_library_profile, i
 from src.discovery import discovery_queue  # noqa: E402
 from src.search import title_matches  # noqa: E402
 from app import memory as local_memory  # noqa: E402
+from src import profile_actions  # noqa: E402
 
 
 def replace_profile(ratings, blocked, demo=False, not_seen=None, watched=None, watchlist=None, topic_blocked=None):
-    # Imported profiles must also replace values retained by editing widgets.
-    for key in list(st.session_state):
-        if str(key).startswith("edit_"):
-            del st.session_state[key]
-    st.session_state.ratings = ratings
-    st.session_state.blocked = blocked
-    st.session_state.topic_blocked = set(blocked if topic_blocked is None else topic_blocked)
-    st.session_state.snoozed = set()
-    st.session_state.pop("recommendation_change", None)
-    st.session_state.demo = demo
-    st.session_state.watched = set(watched or []) | set(ratings)
-    st.session_state.not_seen = set(not_seen or []) - st.session_state.watched
-    st.session_state.watchlist = set(watchlist or []) - st.session_state.watched
-    st.session_state.pop("pending_seen", None)
-    st.session_state.pop("last_uninterested", None)
-    st.session_state.guide_history = []
+    profile_actions.replace_profile(st.session_state, ratings, blocked, demo, not_seen,
+                                    watched, watchlist, topic_blocked)
     st.rerun()
 
 
@@ -228,10 +215,7 @@ def _main(memory):
             st.markdown(f'<div class="poster-missing"><span>🎞</span><p>{t("no_poster") if posters else t("posters_hidden")}</p></div>', unsafe_allow_html=True)
 
     def remember_change():
-        st.session_state.recommendation_change = {
-            "profile": dict(st.session_state.ratings), "blocked": set(st.session_state.blocked),
-            "topic_blocked": set(st.session_state.topic_blocked), "snoozed": set(st.session_state.snoozed),
-            "watched": set(st.session_state.watched)}
+        profile_actions.remember_change(st.session_state)
 
     def content_details(mid):
         if engine.semantic is None:
@@ -248,11 +232,7 @@ def _main(memory):
             st.link_button(t("source_summary") + " · CC BY-SA", source)
 
     def rate_title(mid, value):
-        remember_change()
-        st.session_state.ratings[mid] = float(value)
-        st.session_state.watched.add(mid)
-        st.session_state.not_seen.discard(mid)
-        st.session_state.watchlist.discard(mid)
+        profile_actions.rate_title(st.session_state, mid, value)
 
     def watchlist_button(mid, prefix):
         saved_later = mid in st.session_state.watchlist
@@ -265,14 +245,7 @@ def _main(memory):
             st.rerun()
 
     def mark_seen(mid, origin):
-        remember_change()
-        previous = dict(mid=mid, watched=mid in st.session_state.watched,
-                        later=mid in st.session_state.watchlist, not_seen=mid in st.session_state.not_seen,
-                        origin=origin)
-        st.session_state.watched.add(mid)
-        st.session_state.watchlist.discard(mid)
-        st.session_state.not_seen.discard(mid)
-        st.session_state.pending_seen = previous
+        profile_actions.mark_seen(st.session_state, mid, origin)
         st.rerun()
 
     def seen_feedback(origin):
@@ -296,14 +269,7 @@ def _main(memory):
             st.session_state.pop("pending_seen", None)
             st.rerun()
         if st.button(t("seen_cancel"), key="seen_cancel", use_container_width=True):
-            remember_change()
-            st.session_state.pop("pending_seen", None)
-            if not previous["watched"]:
-                st.session_state.watched.discard(mid)
-            if previous["later"]:
-                st.session_state.watchlist.add(mid)
-            if previous["not_seen"]:
-                st.session_state.not_seen.add(mid)
+            profile_actions.cancel_seen(st.session_state)
             st.rerun()
 
     with guided:
@@ -352,17 +318,7 @@ def _main(memory):
         else:
             st.info(t("guide_empty"))
         if st.session_state.guide_history and st.button(t("undo"), key="guide_undo"):
-            remember_change()
-            previous = st.session_state.guide_history.pop()
-            mid, action, value = previous[:3]
-            if action == "rating" and st.session_state.ratings.get(mid) == value:
-                st.session_state.ratings.pop(mid)
-                st.session_state.watched.discard(mid)
-                if len(previous) > 3 and previous[3]:
-                    st.session_state.watchlist.add(mid)
-                st.session_state.pop(f"edit_{mid}", None)
-            elif action == "not_seen":
-                st.session_state.not_seen.discard(mid)
+            profile_actions.undo_guide(st.session_state)
             st.rerun()
         if st.session_state.not_seen:
             st.caption(t("not_seen_note", count=len(st.session_state.not_seen)))

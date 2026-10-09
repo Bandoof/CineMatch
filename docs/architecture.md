@@ -10,6 +10,7 @@ It has no account service, external vector database or online training service.
 | `app/runtime.py` | Bounded engine cache, validated artifacts and fallbacks | Catalog/loaders, numerical models |
 | `app/recommender.py` | Shared scoring, exclusions, mixed-media quotas, explanations | Pure numerical modules in `src/` |
 | `src/collaborative.py`, `item_knn.py`, `semantic.py` | ALS, observed-rating KNN, TF-IDF/LSA | NumPy/SciPy/scikit-learn |
+| `src/profile_actions.py` | UI-independent replace/rate/seen/cancel/Undo transitions | Mutable state mapping; no Streamlit or I/O |
 | `src/profiles.py`, `src/memory.py`, `app/memory.py` | JSON interchange, named profiles, autosave bridge | Local SQLite, UI state |
 | `scripts/` | Explicit download, train, evaluate and maintenance commands | Official data sources and local artifacts |
 
