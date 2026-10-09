@@ -341,8 +341,9 @@ profile validation/persistence, recognition skips/undo/reload, localized-title i
 and model-score invariance, paired bootstrap, onboarding user exclusion,
 artifact cache refresh, and interactive Ukrainian/English workflows.
 GitHub Actions is configured for Python 3.10/3.11 with synthetic data. The equivalent
-checks are run locally and in Linux Docker; a hosted Actions run requires publishing
-the repository and is not claimed here.
+checks passed locally and in Linux Docker. The first hosted GitHub Actions run
+also passed Ruff and pytest on Python 3.10 and 3.11:
+[verified run](https://github.com/Bandoof/CineMatch/actions/runs/37924477380).
 
 ## Docker
 

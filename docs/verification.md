@@ -156,3 +156,15 @@ this is not an app/series accuracy result. See reports/ml_v3.md and the model ca
 The exact public content snapshot is packaged separately with its checksum and
 source attribution. Source archives exclude datasets, models, local profiles and
 secrets. Remote CI and a cloud task are separate from these local checks.
+# GitHub publication verification — 2026-10-09
+
+Published the reviewed source to https://github.com/Bandoof/CineMatch.
+Commit b64c7b12c97ac158e23947598bd2c1792b49f95f contains 101 files,
+including all 17 owner-approved illustrations. All remote blob hashes match
+the reviewed local file bytes. Data, models, secrets and personal profiles
+are excluded. The original local app and private database remain on the PC.
+
+Hosted run https://github.com/Bandoof/CineMatch/actions/runs/37924477380
+(source commit 25b982a40d97e7468c1a8b5b830a294f9ddbebde) completed
+successfully: both Python 3.10 and 3.11 jobs passed Ruff and pytest.
+This confirms hosted checks separately from the historical local records below.

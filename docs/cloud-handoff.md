@@ -29,7 +29,9 @@ of its quality. Do not invent experience, projects, translations or accuracy.
 ## Evidence and scope
 
 Final local Windows/Python 3.10: 61 tests passed; Linux/Docker/Python 3.11:
-61 tests passed. Ruff passed on both. No remote CI result is inferred from this.
+61 tests passed. Ruff passed on both. Separately, the first hosted GitHub Actions
+run passed Ruff and pytest on Python 3.10 and 3.11:
+https://github.com/Bandoof/CineMatch/actions/runs/37924477380 (commit 25b982a).
 
 Independent MovieLens 1M protocol 3: 1,000,209 events, 300 validation and 600 test
 targets, global chronological split, target histories excluded from background
