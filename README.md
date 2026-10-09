@@ -1,5 +1,9 @@
 # 🎬 CineMatch
 
+[![Tests](https://github.com/Bandoof/CineMatch/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Bandoof/CineMatch/actions/workflows/ci.yml)
+![Python 3.10–3.11](https://img.shields.io/badge/Python-3.10%E2%80%933.11-blue)
+[![MIT License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+
 **Recognise a story. Rate it. Find your next favourite.**
 
 A recommendation systems portfolio project with seven algorithms, chronological
@@ -14,6 +18,22 @@ The screenshot shows the actual current interface. The [earlier walkthrough](ass
 documents the previous layout.
 Movie images link to Wikipedia; series posters link to TVmaze. No artwork is
 included in the source package apart from screenshots of the application.
+
+## Quick start / Швидкий старт
+
+Python 3.10/3.11: create a virtual environment, install `requirements.txt`, run
+`python -m scripts.download_data` and `python -m scripts.train`, then
+`python -m streamlit run app/streamlit_app.py --server.address=127.0.0.1`.
+This starts the minimal film catalog; verified Ukrainian names, series and expanded
+content require the explicit [full setup](#run-locally). Tests need no downloads.
+
+[Development](docs/development.md) · [Architecture](docs/architecture.md) ·
+[Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Changelog](CHANGELOG.md) ·
+[Owner GitHub settings](docs/github-maintenance.md)
+
+Українською: локальний застосунок радить фільми й серіали, зберігає оцінки,
+«Переглянути пізніше» та історію. [Повна українська інструкція](Почати.md).
+Особиста база залишається на вашому ПК; клонування репозиторію її не переносить.
 
 ## Experience
 
