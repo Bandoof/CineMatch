@@ -6,7 +6,6 @@ Evaluation can fit vocabulary/projection on past-supported titles only.
 import hashlib
 import json
 from pathlib import Path
-from urllib.parse import urlparse
 
 import numpy as np
 from scipy import sparse
@@ -15,6 +14,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.preprocessing import normalize
 
 from src.movies import identity_keys
+from src.metadata import trusted_url
 
 
 class SemanticContent:
@@ -39,9 +39,8 @@ class SemanticContent:
             clean = {key: str(item.get(key, ""))[:1500] for key in ("summary_en", "summary_uk", "title_uk")}
             for key in ("source_url", "source_uk"):
                 url = item.get(key, "")
-                parsed = urlparse(url) if isinstance(url, str) else None
-                clean[key] = url if parsed and parsed.scheme == "https" and parsed.hostname in (
-                    "en.wikipedia.org", "uk.wikipedia.org", "www.tvmaze.com") else ""
+                clean[key] = trusted_url(url, {
+                    "en.wikipedia.org", "uk.wikipedia.org", "www.tvmaze.com"})
             runtime = item.get("runtime_minutes")
             clean["runtime_minutes"] = runtime if type(runtime) is int and 0 < runtime < 1000 else None
             self.items[int(row.movie_id)] = clean

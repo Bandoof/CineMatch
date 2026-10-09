@@ -19,6 +19,8 @@ def canonical_catalog(movies, ratings):
         movies["media_type"] = "Movie"
     if "source" not in movies:
         movies["source"] = "MovieLens"
+    movies["media_type"] = movies["media_type"].fillna("Movie")
+    movies["source"] = movies["source"].fillna("MovieLens")
     keys = []
     for row in movies.to_dict("records"):
         url = row.get("imdb_url")
