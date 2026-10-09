@@ -1,0 +1,59 @@
+{
+  "baseline_commit": "ac15d44937046c49269ed355b5a6e454447ab0c2",
+  "date": "2026-10-09",
+  "before": {
+    "python": "3.11.17",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 30,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 69.35596999937843,
+    "engine_init_ms": 41.41531300047063,
+    "app_cold_ms": 340.75958900029946,
+    "app_warm_rerun_ms": 53.295779999643855,
+    "recommend_median_ms": {
+      "Adaptive": 1.7144690000350238,
+      "Hybrid": 1.9799329998022586,
+      "Content-based": 1.8332754998482415
+    },
+    "mmr_10000_median_ms": 3.2027930001277127,
+    "mmr_peak_allocated_bytes": 2011976,
+    "sqlite_write_median_ms": 0.18964599985338282,
+    "process_peak_rss_mib": 235.5234375,
+    "output_sha256": "a6aba7a471544dd857421d800b38ff79e6e12f9ea73c0a5fdd2b0ac9e952a3c1",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "after": {
+    "python": "3.11.17",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.39",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 30,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 75.40591199995106,
+    "engine_init_ms": 41.36605199983023,
+    "app_cold_ms": 337.38292599991837,
+    "app_warm_rerun_ms": 49.837229999866395,
+    "recommend_median_ms": {
+      "Adaptive": 1.1512085002323147,
+      "Hybrid": 1.4124764998086903,
+      "Content-based": 1.246915499905299
+    },
+    "mmr_10000_median_ms": 1.5700105000178155,
+    "mmr_peak_allocated_bytes": 2171696,
+    "sqlite_write_median_ms": 0.17462400001022615,
+    "process_peak_rss_mib": 234.39453125,
+    "output_sha256": "a6aba7a471544dd857421d800b38ff79e6e12f9ea73c0a5fdd2b0ac9e952a3c1",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "limits": "One paired cloud-workspace run; synthetic film fixture and warm caches; cold render excludes interpreter/import and browser/network time. MMR allocation peak rises by 159720 bytes. No change to ML benchmark artifacts."
+}

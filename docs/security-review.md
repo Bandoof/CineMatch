@@ -66,3 +66,24 @@ multi-user storage requires a separate authenticated design. Do not expose the
 personal local installation publicly. Existing data and saved profiles were not migrated.
 
 The MovieLens benchmark and model-quality claims were not changed or rerun.
+
+## v1.1 targeted follow-up — 9 October 2026
+
+Profile transitions were extracted without moving persistence into the UI. Autosave
+JSON now uses the same bounded parser as imports (with the existing 20 KB envelope
+allowance); duplicate keys, non-finite constants and excessive nesting raise a
+controlled ValueError. Tests prove corrupt rows are preserved and rollback/stale
+writers do not overwrite committed data. This is local corruption resilience, not
+an assertion of remotely exploitable SQLite access.
+
+Revisited parameterized SQL, URL/HTML handling, explicit ZIP-member allowlists and
+size limits, numerical `allow_pickle=False` models, environment/Docker exclusions,
+workflow permissions and cache copies. No new confirmed vulnerability was found in
+these reviewed paths beyond the autosave parsing weakness. Source/model files remain
+trusted local inputs; there is no public multi-user authorization or request-rate
+limiting. The engine and score caches are bounded by entry count, not a memory quota.
+
+Actions are pinned; Python CodeQL and dependency auditing are automated. A successful
+CodeQL run alone does not certify absence of findings. Repository administrative
+settings remain owner actions. No deployed-site pentest or private-data access was
+performed. [Engineering evidence](engineering-v11.md) separates local and CI results.

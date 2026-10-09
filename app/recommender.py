@@ -245,12 +245,21 @@ class Recommender:
             order += list(films[len(shows):]) + list(shows[len(films):])
         else:
             order = rank_candidates(scores, indices, self.movie_ids, self.content.features, k, diversity)
-        results = [self._result(int(i), float(scores[i]), profile, algorithm, language) for i in order]
+        explanation_context = (self._explanation_context(profile)
+                               if profile and algorithm in ("Hybrid", "Content-based") else None)
+        results = [self._result(int(i), float(scores[i]), profile, algorithm, language,
+                               explanation_context) for i in order]
         if intent_applied:
             results = [replace(row, reason=tr("reason_query", language)) for row in results]
         return results
 
-    def _result(self, i, score, profile, algorithm, language):
+    def _explanation_context(self, profile):
+        # Compute genre affinity once per list, only for algorithms that explain it.
+        content = self.content.scores(profile)
+        liked = [(self.positions[mid], mid) for mid, rating in profile.items() if rating >= 4]
+        return content, liked
+
+    def _result(self, i, score, profile, algorithm, language, explanation_context=None):
         movie = self.movies.iloc[i]
         counts = int(self.popularity.counts[i])
         reason = tr("reason_movie_pop", language, count=counts)
@@ -274,9 +283,9 @@ class Recommender:
                 reason = tr("reason_series_to_movie", language)
             elif algorithm == "Hybrid" and self.alpha == 1:
                 reason = tr("reason_hybrid_quality" if self.popularity_weight else "reason_cf", language)
-        content = self.content.scores(profile) if profile else None
         if profile and algorithm in ("Hybrid", "Content-based"):
-            liked = [(self.positions[mid], mid) for mid, rating in profile.items() if rating >= 4]
+            content, liked = (self._explanation_context(profile) if explanation_context is None
+                              else explanation_context)
             matches = [(float(self.content.features[i] @ self.content.features[j]), mid)
                        for j, mid in liked]
             if content is not None and matches and max(matches)[0] > 0:

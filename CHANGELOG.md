@@ -12,6 +12,11 @@ Changes are recorded by engineering milestone; these headings are not published 
 - Extracted typed profile state transitions; strict incremental Mypy and local hooks.
 - Hardened corrupt autosave JSON handling and added transactional/isolation regressions.
 
+- Reuse explanation context per list and MMR feature slice; preserve exact synthetic outputs.
+- Skip unused literal-search title work; add bilingual watched-search and artifact-recovery regressions.
+- Upgrade checkout/setup-python to pinned v6 revisions after CI Node20 warnings.
+- Reproducible offline performance harness and before/after measurements.
+
 ## 2026-10-09 — review and security fixes (PR #1)
 
 - Retry Wikipedia soft errors and clear stale metadata when source identity changes.

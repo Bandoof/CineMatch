@@ -15,7 +15,7 @@ repos:
         name: Ruff format (incremental scope)
         entry: python -m ruff format --check
         language: system
-        files: ^(src/(profile_actions|hybrid|ranking)|tests/(test_profile_actions|test_state_reliability))\.py$
+        files: ^(src/(profile_actions|hybrid|ranking)|tests/(test_profile_actions|test_state_reliability|test_performance_equivalence|test_search_ui|test_runtime_reliability)|scripts/benchmark_performance)\.py$
       - id: mypy
         name: Mypy (incremental scope)
         entry: python -m mypy
