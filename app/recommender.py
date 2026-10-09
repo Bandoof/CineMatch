@@ -11,6 +11,7 @@ from src.collaborative import BiasedMF
 from src.content_based import ContentBased
 from src.hybrid import blend_scores
 from src.item_knn import ItemKNN
+from src.explanations import adaptive_parts, cosine_terms
 from src.i18n import genre_name, tr
 from src.popularity import Popularity
 from src.metadata import CatalogMetadata
@@ -215,6 +216,7 @@ class Recommender:
                 scores = .25*normalized + .75*(np.clip(intent, -1, 1)+1)/2
                 intent_applied = True
         dismissed = {self.normalize_id(mid) for mid in ((blocked or []) if topic_blocked is None else topic_blocked)}
+        before_feedback = scores
         if dismissed:
             # Weak, bounded feedback distinct from an explicit low star rating.
             negative = self.content.features[[self.positions[mid] for mid in sorted(dismissed)]]
@@ -247,10 +249,19 @@ class Recommender:
             order = rank_candidates(scores, indices, self.movie_ids, self.content.features, k, diversity)
         explanation_context = (self._explanation_context(profile)
                                if profile and algorithm in ("Hybrid", "Content-based") else None)
+        if algorithm == "Adaptive":
+            explanation_context = adaptive_parts(self, profile, user_id)
         results = [self._result(int(i), float(scores[i]), profile, algorithm, language,
                                explanation_context) for i in order]
         if intent_applied:
             results = [replace(row, reason=tr("reason_query", language)) for row in results]
+        if dismissed:
+            results = [replace(row, reason=row.reason + " " + tr("reason_topic_discount", language,
+                        value=float(before_feedback[i] - scores[i])))
+                       if before_feedback[i] - scores[i] > .0005 else row
+                       for row, i in zip(results, order)]
+        if diversity:
+            results = [replace(row, reason=row.reason + " " + tr("reason_variety_order", language)) for row in results]
         return results
 
     def _explanation_context(self, profile):
@@ -273,17 +284,29 @@ class Recommender:
             reason = tr({"Adaptive": "reason_adaptive", "Semantic": "reason_semantic", "Collaborative": "reason_cf", "Item-KNN": "reason_knn",
                          "Hybrid": "reason_hybrid", "Content-based": "reason_content"}[algorithm],
                         language)
-            if algorithm == "Adaptive" and not self.has_learned_policy:
-                reason = tr("reason_default", language)
+            if algorithm == "Adaptive":
+                parts = adaptive_parts(self, profile) if explanation_context is None else explanation_context
+                used = [(name, weights[i], terms[i]) for name, (weights, terms) in parts.items() if weights[i] > 0]
+                if len(used) == 1 and used[0][0] == "quality":
+                    reason = tr("reason_quality_only", language)
+                else:
+                    reason = tr("reason_adaptive_base", language, parts=" + ".join(
+                        tr("component_" + name, language) + f" {weight:.0%}: {term:.3f}"
+                        for name, weight, term in used))
             if algorithm == "Semantic" and self.semantic is None:
                 reason = tr("reason_text_missing", language)
             if not any(mid > 0 for mid in profile) and algorithm in ("Collaborative", "Item-KNN"):
                 reason = tr("reason_no_movie", language)
             elif not any(mid > 0 for mid in profile) and algorithm == "Hybrid":
                 reason = tr("reason_series_to_movie", language)
+            elif algorithm == "Hybrid" and self.popularity_weight == 1:
+                reason = tr("reason_quality_only", language)
             elif algorithm == "Hybrid" and self.alpha == 1:
                 reason = tr("reason_hybrid_quality" if self.popularity_weight else "reason_cf", language)
-        if profile and algorithm in ("Hybrid", "Content-based"):
+        genre_contributes = (algorithm == "Content-based" or (algorithm == "Hybrid" and
+                             (not any(mid > 0 for mid in profile) or
+                              (self.alpha < 1 and self.popularity_weight < 1))))
+        if profile and genre_contributes:
             content, liked = (self._explanation_context(profile) if explanation_context is None
                               else explanation_context)
             matches = [(float(self.content.features[i] @ self.content.features[j]), mid)
@@ -297,6 +320,20 @@ class Recommender:
                                    title=self.metadata.title(source, language))
             if content is None and algorithm == "Content-based":
                 reason = tr("reason_neutral", language)
+        if profile and algorithm == "Semantic":
+            features = self.content.features if self.semantic is None else self.semantic.features
+            terms = cosine_terms(features, self.positions, profile, int(movie.movie_id))
+            if not terms:
+                reason = tr("reason_quality_only", language)
+            else:
+                positive = max(terms, key=lambda row: row["term"])
+                negative = min(terms, key=lambda row: row["term"])
+                shown = ([positive] if positive["term"] > .0005 else [])
+                shown += ([negative] if negative["term"] < -.0005 else [])
+                for row in shown:
+                    reason += " " + tr("reason_cosine_term", language,
+                        title=self.display_title(row["seed_id"], language),
+                        rating=row["rating"], term=row["term"])
         average = movie.provider_rating if movie.media_type == "Series" else self.popularity.averages[i]
         return Recommendation(int(movie.movie_id), self.metadata.title(movie, language), int(movie.year), movie.genres,
                               score, reason, counts, None if pd.isna(average) else float(average),
