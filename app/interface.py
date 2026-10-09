@@ -530,10 +530,12 @@ def _main(memory):
                 changed = st.number_input(t("your_rating"), .5, 5.0, float(value), .5,
                                           key=f"edit_{mid}")
                 if changed != value:
+                    remember_change()
                     st.session_state.ratings[mid] = changed
                     st.rerun()
             with remove:
                 if st.button(t("remove"), key=f"remove_{mid}"):
+                    remember_change()
                     del st.session_state.ratings[mid]
                     del st.session_state[f"edit_{mid}"]
                     st.rerun()
@@ -547,6 +549,7 @@ def _main(memory):
                     if rate_col.button(t("seen_rate"), key=f"rate_seen_{mid}"):
                         mark_seen(mid, "saved")
                     if restore_col.button(t("seen_restore"), key=f"restore_seen_{mid}"):
+                        remember_change()
                         st.session_state.watched.remove(mid)
                         st.rerun()
         if blocked:

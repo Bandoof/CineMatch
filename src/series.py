@@ -2,9 +2,9 @@
 
 import json
 from pathlib import Path
-from urllib.parse import urlparse
 
 import pandas as pd
+from src.metadata import trusted_url
 
 SERIES_COLUMNS = ["movie_id", "title", "year", "genres", "media_type", "source",
                   "source_url", "poster_url", "provider_rating", "status", "aliases"]
@@ -36,12 +36,10 @@ def parse_show(show):
     if average is not None and (isinstance(average, bool) or not 0 <= float(average) <= 10):
         raise ValueError("Invalid TVmaze community rating.")
     source_url = show.get("url", "")
-    if urlparse(source_url).hostname != "www.tvmaze.com" or not source_url.startswith("https://"):
+    if not trusted_url(source_url, {"www.tvmaze.com"}):
         raise ValueError("Unexpected TVmaze attribution URL.")
     poster = (show.get("image") or {}).get("medium") or ""
-    if poster and (not poster.startswith("https://") or
-                   urlparse(poster).hostname != "static.tvmaze.com"):
-        poster = ""
+    poster = trusted_url(poster, {"static.tvmaze.com"})
     return {"movie_id": -sid, "title": f"{name} ({year})" if year else name,
             "year": year, "genres": genres, "media_type": "Series", "source": "TVmaze",
             "source_url": source_url, "poster_url": poster,

@@ -6,4 +6,6 @@ data/
 models/*.npz
 models/*.json
 .streamlit/secrets.toml
+.env
+.env.*
 .ipynb_checkpoints/

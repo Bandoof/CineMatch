@@ -8,6 +8,36 @@ from pathlib import Path
 MAX_PROFILE_BYTES = 1_000_000
 
 
+def parse_profile(payload):
+    """Reject ambiguous JSON and parser exhaustion without changing user state."""
+    if isinstance(payload, bytes):
+        if len(payload) > MAX_PROFILE_BYTES:
+            raise ValueError("Profile is too large.")
+        payload = payload.decode("utf-8")
+    if not isinstance(payload, str) or len(payload.encode("utf-8")) > MAX_PROFILE_BYTES:
+        raise ValueError("Profile is too large or is not UTF-8 JSON.")
+
+    def unique_object(pairs):
+        result = {}
+        for key, value in pairs:
+            if key in result:
+                raise ValueError("Duplicate JSON keys are not allowed.")
+            result[key] = value
+        return result
+
+    def invalid_constant(value):
+        raise ValueError("Non-finite JSON numbers are not allowed.")
+
+    try:
+        document = json.loads(payload, object_pairs_hook=unique_object,
+                              parse_constant=invalid_constant)
+    except RecursionError as error:
+        raise ValueError("Profile nesting is too deep.") from error
+    if not isinstance(document, dict):
+        raise ValueError("A profile must be a JSON object.")
+    return document
+
+
 def export_profile(engine, ratings, blocked, not_seen=None, watched=None, watchlist=None, topic_blocked=None):
     ratings = engine.validate_profile(ratings)
     hidden = sorted({engine.normalize_id(mid) for mid in blocked})
@@ -38,15 +68,7 @@ def import_discovery_profile(engine, payload):
 
 
 def import_library_profile(engine, payload):
-    if isinstance(payload, bytes):
-        if len(payload) > MAX_PROFILE_BYTES:
-            raise ValueError("Profile is too large.")
-        payload = payload.decode("utf-8")
-    if not isinstance(payload, str) or len(payload.encode("utf-8")) > MAX_PROFILE_BYTES:
-        raise ValueError("Profile is too large or is not UTF-8 JSON.")
-    document = json.loads(payload)
-    if not isinstance(document, dict):
-        raise ValueError("A profile must be a JSON object.")
+    document = parse_profile(payload)
     if "schema_version" not in document:
         # Compatibility with the original {"movie_id": rating} export.
         ratings = engine.validate_profile(document)
@@ -78,7 +100,7 @@ def import_library_profile(engine, payload):
 
 
 def import_topics(engine, payload):
-    document = json.loads(payload)
+    document = parse_profile(payload)
     if "schema_version" not in document:
         return set()
     values = document.get("topic_blocked", document.get("blocked", []))

@@ -75,6 +75,16 @@ def save(path, records):
     temporary.replace(path)
 
 
+def update_identity(records, mid, title, imdb):
+    """Cached presentation fields belong to one title/IMDb identity only."""
+    key = str(mid)
+    previous = records.get(key, {})
+    if previous.get("original_title") != title or previous.get("imdb_id") != imdb:
+        records[key] = {"original_title": title, "imdb_id": imdb}
+    else:
+        records[key] = previous
+
+
 def download(batch_size=100):
     movies, ratings = load_app_movies(ROOT / "data" / "ml-100k")
     films, _, _ = canonical_catalog(movies, ratings)
@@ -97,14 +107,12 @@ def download(batch_size=100):
     for row in films.itertuples():
         native_imdb = getattr(row, "imdb_id", "")
         if isinstance(native_imdb, str) and re.fullmatch(r"tt\d+", native_imdb):
-            records.setdefault(str(row.movie_id), {}).update(
-                {"original_title": row.title, "imdb_id": native_imdb})
+            update_identity(records, row.movie_id, row.title, native_imdb)
             continue
         keys = title_keys(aliases.get(row.title, row.title))
         ids = set().union(*(grouped.get(key, set()) for key in keys))
         if len(ids) == 1:
-            records.setdefault(str(row.movie_id), {}).update(
-                {"original_title": row.title, "imdb_id": next(iter(ids))})
+            update_identity(records, row.movie_id, row.title, next(iter(ids)))
     series_path = ROOT / "data" / "tvmaze" / "series.json"
     if series_path.exists():
         for show in json.loads(series_path.read_text(encoding="utf-8"))["shows"]:
@@ -112,8 +120,7 @@ def download(batch_size=100):
             if isinstance(imdb, str) and re.fullmatch(r"tt\d+", imdb):
                 year = int((show.get("premiered") or "0000")[:4])
                 title = f"{show['name']} ({year})" if year else show["name"]
-                records.setdefault(str(-show["id"]), {}).update(
-                    {"original_title": title, "imdb_id": imdb})
+                update_identity(records, -show["id"], title, imdb)
     targets = [mid for mid, value in records.items() if not value.get("queried")]
     priority = {"tt0110413", "tt0468569", "tt1675434", "tt0816692"}
     targets.sort(key=lambda mid: records[mid]["imdb_id"] not in priority)
@@ -160,13 +167,17 @@ def download(batch_size=100):
             "action": "query", "format": "json", "titles": "|".join(title_to_mid),
             "prop": "pageimages", "piprop": "thumbnail|name", "pithumbsize": 400,
             "pilicense": "any", "maxlag": 5}))
+        if "error" in result:
+            raise ValueError("Wikipedia request unavailable; retry the resumable download later.")
+        normalized = {row["to"]: row["from"]
+                      for row in result.get("query", {}).get("normalized", [])}
         for page in result.get("query", {}).get("pages", {}).values():
-            mid = title_to_mid.get(page["title"])
+            mid = title_to_mid.get(normalized.get(page["title"], page["title"]))
             if mid and "thumbnail" in page:
                 records[mid]["poster_url"] = page["thumbnail"]["source"].split("?")[0]
                 records[mid]["image_source"] = "https://en.wikipedia.org/wiki/File:" + urllib.parse.quote(page["pageimage"])
-        for mid in batch:
-            records[mid]["image_queried"] = True
+            if mid:
+                records[mid]["image_queried"] = True
         save(destination, records)
         print(f"Images {min(start+40,len(targets))}/{len(targets)}", flush=True)
         time.sleep(.25)

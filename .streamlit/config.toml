@@ -7,9 +7,13 @@ textColor = "#17253a"
 font = "sans serif"
 
 [server]
+address = "127.0.0.1"
 headless = true
 runOnSave = true
 maxUploadSize = 1
+enableCORS = true
+enableXsrfProtection = true
+enableStaticServing = false
 
 [client]
 showErrorDetails = false

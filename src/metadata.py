@@ -7,11 +7,16 @@ from urllib.parse import urlparse
 
 
 def trusted_url(value, hosts):
-    if not isinstance(value, str):
+    if (not isinstance(value, str) or "\\" in value
+            or any(ord(char) < 32 or ord(char) == 127 for char in value)):
         return ""
-    parsed = urlparse(value)
-    return value if (parsed.scheme == "https" and parsed.hostname in hosts
-                     and not parsed.username and not parsed.password) else ""
+    try:
+        parsed = urlparse(value)
+        return value if (parsed.scheme == "https" and parsed.hostname in hosts
+                         and parsed.port in (None, 443)
+                         and parsed.username is None and parsed.password is None) else ""
+    except ValueError:
+        return ""
 
 
 class CatalogMetadata:

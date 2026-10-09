@@ -45,7 +45,8 @@ def download(limit=0):
                 {"schema_version": 1, "items": {}})
     records = document["items"]
     targets = [mid for mid, item in metadata.items() if item.get("page")
-               and records.get(mid, {}).get("original_title") != item["original_title"]]
+               and (records.get(mid, {}).get("original_title") != item["original_title"]
+                    or records.get(mid, {}).get("source_url") != item["page"])]
     targets.sort(key=lambda mid: metadata[mid].get("imdb_id") not in
                  {"tt0816692", "tt0468569", "tt1675434", "tt0110413"})
     if limit:
@@ -64,15 +65,17 @@ def download(limit=0):
             "action": "query", "format": "json", "titles": "|".join(mapping),
             "prop": "extracts|langlinks", "exintro": 1, "explaintext": 1,
             "exchars": 1200, "exlimit": 20, "lllang": "uk", "lllimit": 20, "maxlag": 5}))
+        if "error" in result:
+            raise ValueError("Wikipedia request unavailable; retry the resumable download later.")
+        normalized = {row["to"]: row["from"]
+                      for row in result.get("query", {}).get("normalized", [])}
         for page in result.get("query", {}).get("pages", {}).values():
-            for mid in mapping.get(page.get("title"), []):
+            for mid in mapping.get(normalized.get(page.get("title"), page.get("title")), []):
                 records[mid] = {"original_title": metadata[mid]["original_title"],
                     "summary_en": str(page.get("extract", ""))[:1400],
                     "summary_uk": "", "title_uk": metadata[mid].get("title_uk", ""),
                     "source_url": metadata[mid]["page"], "license": "CC BY-SA; Wikipedia",
                     "uk_page": next((link["*"] for link in page.get("langlinks", []) if link["lang"] == "uk"), "")}
-        for mid in batch:
-            records.setdefault(mid, {"original_title": metadata[mid]["original_title"], "summary_en": ""})
         document["fetched_utc"] = datetime.now(timezone.utc).isoformat()
         save(path, document)
         print(f"Lead extracts {min(start+20,len(targets))}/{len(targets)}", flush=True)
@@ -84,7 +87,8 @@ def download(limit=0):
     with ThreadPoolExecutor(max_workers=4) as pool:
         for index, (batch, updates) in enumerate(pool.map(lambda b: ukrainian_batch(b, records), batches), 1):
             for mid in batch:
-                records[mid].update(updates.get(mid, {}), uk_queried=True)
+                if mid in updates:
+                    records[mid].update(updates[mid], uk_queried=True)
             save(path, document)
             print(f"Ukrainian extracts {min(index*20,len(uk_targets))}/{len(uk_targets)}", flush=True)
     series_path = ROOT / "data/tvmaze/series.json"

@@ -292,6 +292,11 @@ presentation metadata, model and benchmark file changes, including newly created
 
 ## Profiles and deployment
 
+The standard launch binds to `127.0.0.1`; CORS and XSRF protection remain enabled,
+static file serving is disabled, and uploads are limited to 1 MB. Docker Compose
+also publishes only to localhost. Security fixes and verification scope are
+recorded in [security review](docs/security-review.md).
+
 Automatic memory is enabled by default for local installations. Ratings, watched
 titles, watch-later, skipped prompts, Not interested, language and filter preferences
 are saved after changes and restored after a page/server restart. The sidebar can
