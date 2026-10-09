@@ -10,3 +10,7 @@ work
 .streamlit/secrets.toml
 .env
 .env.*
+.coverage*
+htmlcov
+coverage.xml
+.mypy_cache

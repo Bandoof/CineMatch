@@ -9,3 +9,7 @@ models/*.json
 .env
 .env.*
 .ipynb_checkpoints/
+.coverage*
+htmlcov/
+coverage.xml
+.mypy_cache/
