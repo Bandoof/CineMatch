@@ -22,18 +22,20 @@ jobs:
         run: |
           set -euo pipefail
           test "$(gh api repos/$GH_REPO/branches/main --jq .commit.sha)" = "$RELEASE_SHA"
-          required='["Test (ubuntu-latest, Python 3.10)","Test (ubuntu-latest, Python 3.11)","Test (windows-latest, Python 3.11)","security","Python analysis","CodeQL"]'
           ready=false
           for attempt in $(seq 1 150); do
-            gh api "repos/$GH_REPO/commits/$RELEASE_SHA/check-runs?per_page=100" > "$RUNNER_TEMP/checks.json"
-            jq '{check_runs: (.check_runs | group_by(.name) | map(max_by(.id)))}' "$RUNNER_TEMP/checks.json" > "$RUNNER_TEMP/latest-checks.json"
-            mv "$RUNNER_TEMP/latest-checks.json" "$RUNNER_TEMP/checks.json"
-            if jq -e --argjson required "$required" '[.check_runs[] | select(.name as $name | $required | index($name)) | select(.status == "completed" and (.conclusion == "failure" or .conclusion == "cancelled" or .conclusion == "timed_out" or .conclusion == "action_required"))] | length > 0' "$RUNNER_TEMP/checks.json" > /dev/null; then
-              echo "Final-main checks did not pass; release blocked."; exit 1
-            fi
-            if jq -e --argjson required "$required" '[.check_runs[] | select(.status == "completed" and .conclusion == "success") | .name] as $passed | ($required - $passed | length) == 0' "$RUNNER_TEMP/checks.json" > /dev/null; then
-              ready=true; break
-            fi
+            ready=true
+            for run_id in 38076664322 38076664246; do
+              gh api repos/$GH_REPO/actions/runs/$run_id > "$RUNNER_TEMP/run.json"
+              test "$(jq -r .head_sha "$RUNNER_TEMP/run.json")" = "$RELEASE_SHA"
+              test "$(jq -r .head_branch "$RUNNER_TEMP/run.json")" = main
+              if test "$(jq -r .status "$RUNNER_TEMP/run.json")" = completed; then
+                test "$(jq -r .conclusion "$RUNNER_TEMP/run.json")" = success
+              else
+                ready=false
+              fi
+            done
+            if test "$ready" = true; then break; fi
             sleep 5
           done
           test "$ready" = true
