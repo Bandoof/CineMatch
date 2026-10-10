@@ -10,12 +10,12 @@ repos:
         name: Ruff imports (incremental scope)
         entry: python -m ruff check --select I
         language: system
-        files: ^(src/(profile_actions|hybrid|ranking|explanations|research_[a-z_]+)|scripts/(prepare_research|research_v12|download_research|verify_v12_evidence)|tests/(test_research_[a-z_]+|test_faithful_explanations|test_v12_evidence))\.py$
+        files: ^(src/(profile_actions|hybrid|ranking|explanations|modern_catalog|providers|catalog_view|research_[a-z_]+)|app/catalog_explorer|scripts/(sync_catalog|prepare_research|research_v12|download_research|verify_v12_evidence)|tests/(test_modern_catalog|test_catalog_explorer|test_research_[a-z_]+|test_faithful_explanations|test_v12_evidence))\.py$
       - id: ruff-format
         name: Ruff format (incremental scope)
         entry: python -m ruff format --check
         language: system
-        files: ^(src/(profile_actions|hybrid|ranking|explanations)|tests/(test_profile_actions|test_state_reliability|test_performance_equivalence|test_search_ui|test_runtime_reliability)|scripts/(benchmark_performance|prepare_research|research_v12|download_research|verify_v12_evidence)|src/research_[a-z_]+|tests/(test_research_[a-z_]+|test_faithful_explanations|test_v12_evidence))\.py$
+        files: ^(src/(profile_actions|hybrid|ranking|explanations|modern_catalog|providers|catalog_view)|app/catalog_explorer|tests/(test_modern_catalog|test_catalog_explorer|test_profile_actions|test_state_reliability|test_performance_equivalence|test_search_ui|test_runtime_reliability)|scripts/(sync_catalog|benchmark_performance|prepare_research|research_v12|download_research|verify_v12_evidence)|src/research_[a-z_]+|tests/(test_research_[a-z_]+|test_faithful_explanations|test_v12_evidence))\.py$
       - id: mypy
         name: Mypy (incremental scope)
         entry: python -m mypy
