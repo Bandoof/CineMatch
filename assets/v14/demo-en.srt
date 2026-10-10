@@ -1,0 +1,47 @@
+1
+00:00:00,000 --> 00:00:20,000
+Synthetic profile; real title metadata.
+
+2
+00:00:20,000 --> 00:00:40,000
+A dated selection, not a popularity chart.
+
+3
+00:00:40,000 --> 00:01:00,000
+Ukrainian search and release-year disambiguation.
+
+4
+00:01:00,000 --> 00:01:20,000
+Filters and traceable source information.
+
+5
+00:01:20,000 --> 00:01:40,000
+Rating is an explicit action in this session.
+
+6
+00:01:40,000 --> 00:02:00,000
+Collaborative: original matrix factorization.
+
+7
+00:02:00,000 --> 00:02:20,000
+Modern titles use separate metadata heuristics.
+
+8
+00:02:20,000 --> 00:02:40,000
+Add a series to the watchlist.
+
+9
+00:02:40,000 --> 00:03:00,000
+My Library and reversible actions with Undo.
+
+10
+00:03:00,000 --> 00:03:20,000
+Two languages and responsive layout.
+
+11
+00:03:20,000 --> 00:03:40,000
+Historical +17.8% remains unverified.
+
+12
+00:03:40,000 --> 00:04:00,000
+Reset; no shared profiles or public deployment.

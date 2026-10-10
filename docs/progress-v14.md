@@ -39,9 +39,9 @@ Portable summarized evidence will be saved in `reports/engineering_v14.json`.
 - [x] Desktop/mobile/tablet browser journeys, independent contexts, reset/refresh,
   controlled offline/errors, basic accessibility checks with manual gaps disclosed.
 - [x] Same benchmark fixtures/output hash; resource/session and Docker checks.
-- [ ] Bilingual portfolio README/case study/architecture, real screenshots,
+- [x] Bilingual portfolio README/case study/architecture, real screenshots,
   3–5 minute scripts/storyboard/subtitles and hosting/threat-model documentation.
-- [ ] All tests/security/evidence checks pass; focused v1.4 PRs pushed, unmerged.
+- [x] All tests/security/evidence checks pass; focused v1.4 PRs pushed, unmerged.
 
 No public deployment, tag, GitHub Release, private infrastructure modification or
 v1.4 merge is authorized. Recovery: fetch/read current GitHub PR state; resume the
@@ -80,3 +80,18 @@ Final shareable capture: 19 journeys including Research, all three viewports,
 0 page errors / failed requests, posters disabled. Invalid-pack fallback also
 passed independently. Real files are ready for the presentation PR; no narrated
 3–5 minute video has been recorded. Only actual silent QA footage is available.
+
+Delivery checkpoint: #20 → #21 → #22 → #23, all OPEN/unmerged, review-ready.
+Last code head #22: 83437f9d8b5fc34a2f16a5a112fc32a7b4cff7f6; Linux/Windows,
+audit/CodeQL and browser checks passed. Presentation head 0086d05 also passed
+fresh checks. This documentation/evidence follow-up receives its own new CI.
+Final clean-archive Docker suite: 231 passed / 0 failed / 2 skipped, network none.
+An initial collection run hit ENOSPC (12 collection errors); unchanged tests passed
+in isolated tmpfs /tmp and cache paths. No tests/trust stores were weakened.
+13 screenshots / 24 draft caption cues / original reports+configs bytes verified.
+Narrated video remains owner work. Actual 65.44-second silent QA MP4 is local-only:
+/workspace/cinematch-v14/media/qa-walkthrough.mp4; no video was uploaded to GitHub.
+Full Ukrainian report: docs/final-report-v14-uk.md. Capture hashes and scripts allow
+recovery without this chat. No public hosting, new merge, tag or Release performed.
+Recovery: read actual PR heads/checks; owner review before retargeting each lower
+PR to main after the preceding approved merge. Do not rerun the consumed holdout.

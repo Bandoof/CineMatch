@@ -22,7 +22,7 @@ warnings remain. Ruff, expanded import/format checks, configured strict Mypy
 pass. Audits after Streamlit 1.65: 100 requirements / 113 installed dependencies,
 zero known vulnerabilities on 2026-10-10; this is not a future security guarantee.
 
-The real Playwright 1.63 / Chromium 153 suite checks desktop 1440×1000, mobile
+The final 19-flow real Playwright 1.63 / Chromium 153 suite checks desktop 1440×1000, mobile
 390×844 and tablet 768×1024, UK/year search, media filters and empty results,
 details, rating, watchlist, Undo, library, UK/EN/UK switching, two independent
 visitors, empty/reset/fresh-session state, internet-offline metadata and visible
@@ -93,3 +93,9 @@ was resolved through clean source; recursive Docker exclusions prevent recurrenc
 The default Docker build still opens the local app; `--target portfolio` is explicit.
 Final GitHub head/check URLs and recovery instructions are in
 [`progress-v14.md`](progress-v14.md). v1.4 remains unmerged and undeployed.
+
+Final clean-archive container follow-up: the first collection encountered ENOSPC
+with 12 collection errors; an isolated `--tmpfs /tmp:rw,size=1g`,
+`MPLCONFIGDIR=/tmp/matplotlib` and `-o cache_dir=/tmp/pytest-cache` resolved it.
+Unchanged tests then passed 231 / 0 / 2 with network disabled. This is a QA
+environment/cache workaround, not a product test bypass or OS policy change.
