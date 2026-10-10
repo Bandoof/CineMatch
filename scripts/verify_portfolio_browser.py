@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
-def verify(url, output, axe_script=None, expect_pack_error=False):
+def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=False):
     from playwright.sync_api import expect, sync_playwright
 
     output.mkdir(parents=True, exist_ok=True)
@@ -47,6 +47,18 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
             expect(
                 page.get_by_text("Демонстрація · синтетичний профіль, реальні назви", exact=True)
             ).to_be_visible()
+            if (
+                no_artwork
+                and page.get_by_role(
+                    "checkbox", name="Показувати постери", exact=True, include_hidden=True
+                ).is_checked()
+            ):
+                expand(page, "Ваша демосесія")
+                page.get_by_text("Показувати постери", exact=True).click()
+                expect(
+                    page.get_by_role("checkbox", name="Показувати постери", exact=True)
+                ).not_to_be_checked()
+                page.get_by_text("Ваша демосесія", exact=True).click()
 
         def screenshot(page, name):
             print(f"Capturing {name}", flush=True)
@@ -193,7 +205,11 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         # Offline internet scenario: posters disabled and external HTTPS blocked;
         # the local Streamlit websocket remains available.
         expand(page, "Ваша демосесія")
-        page.get_by_role("checkbox", name="Показувати постери", exact=True).uncheck()
+        if page.get_by_role("checkbox", name="Показувати постери", exact=True).is_checked():
+            page.get_by_text("Показувати постери", exact=True).click()
+        expect(
+            page.get_by_role("checkbox", name="Показувати постери", exact=True)
+        ).not_to_be_checked()
         blocked = []
 
         def block_remote(route):
@@ -289,6 +305,9 @@ def main():
     parser.add_argument("--axe-script", type=Path)
     parser.add_argument("--isolated-demo", action="store_true")
     parser.add_argument("--expect-pack-error", action="store_true")
+    parser.add_argument(
+        "--no-artwork", action="store_true", help="Capture without third-party artwork"
+    )
     args = parser.parse_args()
     parsed = urlparse(args.url)
     if (
@@ -297,7 +316,7 @@ def main():
         or parsed.scheme != "http"
     ):
         parser.error("Use only a local dedicated portfolio server and --isolated-demo")
-    result = verify(args.url, args.output, args.axe_script, args.expect_pack_error)
+    result = verify(args.url, args.output, args.axe_script, args.expect_pack_error, args.no_artwork)
     (args.output / "browser-results.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
