@@ -18,6 +18,7 @@ class CatalogView:
         self._rebuild()
 
     def _rebuild(self):
+        self.revision = getattr(self, "revision", 0) + 1
         records = self.base.movies.to_dict("records") if self.base is not None else []
         columns = [
             "movie_id",
@@ -93,7 +94,9 @@ class CatalogView:
         return self.base.display_title(mid, language)
 
     def add_titles(self, titles):
+        titles = list(titles)
         self.catalog.update(titles)
+        self.reference_only -= {title.canonical_id for title in titles}
         self._rebuild()
 
     def known_profile(self, profile):
