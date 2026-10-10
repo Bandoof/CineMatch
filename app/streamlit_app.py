@@ -45,7 +45,7 @@ def safe_main(load_ui=None):
     surface = st.empty()
     try:
         # Imports belong inside the boundary so import errors are covered too.
-        module = "app.interface" if os.environ.get("CINEMATCH_UI") == "classic" else "app.product_ui"
+        module = "app.interface" if os.environ.get("CINEMATCH_UI") == "classic" and os.environ.get("CINEMATCH_MODE") != "portfolio" else "app.product_ui"
         ui = (load_ui or (lambda: importlib.import_module(module)))()
         with surface.container():
             ui.main()

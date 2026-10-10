@@ -34,7 +34,7 @@ Portable summarized evidence will be saved in `reports/engineering_v14.json`.
   labels, namespaces/dedup tests, bounded explicit refresh; no invented ratings.
 - [x] Correct provider error feedback, useful empty/offline states and preserved
   bilingual selections; no misleading saved-success messages.
-- [ ] Labeled synthetic demo profile with positive/negative ratings, watched and
+- [x] Labeled synthetic demo profile with positive/negative ratings, watched and
   watchlist; independent visitor state, reset, no local private storage access.
 - [ ] Desktop/mobile/tablet browser journeys, independent contexts, reset/refresh,
   controlled offline/errors, basic accessibility checks with manual gaps disclosed.
@@ -54,3 +54,11 @@ labels, 25 UK short descriptions, 8 poster URLs / attributed community ratings.
 Initial capture 14 live requests; label-priority refinement 4 live / 10 hits;
 final reconstruction 0 live / 14 hits. TMDB credential absent; no live claim.
 Wikidata/TVmaze data license is separate from code; no artwork bundled.
+
+Demo checkpoint: dedicated `app/portfolio_app.py`, no SQLite/import/provider client
+paths. Independent AppTest sessions, reset/Undo, fresh-session reset and original
+formula cache equivalence passed. Optional public pack prepared from verified
+official archives: 222 titles / 30,000 input events (29,974 canonical latest events),
+248 combined identities. Seven recommendation modes exercised on the real pack.
+Source files/DBs/models remain outside Git. No owner DB created.
+PR #20: https://github.com/Bandoof/CineMatch/pull/20 (main base, unmerged).

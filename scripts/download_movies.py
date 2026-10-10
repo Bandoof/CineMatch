@@ -21,7 +21,8 @@ def download(directory=None):
     if all((directory / name).is_file() for name in names):
         print("Extended movie catalog is already installed.")
         return
-    context = ssl.create_default_context(cafile=certifi.where())
+    context = ssl.create_default_context()
+    context.load_verify_locations(cafile=certifi.where())
     request = urllib.request.Request(URL, headers={"User-Agent": "CineMatch/4.0"})
     with urllib.request.urlopen(request, timeout=60, context=context) as response:
         blob = response.read(10_000_001)

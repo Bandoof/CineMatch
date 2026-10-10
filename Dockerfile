@@ -15,3 +15,7 @@ CMD ["python", "-m", "pytest", "-q"]
 FROM base AS runtime
 HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"
 CMD ["streamlit", "run", "app/streamlit_app.py", "--server.address=0.0.0.0", "--server.port=8501"]
+
+FROM base AS portfolio
+HEALTHCHECK --interval=30s --timeout=5s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=3)"
+CMD ["streamlit", "run", "app/portfolio_app.py", "--server.address=0.0.0.0", "--server.port=8501"]

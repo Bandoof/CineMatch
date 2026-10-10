@@ -11,6 +11,7 @@ from app import memory as local_memory
 from app.catalog_explorer import provider_client, provider_credits, save_catalog
 from app.recommender import ALGORITHMS
 from app.runtime import artifact_signature, load_runtime
+from src import portfolio
 from src.catalog_view import CatalogView
 from src.discovery import discovery_queue
 from src.discovery_collections import collections
@@ -66,6 +67,24 @@ def index(view):
 
 
 def load_view():
+    if portfolio.enabled(st.session_state):
+        if "_portfolio_view" not in st.session_state:
+            base = None
+            try:
+                with st.spinner(s("Готуємо демонстрацію…", "Preparing the demonstration…")):
+                    base = portfolio.prepared_engine(
+                        os.environ.get("CINEMATCH_PORTFOLIO_DATA_DIR", ROOT / "data/portfolio")
+                    )
+            except (OSError, ValueError, KeyError, TypeError):
+                st.session_state._portfolio_pack_error = True
+            view = CatalogView(base, portfolio.sample_catalog(ROOT))
+            view.bundled_sample = True
+            st.session_state._portfolio_view = view
+        view = st.session_state._portfolio_view
+        if not st.session_state.get("_portfolio_initialized"):
+            st.session_state.update(portfolio.initial_profile(view))
+            st.session_state.update(demo=True, _portfolio_initialized=True)
+        return view, None
     directory = Path(os.environ.get("CINEMATCH_DATA_DIR", ROOT / "data" / "ml-100k"))
     discovery_dir = Path(os.environ.get("CINEMATCH_DISCOVERY_DIR", ROOT / "data" / "discovery"))
     series = Path(os.environ.get("CINEMATCH_SERIES_FILE", ROOT / "data" / "tvmaze" / "series.json"))
@@ -253,6 +272,16 @@ def exclusions():
 
 def provider_controls(view, directory):
     with st.sidebar.expander(s("Каталог і джерела", "Catalog & sources")):
+        if portfolio.enabled(st.session_state):
+            st.caption(
+                s(
+                    "Датована демонстраційна добірка; зовнішні запити вимкнено.",
+                    "Dated demonstration selection; external provider requests are disabled.",
+                )
+            )
+            st.caption(f"{len(view.rows)} " + s("назв", "titles"))
+            provider_credits(view.catalog)
+            return
         st.caption(
             s(
                 "Збережені назви працюють без інтернету. Оновлення надсилає лише запит каталогу.",
@@ -514,7 +543,7 @@ def browse(view, directory, page):
             "No matches. Try another title, remove the year or relax filters. The saved catalog may be incomplete.",
         ),
     )
-    if query.strip():
+    if query.strip() and not portfolio.enabled(st.session_state):
         with st.expander(s("Шукати поза збереженим каталогом", "Search beyond the saved catalog")):
             st.caption(
                 s(
@@ -603,7 +632,9 @@ def details(view, directory, mid):
                         "Saved identity restored from your profile. Full metadata can be refreshed.",
                     )
                 )
-            if st.button(s("Оновити деталі", "Refresh details"), key="refresh_details"):
+            if not portfolio.enabled(st.session_state) and st.button(
+                s("Оновити деталі", "Refresh details"), key="refresh_details"
+            ):
                 client = provider_client(
                     str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", "")
                 )
@@ -808,6 +839,14 @@ def profile_controls(view):
             "application/json",
             key="profile_export",
         )
+        if portfolio.enabled(st.session_state):
+            st.caption(
+                s(
+                    "Це ваш поточний демонстраційний стан. Імпорт і локальні збережені профілі в цьому режимі недоступні.",
+                    "This is your current demonstration state. Import and local saved profiles are unavailable in this mode.",
+                )
+            )
+            return
         uploaded = st.file_uploader(
             s("Імпортувати профіль JSON", "Import profile JSON"), type="json", key="profile_upload"
         )
@@ -1044,7 +1083,7 @@ def research(view):
 
 
 def main():
-    memory = local_memory.initialize(ROOT)
+    memory = None if portfolio.enabled(st.session_state) else local_memory.initialize(ROOT)
     try:
         _main(memory)
     finally:
@@ -1068,6 +1107,65 @@ def _main(memory):
             format_func=lambda v: "Українська" if v == "uk" else "English",
         )
     view, directory = load_view()
+    if portfolio.enabled(state):
+        with st.container(border=True, key="portfolio_notice"):
+            st.write(
+                s(
+                    "Демонстрація · синтетичний профіль, реальні назви",
+                    "Demonstration · synthetic profile, real titles",
+                )
+            )
+            st.caption(
+                s(
+                    "Ці прикладні оцінки не є історією людини. Зміни живуть лише у вашій сесії; оновлення сторінки відновить початковий стан. Без акаунтів і спільного збереження.",
+                    "These example ratings are not a person's history. Changes live only in your session; refreshing restores the initial state. No accounts or shared persistence.",
+                )
+            )
+            st.caption(
+                s(
+                    "Постери завантажуються з TVmaze і передають цьому сайту мережеві дані. Вимкніть постери для повністю офлайн-перегляду.",
+                    "Posters load from TVmaze and share network information with that site. Disable posters for fully offline browsing.",
+                )
+            )
+            if view.base is None:
+                st.info(
+                    s(
+                        "У цій демонстрації доступні метадані й жанрові евристики. Історичну ML-модель не завантажено.",
+                        "This demonstration uses metadata and genre heuristics. The historical ML model is not loaded.",
+                    )
+                )
+            else:
+                st.caption(
+                    s(
+                        "Історичні рекомендації: окрема модель на обмеженому публічному development-наборі. Це не оцінка якості на holdout.",
+                        "Historical recommendations: a separate model on a bounded public development subset. This is not a holdout quality evaluation.",
+                    )
+                )
+            if state.get("_portfolio_pack_error"):
+                st.warning(
+                    s(
+                        "Підготовлений ML-набір не пройшов перевірку. Доступна демонстрація метаданих; збережені файли не змінено.",
+                        "The prepared ML pack failed verification. Metadata demonstration remains available; saved files were preserved.",
+                    )
+                )
+            a, b = st.columns(2)
+
+            def reset_demo(empty):
+                portfolio.reset(state, view, empty=empty)
+                st.query_params.pop("title", None)
+
+            a.button(
+                s("Відновити приклад", "Reset example"),
+                key="portfolio_reset",
+                on_click=reset_demo,
+                args=(False,),
+            )
+            b.button(
+                s("Почати з чистого профілю", "Start with an empty profile"),
+                key="portfolio_empty",
+                on_click=reset_demo,
+                args=(True,),
+            )
     local_memory.restore(memory, view)
     for key, default in (
         ("ratings", {}),
