@@ -350,3 +350,25 @@ UK.update({
  "guide_probe_note": "Наступні запитання досліджують менш оцінені вами теми серед знайомих назв. Це евристика, а не виміряна невпевненість моделі.",
  "reason_query": "Запит за темою: 75% подібності описів і 25% ранжування обраної моделі, з урахуванням ваших виключень і різноманітності.",
 })
+
+# Exact score terms / explicitly identified heuristic reordering (v1.2).
+EN.update({
+ "reason_adaptive_base": "Base score contributions: {parts}.",
+ "reason_quality_only": "Ranked by community quality; rated titles are excluded.",
+ "component_cf": "ALS", "component_lsa": "LSA content", "component_tfidf": "TF-IDF content",
+ "component_genres": "Genre affinity", "component_quality": "Community quality",
+ "reason_cosine_term": "Content cosine term from {title} (rating {rating:g}): {term:+.3f}.",
+ "reason_topic_discount": "Topic discount: −{value:.3f} (heuristic).",
+ "reason_variety_order": "Variety can reorder results using genre similarity.",
+ "reason_semantic": "Local content similarity from titles, genres and available source descriptions.",
+})
+UK.update({
+ "reason_adaptive_base": "Внески до базового бала: {parts}.",
+ "reason_quality_only": "Добір за якістю спільноти; оцінені назви виключено.",
+ "component_cf": "ALS", "component_lsa": "Зміст LSA", "component_tfidf": "Зміст TF-IDF",
+ "component_genres": "Жанрова спорідненість", "component_quality": "Якість спільноти",
+ "reason_cosine_term": "Внесок у змістовий косинус від «{title}» (оцінка {rating:g}): {term:+.3f}.",
+ "reason_topic_discount": "Тематичне зниження: −{value:.3f} (евристика).",
+ "reason_variety_order": "Різноманітність може змінити порядок за жанровою схожістю.",
+ "reason_semantic": "Локальна змістова схожість назв, жанрів і наявних описів із джерел.",
+})

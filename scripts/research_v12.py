@@ -58,6 +58,8 @@ SOURCE_PATHS = [
     "src/data.py",
     "src/evaluation.py",
     "app/recommender.py",
+    "src/explanations.py",
+    "src/i18n.py",
 ]
 
 
