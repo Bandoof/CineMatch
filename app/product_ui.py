@@ -44,6 +44,19 @@ def language():
     return st.session_state.ui_language
 
 
+def choice(label, options, key, labels, container=st, radio=False, **kwargs):
+    """Keep canonical values while remounting translated native widget labels."""
+    options = list(options)
+    value = st.session_state.get(key, options[0])
+    selected = options.index(value) if value in options else 0
+    render = container.radio if radio else container.selectbox
+    result = render(
+        label, options, index=selected, key=f"{key}_{language()}", format_func=labels.get, **kwargs
+    )
+    st.session_state[key] = result
+    return result
+
+
 def index(view):
     key = (id(view), view.revision)
     if st.session_state.get("_search_revision") != key:
@@ -133,6 +146,7 @@ def navigate():
 
 def search_page():
     st.session_state.navigation = "search"
+    st.session_state[f"navigation_{language()}"] = "search"
     navigate()
 
 
@@ -290,17 +304,17 @@ def discover(view):
             type="primary",
             on_click=search_page,
         )
-    shelf = st.selectbox(
+    shelf = choice(
         s("Що відкриємо сьогодні?", "What shall we discover?"),
         ["recent", "popular", "hidden_gems", "upcoming", "tonight", "because_liked"],
-        format_func={
+        labels={
             "recent": s("Нещодавно вийшли", "Recently released"),
             "popular": s("Популярні в MovieLens", "Popular in MovieLens"),
             "hidden_gems": s("Приховані перлини", "Hidden gems"),
             "upcoming": s("Незабаром", "Upcoming"),
             "tonight": s("Фільми на вечір", "Movies for tonight"),
             "because_liked": s("Тому що вам сподобалося", "Because you liked"),
-        }.get,
+        },
         key="discovery_shelf",
     )
     definitions = {
@@ -352,22 +366,28 @@ def browse(view, directory, page):
     media = "Movie" if page == "movies" else "Series" if page == "series" else "All"
     with st.expander(s("Фільтри та порядок", "Filters & sorting")):
         if page == "search":
-            media = st.selectbox(
+            media = choice(
                 s("Тип", "Media"),
                 ["All", "Movie", "Series"],
                 key="search_media",
-                format_func={
+                labels={
                     "All": s("Усе", "All"),
                     "Movie": s("Фільми", "Movies"),
                     "Series": s("Серіали", "Series"),
-                }.get,
+                },
             )
         genres = st.multiselect(
             s("Жанри", "Genres"),
             view.content.genre_names if view.content else [],
-            key=f"genres_{page}",
+            key=f"genres_{page}_{language()}",
+            default=[
+                g
+                for g in st.session_state.get(f"genres_{page}", [])
+                if view.content and g in view.content.genre_names
+            ],
             format_func=lambda g, lang=language(): genre_name(g, lang),
         )
+        st.session_state[f"genres_{page}"] = genres
         known_years = [int(r.year) for r in view.rows.values() if r.year]
         years = None
         if known_years and min(known_years) < max(known_years):
@@ -392,17 +412,17 @@ def browse(view, directory, page):
                 "MovieLens /5 is scaled to /10 for this filter only; missing ratings remain missing.",
             )
         )
-        sort = st.selectbox(
+        sort = choice(
             s("Порядок", "Sort"),
             ["relevance", "newest", "title", "rating", "votes"],
             key=f"sort_{page}",
-            format_func={
+            labels={
                 "relevance": s("За відповідністю", "Relevance"),
                 "newest": s("Новіші спочатку", "Newest"),
                 "title": s("За назвою", "Title"),
                 "rating": s("За оцінкою джерела", "Source rating"),
                 "votes": s("За кількістю оцінок", "Rating count"),
-            }.get,
+            },
         )
     hits = index(view).search(
         query,
@@ -781,10 +801,11 @@ def library(view):
         "snoozed": s("Відкладено на сесію", "Snoozed this session"),
         "session_activity": s("Оновлено в цій сесії", "Updated this session"),
     }
-    group = st.radio(
+    group = choice(
         s("Колекція", "Collection"),
         list(groups),
-        format_func=groups.get,
+        labels=groups,
+        radio=True,
         horizontal=True,
         key="library_group",
     )
@@ -792,25 +813,27 @@ def library(view):
     query = query_col.text_input(
         s("Пошук у бібліотеці", "Search your library"), max_chars=160, key="library_query"
     )
-    media = media_col.selectbox(
+    media = choice(
         s("Тип у бібліотеці", "Library media"),
         ["All", "Movie", "Series"],
         key="library_media",
-        format_func={
+        container=media_col,
+        labels={
             "All": s("Усе", "All"),
             "Movie": s("Фільми", "Movies"),
             "Series": s("Серіали", "Series"),
-        }.get,
+        },
     )
-    sort = sort_col.selectbox(
+    sort = choice(
         s("Порядок бібліотеки", "Library sort"),
         ["title", "newest", "rating"],
         key="library_sort",
-        format_func={
+        container=sort_col,
+        labels={
             "title": s("За назвою", "Title"),
             "newest": s("За роком виходу", "Release year"),
             "rating": s("За моєю оцінкою", "My rating"),
-        }.get,
+        },
     )
     selected = set(st.session_state[group])
     hits = [
@@ -887,11 +910,11 @@ def research(view):
         return
     from app.ml_lab import render
 
-    algorithm = st.selectbox(
+    algorithm = choice(
         s("Алгоритм", "Algorithm"),
         ALGORITHMS,
         key="algorithm",
-        format_func=lambda v, lang=language(): model_name(v, lang),
+        labels={v: model_name(v, language()) for v in ALGORITHMS},
     )
     minimum = st.select_slider(
         s("Мінімум оцінок MovieLens", "Minimum MovieLens ratings"),
@@ -1009,14 +1032,13 @@ def _main(memory):
         provider_controls(view, directory)
     if state.pop("_feedback", None):
         st.toast(s("Бібліотеку оновлено", "Library updated"))
-    page = st.radio(
+    page = choice(
         s("Навігація", "Navigation"),
         PAGES,
         key="navigation",
         horizontal=True,
-        format_func={
-            k: labels[0 if language() == "uk" else 1] for k, labels in PAGE_LABELS.items()
-        }.get,
+        radio=True,
+        labels={k: labels[0 if language() == "uk" else 1] for k, labels in PAGE_LABELS.items()},
         on_change=navigate,
     )
     if state.get("selected_title") is None and "title" in st.query_params:
