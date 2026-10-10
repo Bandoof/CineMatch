@@ -33,6 +33,11 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
                 "button", name="Open", exact=True
             ).click()
 
+        def expand(page, title):
+            label = page.get_by_text(title, exact=True)
+            if label.locator("xpath=ancestor::details[1]").get_attribute("open") is None:
+                label.click()
+
         observe(page)
 
         def ready(page):
@@ -94,7 +99,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         query.press("Enter")
         page.get_by_role("heading", name="Інтерстеллар (2014)", exact=True).wait_for()
         timings["uk_search_ready_ms"] = (time.perf_counter() - start) * 1000
-        page.get_by_text("Фільтри та порядок", exact=True).click()
+        expand(page, "Фільтри та порядок")
         media = page.get_by_role("combobox", name=re.compile(r"Тип$"))
         open_choice(media)
         page.get_by_role("option", name="Серіали", exact=True).click()
@@ -115,6 +120,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         query = page.get_by_role("textbox", name="Назва, рік або частина назви", exact=True)
         query.fill("Пуститися берега")
         query.press("Enter")
+        expand(page, "Фільтри та порядок")
         media = page.get_by_role("combobox", name=re.compile(r"Тип$"))
         open_choice(media)
         page.get_by_role("option", name="Серіали", exact=True).click()
@@ -124,7 +130,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         screenshot(page, "desktop-series-details.png")
         page.get_by_role("button", name="Дивитися пізніше", exact=True).first.click()
         page.get_by_role("button", name="Прибрати зі списку", exact=True).first.wait_for()
-        page.get_by_text("Ваша демосесія", exact=True).click()
+        expand(page, "Ваша демосесія")
         page.get_by_role("button", name="Скасувати останню дію", exact=True).click()
         expect(
             page.get_by_role("button", name="Дивитися пізніше", exact=True).first
@@ -177,7 +183,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         ready(page)
         page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
         ready(page)
-        page.get_by_text("Ваша демосесія", exact=True).click()
+        expand(page, "Ваша демосесія")
         expect(page.get_by_text("0 у списку · 0 оцінок", exact=True)).to_be_visible()
         page.get_by_text("Для вас", exact=True).first.click()
         page.get_by_text("Оцініть кілька знайомих історій", exact=False).wait_for()
@@ -186,7 +192,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False):
         expect(page.get_by_text("0 у списку · 0 оцінок", exact=True)).to_have_count(0)
         # Offline internet scenario: posters disabled and external HTTPS blocked;
         # the local Streamlit websocket remains available.
-        page.get_by_text("Ваша демосесія", exact=True).click()
+        expand(page, "Ваша демосесія")
         page.get_by_role("checkbox", name="Показувати постери", exact=True).uncheck()
         blocked = []
 

@@ -22,8 +22,8 @@ jobs:
     env:
       OPENBLAS_NUM_THREADS: '1'
       CINEMATCH_DEFAULT_LANGUAGE: uk
-      CINEMATCH_PORTFOLIO_DATA_DIR: ${{ runner.temp }}/cinematch-public-pack
-      CINEMATCH_PROFILE_DB: ${{ runner.temp }}/must-not-create.sqlite3
+      CINEMATCH_PORTFOLIO_DATA_DIR: /tmp/cinematch-public-pack
+      CINEMATCH_PROFILE_DB: /tmp/must-not-create.sqlite3
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
