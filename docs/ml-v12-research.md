@@ -161,6 +161,10 @@ source. Historical artifacts contain both original CRLF and LF files; their byte
 are preserved rather than normalized. Windows checkout therefore retains the
 same evidence hashes and frozen-source fingerprints as Linux.
 
+Recovery also sets the remaining discovery/basic-app AppTest instances to the
+existing 30-second UI test budget. This prevents the observed three-second Undo
+timeout on shared Windows runners while retaining every state assertion.
+
 If original outputs become available, preserve bytes in a new directory. Verify
 manifest/config/input/selection/source/vector hashes with the exact frozen source
 checkout and reconcile validation selection with final embedded selection.

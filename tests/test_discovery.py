@@ -62,7 +62,8 @@ def test_guided_rate_skip_undo_and_reload(dataset_dir, monkeypatch):
                        "CINEMATCH_PROFILE_DB": dataset_dir / "profile.sqlite3",
                        "CINEMATCH_DEFAULT_LANGUAGE": "en"}.items():
         monkeypatch.setenv(key, str(value))
-    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py")).run()
+    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py"),
+                            default_timeout=30).run()
     first_title = app.subheader[0].value
     app.button(key="guide_not_seen").click().run()
     assert not app.exception and not app.session_state["ratings"]

@@ -166,5 +166,21 @@
     "local_verification_passed": true,
     "fixed_code_commit": "828bfe75c4fc650985d6240f07cb02c26253489e",
     "hosted_ci": "Passed Ubuntu 3.10/3.11, Windows 3.11, security and CodeQL on repair commit"
+  },
+  "post_ui_timeout_fix": {
+    "failure_run": "https://github.com/Bandoof/CineMatch/actions/runs/38055333020",
+    "passed_same_head_push_run": "https://github.com/Bandoof/CineMatch/actions/runs/38055329475",
+    "diagnosis": "AppTest default 3-second rerun budget expired during guided Undo; state assertions did not fail",
+    "change": "Discovery/basic-app tests use bounded default_timeout=30, matching existing UI helpers; no assertions removed",
+    "targeted_tests_passed": 5,
+    "repeated_full_suite_passed": 159,
+    "repeated_full_suite_skipped": 0,
+    "real_cpu_tests_included": true,
+    "tested_file_sha256": {
+      "tests/test_app.py": "d6a455337f044cb7d0188cc3907e03642f2e93ee8f817cadd1a41d5dd3e725fd",
+      "tests/test_discovery.py": "271d8431d8a933abdcc3920f32d6d33e8b69cfd4ffb6bfa4e49fa123e41ec9fe",
+      "scripts/verify_v12_evidence.py": "548bb77f79d2a7e19fe02ee16703ee05f2c427967d1a5281be82ce738f9a545c",
+      "tests/test_v12_evidence.py": "1008ac0916ec21f4dd0c60e1fa4c5fc5c5fcc0e4a0241a6a584be32866dafcd2"
+    }
   }
 }

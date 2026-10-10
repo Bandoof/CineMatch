@@ -203,6 +203,12 @@ new hosted Windows checks validated the repair. The repair commit
 `828bfe75c4fc650985d6240f07cb02c26253489e` passed Ubuntu Python 3.10/3.11,
 Windows Python 3.11, security and CodeQL; exact check URLs are in the QA receipt.
 
+A later Windows pull-request run exposed the guided Undo UI test's default
+three-second AppTest rerun timeout; the push run on the identical commit passed.
+Discovery and basic app tests now use the same bounded 30-second default as
+other UI tests, including widget reruns. All state assertions remain, and runtime
+latency is still measured by the separate performance tests.
+
 The real final test cohort was not evaluated. Original selection, validation and
 final metric files are missing. The quoted +17.8% gain and interval remain
 unverified; neither passing tests nor the saved manifest establishes them. See
