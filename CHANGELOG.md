@@ -2,7 +2,19 @@
 
 Changes are recorded by engineering milestone; these headings are not published tags.
 
-## Unreleased — v1.1 engineering work
+## Unreleased — v1.2 engineering and research infrastructure
+
+- Reproducible offline research with pinned data, disjoint cohorts, validation-only
+  selection and frozen-source/final-access safeguards.
+- Controlled ALS and content experiments; optional multilingual MiniLM on CPU.
+- Faithful Ukrainian/English score explanations without changing production defaults.
+- Research regression tests, read-only evidence verification and exact evidence bytes
+  on Linux/Windows.
+- Interrupted experiment documentation: reported +17.8% NDCG@10 gain remains
+  **unverified**; missing final results are not reconstructed or advertised.
+- See [release preparation](docs/release-v12.md) for verification and research limits.
+
+## v1.1 engineering milestone
 
 - Contributor/security policies, architecture and development documentation.
 - Python and Actions dependency update proposals; Python CodeQL workflow.
@@ -28,6 +40,7 @@ Changes are recorded by engineering milestone; these headings are not published 
 ## Earlier design and ML v3 milestone
 
 - Bilingual recognition, watchlist/watched history, feedback scopes and autosave.
-- Independent MovieLens 1M benchmark: Adaptive +13.3% relative NDCG@10 versus
-  popularity for three initial ratings only; no improvement at five/ten.
+- Historical MovieLens 1M benchmark recorded Adaptive +13.3% relative NDCG@10 versus
+  popularity for three initial ratings only; no improvement at five/ten. Its
+  validation/test targets overlap; inspected outcomes are development evidence for v1.2.
 - See the [model card](docs/ml-v3-model-card.md) and historical verification reports.

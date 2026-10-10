@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "observed_date": "2026-10-10",
+  "source_code_commit": "7a174ad6f110f2c1745876ee2fa6f5150b077337",
+  "python": "Python 3.11.16",
+  "pytest": {
+    "command": "CINEMATCH_RESEARCH_MODEL_CACHE=<separate verified cache>/minilm OPENBLAS_NUM_THREADS=1 python -m pytest -q --cov=app --cov=src --cov=scripts --cov-report=term-missing",
+    "passed": 159,
+    "skipped": 0,
+    "warnings": 14,
+    "warnings_scope": "Existing Matplotlib/Pyparsing deprecations",
+    "total_coverage_percent": 73,
+    "real_cpu_encoder_tests": 2,
+    "new_evidence_integrity_tests": 6,
+    "real_final_holdout_evaluated": false
+  },
+  "ruff": "passed for all Python files",
+  "imports_and_format": "passed in configured pre-commit scope including new verifier/tests",
+  "mypy": "passed; configured three modules only",
+  "pre_commit": "passed all configured hooks",
+  "pip_check": "passed after installing optional research requirements",
+  "dependency_audit": {
+    "requirements_research": {
+      "status": "passed",
+      "resolved_dependencies": 101,
+      "known_vulnerabilities": 0
+    },
+    "installed_environment_initial": {
+      "status": "failed",
+      "reported_findings": 14,
+      "affected": [
+        {
+          "name": "pip",
+          "version": "24.0",
+          "advisory_ids": [
+            "PYSEC-2026-1795",
+            "PYSEC-2026-1796",
+            "PYSEC-2026-196",
+            "PYSEC-2026-2875",
+            "PYSEC-2026-2876",
+            "PYSEC-2026-3721"
+          ]
+        },
+        {
+          "name": "setuptools",
+          "version": "79.0.1",
+          "advisory_ids": [
+            "PYSEC-2026-3447"
+          ]
+        }
+      ]
+    },
+    "remediation": "Updated only local virtualenv bootstrap pip to 26.2.1 and setuptools to 83.0.0; repository requirements unchanged",
+    "installed_environment_final": {
+      "status": "passed",
+      "dependencies": 104,
+      "known_vulnerabilities": 0
+    }
+  },
+  "stack_compatibility": {
+    "ancestry": "main -> PR12 -> PR13 -> PR14 verified with git merge-base --is-ancestor",
+    "merge_tree": "All three git merge-tree --write-tree operations exit 0 and equal the respective descendant tree",
+    "trees": {
+      "pr12": "52e35fcf24528a1d7945ba37d72efe600ca9d3c0",
+      "pr13": "4223015edd705fcec0abbef5fa345428eacd7865",
+      "pr14": "486ad192e8e339109105af943764ed730aec0379"
+    }
+  },
+  "evidence_reproduction": {
+    "receipt": "reports/ml_v12_integrity.json",
+    "byte_identical_reproduction": true,
+    "inputs_hashed_only": true,
+    "historical_artifacts_unchanged": 11
+  },
+  "application_regression_scope": [
+    "Movie/series ranking and fallbacks",
+    "All existing algorithms, Adaptive/Hybrid and score attribution",
+    "Old/current JSON profile schemas and import/export",
+    "SQLite autosave, transaction rollback and installation isolation",
+    "Watched/watchlist, dismissal and Undo",
+    "Ukrainian/English UI, metadata fallback, artifact recovery and cache isolation"
+  ],
+  "github_checks": {
+    "existing_pr_heads": "All PR12/13/14 checks successful; exact SHA/status/URLs in reports/ml_v12_recovery_github.json",
+    "windows": "Windows Python 3.11 tests verified on all three existing PR heads; new follow-up checked separately on GitHub",
+    "follow_up": {
+      "pr": 15,
+      "url": "https://github.com/Bandoof/CineMatch/pull/15",
+      "head_sha": "828bfe75c4fc650985d6240f07cb02c26253489e",
+      "checks": [
+        {
+          "conclusion": "success",
+          "name": "CodeQL",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/runs/114222017814"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878118"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878088"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878036"
+        },
+        {
+          "conclusion": "success",
+          "name": "security",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221877886"
+        },
+        {
+          "conclusion": "success",
+          "name": "Python analysis",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118252/job/114221877309"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866162"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866155"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866146"
+        },
+        {
+          "conclusion": "success",
+          "name": "security",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221865952"
+        }
+      ],
+      "scope": "Verified on repair commit; later report-only commits have their own live PR checks"
+    }
+  },
+  "limits": [
+    "No live quality or TV-series interaction benchmark",
+    "No private data accessed or rewritten",
+    "No Windows CPU encoder latency test",
+    "No local CodeQL execution; verified GitHub workflow results instead",
+    "Test fixtures do not replace missing real experiment evidence"
+  ],
+  "windows_checkout_repair": {
+    "initial_failure": "Git autocrlf checkout changed reports/performance_v11.json, invalidating its historical SHA-256",
+    "fix": "Disable newline conversion for reports/configs/Python with Git attributes; historical blob bytes remain unchanged",
+    "local_verification": "autocrlf=true clone passed six evidence tests; exact report/config bytes and all SOURCE_PATHS fingerprints equal original checkout",
+    "local_verification_passed": true,
+    "fixed_code_commit": "828bfe75c4fc650985d6240f07cb02c26253489e",
+    "hosted_ci": "Passed Ubuntu 3.10/3.11, Windows 3.11, security and CodeQL on repair commit"
+  },
+  "post_ui_timeout_fix": {
+    "failure_run": "https://github.com/Bandoof/CineMatch/actions/runs/38055333020",
+    "passed_same_head_push_run": "https://github.com/Bandoof/CineMatch/actions/runs/38055329475",
+    "diagnosis": "AppTest default 3-second rerun budget expired during guided Undo; state assertions did not fail",
+    "change": "Discovery/basic-app tests use bounded default_timeout=30, matching existing UI helpers; no assertions removed",
+    "targeted_tests_passed": 5,
+    "repeated_full_suite_passed": 159,
+    "repeated_full_suite_skipped": 0,
+    "real_cpu_tests_included": true,
+    "tested_file_sha256": {
+      "tests/test_app.py": "d6a455337f044cb7d0188cc3907e03642f2e93ee8f817cadd1a41d5dd3e725fd",
+      "tests/test_discovery.py": "271d8431d8a933abdcc3920f32d6d33e8b69cfd4ffb6bfa4e49fa123e41ec9fe",
+      "scripts/verify_v12_evidence.py": "548bb77f79d2a7e19fe02ee16703ee05f2c427967d1a5281be82ce738f9a545c",
+      "tests/test_v12_evidence.py": "1008ac0916ec21f4dd0c60e1fa4c5fc5c5fcc0e4a0241a6a584be32866dafcd2"
+    }
+  }
+}

@@ -157,13 +157,21 @@ active-learning gain and is not a calibrated confidence estimate.
 
 **ML Lab** shows real before/after Top-10 lists for the latest rating, dismissal
 or viewing mark under the same current filters and model. A changed list is not
-an accuracy improvement. It also presents an independent MovieLens 1M experiment
+an accuracy improvement. It also presents a recorded MovieLens 1M experiment
 with ranking metrics, coverage, genre diversity, novelty and paired user bootstrap
 intervals. Current source descriptions are retrospective metadata; the protocol
 does not claim historical text was available at each rating boundary. Series,
-negative feedback and live satisfaction are outside that benchmark.
+negative feedback and live satisfaction are outside that benchmark. Its historical
+validation/test target cohorts overlap; previously viewed v3 outcomes are development
+evidence for v1.2.
 
 [Current experiment](reports/ml_v3.md) · [Model card and protocol](docs/ml-v3-model-card.md)
+
+The separate [v1.2 recovery report](reports/ml_v12.md) verifies a saved protocol
+with disjoint 171-user validation and 326-user test cohorts. Final selection and
+outcome artifacts are missing, so the failed session's reported +17.8% gain is
+**unverified** and does not change the application's recommendation policy.
+[Engineering release preparation](docs/release-v12.md) · [Recovery methodology](docs/ml-v12-research.md) · [Experimental model card](docs/ml-v12-model-card.md)
 
 To reproduce the content/experiment, after installing the expanded catalog:
 

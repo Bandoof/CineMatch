@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "report_kind": "recovery_audit",
+  "recovery_date": "2026-10-10",
+  "status": "final_results_unrecoverable_from_accessible_evidence",
+  "verified_final_results": null,
+  "verified_selection": null,
+  "evidence": {
+    "integrity": "reports/ml_v12_integrity.json",
+    "github": "reports/ml_v12_recovery_github.json",
+    "config": "configs/ml-v12-2026-10-09.json",
+    "manifest": "reports/ml_v12_manifest.json",
+    "baseline": "reports/ml_v12_baseline.json",
+    "qa": "reports/ml_v12_recovery_checks.json"
+  },
+  "verified_protocol": {
+    "validation_users": 171,
+    "test_users": 326,
+    "historical_target_users_excluded": 701,
+    "validation_test_overlap": 0,
+    "historical_validation_test_overlap": 199,
+    "config_sha256": "967f0308e032c527835009289ba6ac87fb48496071866ba9c130efe6568334a4",
+    "dataset_hashes_verified": true,
+    "historical_artifacts_unchanged": 11
+  },
+  "recovered_statements": {
+    "provenance": "User-supplied recovery request quoting the failed session; not numerical experiment artifacts.",
+    "independently_verified": false,
+    "selected_cf": {
+      "factors": 32,
+      "bias_regularization": 20,
+      "fold_in": 1,
+      "regularization": null,
+      "calibration": null,
+      "blend_weights": null
+    },
+    "selected_content": {
+      "representation": "tfidf",
+      "preference": "user_centered"
+    },
+    "primary_outcome": {
+      "algorithm": "Adaptive (reported name; exact frozen blend missing)",
+      "seed_ratings": 3,
+      "ndcg_at_10": 0.0987,
+      "popularity_ndcg_at_10": 0.0838,
+      "relative_improvement_percent": 17.8,
+      "paired_absolute_difference_ci_95": [
+        0.0017,
+        0.0276
+      ]
+    },
+    "secondary_outcomes": {
+      "ten_seed_difference_ci": "Reported to include zero; endpoints unavailable",
+      "coverage": "Reported increase; values unavailable",
+      "genre_diversity": "Reported decrease; values unavailable",
+      "novelty": "Reported decrease; values unavailable",
+      "minilm": "Reported investigated and not selected; validation trials and scores unavailable"
+    }
+  },
+  "holdout": {
+    "prior_access": "Reported by the failed session; marker not recovered",
+    "assume_consumed": true,
+    "real_test_scoring_during_recovery": false,
+    "retuning_permitted": false,
+    "future_work": "Recover the original frozen bundle, or preregister separate development/test evidence. Any rerun of this known cohort is a replication, never a fresh holdout."
+  },
+  "unrecoverable": [
+    "Frozen selection and its source/manifest/embedding hashes",
+    "Validation trials, rejected-model metrics and MiniLM selection margin",
+    "Final aggregate/per-user metrics and bootstrap intervals",
+    "Numerical model/vector artifacts, performance measurements and original logs"
+  ],
+  "integration": {
+    "research_infrastructure": "Ready for owner review; code and Windows checkout repair passed follow-up CI/CodeQL",
+    "research_quality_claims": "Blocked on missing original final evidence",
+    "production_policy_changed": false,
+    "private_data_modified": false,
+    "merged": false,
+    "deployed": false
+  },
+  "recommended_merge_order": [
+    12,
+    13,
+    14,
+    15
+  ],
+  "retargeting": "After each prerequisite is merged, retarget the next PR to main, refresh checks, and inspect its diff before owner-approved merge. Preserve stack ancestry; avoid squash/rebase merges without reconciling dependent branches.",
+  "pull_request_urls": {
+    "12": "https://github.com/Bandoof/CineMatch/pull/12",
+    "13": "https://github.com/Bandoof/CineMatch/pull/13",
+    "14": "https://github.com/Bandoof/CineMatch/pull/14",
+    "15": "https://github.com/Bandoof/CineMatch/pull/15"
+  }
+}

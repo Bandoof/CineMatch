@@ -1,0 +1,443 @@
+{
+  "observed_utc": "2026-10-10 13:03:39 UTC",
+  "repository": "Bandoof/CineMatch",
+  "main_sha": "9e5c334c85133668ecb1e39a81060f9fea21a351",
+  "branches": [
+    {
+      "name": "codex/v11-architecture",
+      "sha": "7e8addb34e36bee7af41bf73fa73f30a7135ea46"
+    },
+    {
+      "name": "codex/v11-infrastructure",
+      "sha": "2328af9f31aff054d8fe45c33c4089537d5eb63b"
+    },
+    {
+      "name": "codex/v11-performance",
+      "sha": "cafbb82519d8e95bfdb81abbc6d6f3b7ed043d2b"
+    },
+    {
+      "name": "codex/v12-evaluation-integrity",
+      "sha": "a4f3947077e91665d33309644674d5de95cd9195"
+    },
+    {
+      "name": "codex/v12-faithful-explanations",
+      "sha": "4c9f46c49140aed7876bbef113347360daac63c7"
+    },
+    {
+      "name": "codex/v12-offline-models",
+      "sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2"
+    },
+    {
+      "name": "dependabot/github_actions/actions/checkout-7.0.1",
+      "sha": "5f00a83159d2774cdc391e9c4d3fc9f3c6770503"
+    },
+    {
+      "name": "dependabot/github_actions/actions/setup-python-7.0.0",
+      "sha": "5f2f8ea48ba8f7d9a5856d53dbc9b598f3f3a5bd"
+    },
+    {
+      "name": "dependabot/pip/matplotlib-3.11.2",
+      "sha": "17630e2df202dddc9565522f3431720c03e7e71d"
+    },
+    {
+      "name": "dependabot/pip/numpy-2.5.3",
+      "sha": "a0fb5012b2d992237e7fd01d4283ef4a00a52896"
+    },
+    {
+      "name": "dependabot/pip/pandas-3.0.6",
+      "sha": "972994687f2a882288c76a7505505256b8047016"
+    },
+    {
+      "name": "dependabot/pip/ruff-0.16.10",
+      "sha": "15d29077cd8da65a191f12586133aea06c99038a"
+    },
+    {
+      "name": "dependabot/pip/scikit-learn-1.9.1",
+      "sha": "47abb6eb62189ccb1942f5dc4032f745eb0702ab"
+    },
+    {
+      "name": "fix/review-security",
+      "sha": "ad2cc104ac4117ec628cd0b27fdf7c7564fcf002"
+    },
+    {
+      "name": "main",
+      "sha": "9e5c334c85133668ecb1e39a81060f9fea21a351"
+    }
+  ],
+  "pull_requests": [
+    {
+      "number": 12,
+      "url": "https://github.com/Bandoof/CineMatch/pull/12",
+      "state": "open",
+      "merged": false,
+      "base": "main",
+      "base_sha": "9e5c334c85133668ecb1e39a81060f9fea21a351",
+      "head": "codex/v12-evaluation-integrity",
+      "head_sha": "a4f3947077e91665d33309644674d5de95cd9195",
+      "mergeable": true,
+      "commits": [
+        {
+          "sha": "a4f3947077e91665d33309644674d5de95cd9195",
+          "message": "Freeze disjoint ML research cohorts and reproducible evaluation boundaries"
+        }
+      ],
+      "changed_files": [
+        "configs/ml-v12-2026-10-09.json",
+        "docs/ml-v12-evaluation.md",
+        "reports/ml_v12_baseline.json",
+        "reports/ml_v12_manifest.json",
+        "scripts/prepare_research.py",
+        "src/research_protocol.py",
+        "tests/test_research_protocol.py"
+      ],
+      "checks": [
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971370123/job/113968021120"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971370123/job/113967966887"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971370123/job/113967966407"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971370123/job/113967964740"
+        },
+        {
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/runs/113958916602"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385822/job/113958608575"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385822/job/113958608543"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385822/job/113958608483"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385822/job/113958608182"
+        },
+        {
+          "name": "Python analysis",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385776/job/113958607395"
+        }
+      ],
+      "runs": [
+        {
+          "id": 37971385776,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "a4f3947077e91665d33309644674d5de95cd9195",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385776"
+        },
+        {
+          "id": 37971385822,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "a4f3947077e91665d33309644674d5de95cd9195",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971385822"
+        },
+        {
+          "id": 37971370123,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "a4f3947077e91665d33309644674d5de95cd9195",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37971370123"
+        }
+      ]
+    },
+    {
+      "number": 13,
+      "url": "https://github.com/Bandoof/CineMatch/pull/13",
+      "state": "open",
+      "merged": false,
+      "base": "codex/v12-evaluation-integrity",
+      "base_sha": "a4f3947077e91665d33309644674d5de95cd9195",
+      "head": "codex/v12-offline-models",
+      "head_sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+      "mergeable": true,
+      "commits": [
+        {
+          "sha": "f6a75425dcef933c37db600c294c26d40aa8af7e",
+          "message": "Add controlled offline ALS, multilingual content and onboarding research pipeline"
+        },
+        {
+          "sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+          "message": "Expose the exact research corpus without app retention and test real CPU cache construction"
+        }
+      ],
+      "changed_files": [
+        ".github/workflows/ci.yml",
+        ".pre-commit-config.yaml",
+        "requirements-research.txt",
+        "scripts/download_research.py",
+        "scripts/prepare_research.py",
+        "scripts/research_v12.py",
+        "src/research_embeddings.py",
+        "src/research_models.py",
+        "src/research_onboarding.py",
+        "src/research_protocol.py",
+        "src/semantic.py",
+        "tests/test_research_encoder_integration.py",
+        "tests/test_research_models.py",
+        "tests/test_research_protocol.py",
+        "tests/test_research_runner.py"
+      ],
+      "checks": [
+        {
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/runs/113970642464"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819781/job/113970324686"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819781/job/113970324664"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819781/job/113970324591"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819781/job/113970324255"
+        },
+        {
+          "name": "Python analysis",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819803/job/113970324052"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974813633/job/113970304360"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974813633/job/113970304227"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974813633/job/113970304131"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974813633/job/113970303770"
+        }
+      ],
+      "runs": [
+        {
+          "id": 37974819803,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819803"
+        },
+        {
+          "id": 37974819781,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974819781"
+        },
+        {
+          "id": 37974813633,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974813633"
+        }
+      ]
+    },
+    {
+      "number": 14,
+      "url": "https://github.com/Bandoof/CineMatch/pull/14",
+      "state": "open",
+      "merged": false,
+      "base": "codex/v12-offline-models",
+      "base_sha": "cf8fdcd27c8a48a6c96c8f74abcb99b00238c4d2",
+      "head": "codex/v12-faithful-explanations",
+      "head_sha": "4c9f46c49140aed7876bbef113347360daac63c7",
+      "mergeable": true,
+      "commits": [
+        {
+          "sha": "4c9f46c49140aed7876bbef113347360daac63c7",
+          "message": "Make recommendation explanations reflect actual score components and heuristic adjustments"
+        }
+      ],
+      "changed_files": [
+        ".github/workflows/ci.yml",
+        ".pre-commit-config.yaml",
+        "app/recommender.py",
+        "docs/ml-v12-explanations.md",
+        "scripts/research_v12.py",
+        "src/explanations.py",
+        "src/i18n.py",
+        "tests/test_faithful_explanations.py"
+      ],
+      "checks": [
+        {
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/runs/113971074534"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974963489/job/113970817152"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974963489/job/113970817090"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974963489/job/113970817049"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974963489/job/113970816896"
+        },
+        {
+          "name": "Python analysis",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974962864/job/113970814229"
+        },
+        {
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974948430/job/113970765576"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974948430/job/113970765566"
+        },
+        {
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974948430/job/113970765427"
+        },
+        {
+          "name": "security",
+          "status": "completed",
+          "conclusion": "success",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974948430/job/113970765209"
+        }
+      ],
+      "runs": [
+        {
+          "id": 37974963489,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "4c9f46c49140aed7876bbef113347360daac63c7",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974963489"
+        },
+        {
+          "id": 37974962864,
+          "name": "CodeQL",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "4c9f46c49140aed7876bbef113347360daac63c7",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974962864"
+        },
+        {
+          "id": 37974948430,
+          "name": "Tests",
+          "status": "completed",
+          "conclusion": "success",
+          "head_sha": "4c9f46c49140aed7876bbef113347360daac63c7",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/37974948430"
+        }
+      ]
+    }
+  ],
+  "actions_artifacts_found": 0,
+  "releases_found": 0,
+  "tags_found": 0,
+  "search_scope": [
+    "All current GitHub branches and commits reachable from their heads",
+    "Local Git reflogs and unreachable objects (none found)",
+    "Workspace and /tmp experiment file names; /tmp test fixtures created by recovery pytest are synthetic",
+    "GitHub Actions artifact listing, releases and tags"
+  ],
+  "missing": [
+    "validation.json",
+    "selection.json",
+    "final-access.json",
+    "final.json",
+    "final.csv",
+    "per-user-metrics.csv",
+    "original numerical model/vector caches and experiment logs"
+  ],
+  "real_holdout_evaluated_during_recovery": false
+}

@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "status": "surviving_evidence_verified",
+  "evidence_sha256": {
+    "config": "30b56d5b5dcd934ec731b5d720f0e3aac220702ee64075aeaa6fa8cfb0bb130e",
+    "manifest": "abbdbf3235a8ff40b274ec8515d0dc962e97ab91320b6e71c7c5d16bbf72d1c7",
+    "baseline": "a735d1efcd520007d9d8849b5deb4fa480400ee077a609f801da9cc04a82e215"
+  },
+  "config_sha256": "967f0308e032c527835009289ba6ac87fb48496071866ba9c130efe6568334a4",
+  "cohorts": {
+    "validation_users": 171,
+    "test_users": 326,
+    "historical_target_users": 701,
+    "historical_validation_test_overlap": 199,
+    "validation_test_overlap": 0,
+    "historical_reuse": 0,
+    "scope": "Saved IDs/counts verified; eligibility and model outcomes not reevaluated."
+  },
+  "historical_evidence_sha256": {
+    "reports/benchmark.md": "df82f3cbe0c04e442dfd3cddc7d560a41160afb1b1773e91ccc546157a8fd520",
+    "reports/eda.json": "f4768a9587ecd4019510be0c2aedbe83b77b3e434f5bf4d5447a06f56bd7d4f3",
+    "reports/expanded_benchmark.md": "addb86373422f522f1fac7a87539db37bc76b894ab1564ccd59b6a8c6fd80c1e",
+    "reports/expanded_metrics.csv": "f6ce2fc8b44c901879c64e372d0d6b2ceaff96cfb2361a5703854e19d72b6f3c",
+    "reports/expanded_metrics.json": "e161fb237365226e98fa52da72b374d55174b6c2ad2dd0d356a87778082ae70d",
+    "reports/metrics.csv": "c601eb9e146fad26b701fce03ffd644b6160ef77109e381d5f22d3286856776e",
+    "reports/metrics.json": "3504f7257f4f1399e97f9b55f5236cddc7560f24176b015cdeccfc41b190e78b",
+    "reports/ml_v3.csv": "075f8fcddad88781dfa3f23f2b73005980b18491008a19035f05c3fab10a4979",
+    "reports/ml_v3.json": "c37f64e403f6d5d3d1da53a49ffb6afca105065eced1843c45751b82294024ff",
+    "reports/ml_v3.md": "d900f2c718f32aab69ba480ee3a2ea6b11748252d15c4da917ebd3379e13a1d6",
+    "reports/performance_v11.json": "a8b59cf3866064b96a4e4d8a2db85c47b3973543be8eb92fee4bf71080014feb"
+  },
+  "dataset": {
+    "status": "verified",
+    "archive_sha256": "a6898adb50b9ca05aa231689da44c217cb524e7ebd39d264c56e2832f2c54e20",
+    "input_sha256": {
+      "movies.dat": "0140fc2356357c1a851d0f52e893a1e4d3696df632c4141cea8d5bc3d621f0b9",
+      "ratings.dat": "506d64ca44484487c11dc2d9a28de5c54948213e6b96285e298afe28d6ea4e0f",
+      "README": "2d5ddce86ccbd247207456165827b4b9ddf27282bca93807d4c763e28414f133"
+    },
+    "operation": "Byte hashing only; no interaction parsing, training or scoring."
+  },
+  "final_metrics_verified": false,
+  "scope": "Integrity of surviving protocol evidence only. This does not verify missing validation, frozen selection, final outcomes or confidence intervals."
+}

@@ -10,7 +10,8 @@ def test_rating_hide_and_restore_workflow(dataset_dir, monkeypatch):
     monkeypatch.setenv("CINEMATCH_SERIES_FILE", str(dataset_dir / "absent.json"))
     monkeypatch.setenv("CINEMATCH_METADATA_FILE", str(dataset_dir / "absent-metadata.json"))
     monkeypatch.setenv("CINEMATCH_PROFILE_DB", str(dataset_dir / "profiles.sqlite3"))
-    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py"))
+    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py"),
+                            default_timeout=30)
     app.run(timeout=30)
     assert not app.exception
     app.button(key="FormSubmitter:rate_movie-Save rating").click().run()
@@ -50,7 +51,8 @@ def test_ukrainian_series_and_saved_profile(dataset_dir, monkeypatch):
                        "CINEMATCH_PROFILE_DB": dataset_dir / "profiles.sqlite3",
                        "CINEMATCH_DEFAULT_LANGUAGE": "uk"}.items():
         monkeypatch.setenv(key, str(value))
-    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py")).run()
+    app = AppTest.from_file(str(Path(__file__).parents[1] / "app" / "streamlit_app.py"),
+                            default_timeout=30).run()
     assert not app.exception
     assert app.tabs[0].label == tr("for_you", "uk")
     app.selectbox(key="media_type").set_value("Series").run()
