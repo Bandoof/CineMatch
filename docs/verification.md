@@ -168,3 +168,33 @@ Hosted run https://github.com/Bandoof/CineMatch/actions/runs/37924477380
 (source commit 25b982a40d97e7468c1a8b5b830a294f9ddbebde) completed
 successfully: both Python 3.10 and 3.11 jobs passed Ruff and pytest.
 This confirms hosted checks separately from the historical local records below.
+## v1.2 recovery verification — 2026-10-10
+
+The combined #12/#13/#14 code and recovery verifier passed **159 tests, zero
+skipped**, including both pinned-weight real MiniLM CPU tests and six new
+evidence-corruption/read-only tests, on Python 3.11.16. Coverage was 73%; 14
+warnings were existing Matplotlib/Pyparsing deprecations. Ruff, configured Mypy
+(three modules), pre-commit including new files, pip check and exact integrity
+receipt reproduction passed. Tests cover movie/series ranking, old/current JSON
+profiles, SQLite rollback/autosave, watched/watchlist, negative feedback, Undo,
+UK/EN rendering, optional-dependency fallback and numerical artifact recovery.
+Fixtures use temporary data; no private database was opened or rewritten.
+
+The `requirements-research.txt` audit found no known vulnerabilities. The broader
+installed-environment audit initially reported 14 advisory entries in bootstrap
+pip 24.0/setuptools 79.0.1. Updating only this virtualenv to pip 26.2.1/setuptools
+83.0.0 made that audit pass with no known vulnerabilities. Repository dependency
+pins were unchanged. Full executed-check details are saved in
+[the QA receipt](../reports/ml_v12_recovery_checks.json).
+
+Existing PR heads had successful Ubuntu Python 3.10/3.11, Windows Python 3.11,
+security and CodeQL checks, verified via GitHub API and saved with exact SHAs in
+[the GitHub receipt](../reports/ml_v12_recovery_github.json). CodeQL was not run
+locally. Current follow-up checks must be read on its PR; historical success is
+not a guarantee for later commits. Ancestry and three `git merge-tree` operations
+confirmed the stack combines without conflicts at those heads.
+
+The real final test cohort was not evaluated. Original selection, validation and
+final metric files are missing. The quoted +17.8% gain and interval remain
+unverified; neither passing tests nor the saved manifest establishes them. See
+[research recovery](ml-v12-research.md) and [model card](ml-v12-model-card.md).

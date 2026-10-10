@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "observed_date": "2026-10-10",
+  "source_code_commit": "7a174ad6f110f2c1745876ee2fa6f5150b077337",
+  "python": "Python 3.11.16",
+  "pytest": {
+    "command": "CINEMATCH_RESEARCH_MODEL_CACHE=<separate verified cache>/minilm OPENBLAS_NUM_THREADS=1 python -m pytest -q --cov=app --cov=src --cov=scripts --cov-report=term-missing",
+    "passed": 159,
+    "skipped": 0,
+    "warnings": 14,
+    "warnings_scope": "Existing Matplotlib/Pyparsing deprecations",
+    "total_coverage_percent": 73,
+    "real_cpu_encoder_tests": 2,
+    "new_evidence_integrity_tests": 6,
+    "real_final_holdout_evaluated": false
+  },
+  "ruff": "passed for all Python files",
+  "imports_and_format": "passed in configured pre-commit scope including new verifier/tests",
+  "mypy": "passed; configured three modules only",
+  "pre_commit": "passed all configured hooks",
+  "pip_check": "passed after installing optional research requirements",
+  "dependency_audit": {
+    "requirements_research": {
+      "status": "passed",
+      "resolved_dependencies": 101,
+      "known_vulnerabilities": 0
+    },
+    "installed_environment_initial": {
+      "status": "failed",
+      "reported_findings": 14,
+      "affected": [
+        {
+          "name": "pip",
+          "version": "24.0",
+          "advisory_ids": [
+            "PYSEC-2026-1795",
+            "PYSEC-2026-1796",
+            "PYSEC-2026-196",
+            "PYSEC-2026-2875",
+            "PYSEC-2026-2876",
+            "PYSEC-2026-3721"
+          ]
+        },
+        {
+          "name": "setuptools",
+          "version": "79.0.1",
+          "advisory_ids": [
+            "PYSEC-2026-3447"
+          ]
+        }
+      ]
+    },
+    "remediation": "Updated only local virtualenv bootstrap pip to 26.2.1 and setuptools to 83.0.0; repository requirements unchanged",
+    "installed_environment_final": {
+      "status": "passed",
+      "dependencies": 104,
+      "known_vulnerabilities": 0
+    }
+  },
+  "stack_compatibility": {
+    "ancestry": "main -> PR12 -> PR13 -> PR14 verified with git merge-base --is-ancestor",
+    "merge_tree": "All three git merge-tree --write-tree operations exit 0 and equal the respective descendant tree",
+    "trees": {
+      "pr12": "52e35fcf24528a1d7945ba37d72efe600ca9d3c0",
+      "pr13": "4223015edd705fcec0abbef5fa345428eacd7865",
+      "pr14": "486ad192e8e339109105af943764ed730aec0379"
+    }
+  },
+  "evidence_reproduction": {
+    "receipt": "reports/ml_v12_integrity.json",
+    "byte_identical_reproduction": true,
+    "inputs_hashed_only": true,
+    "historical_artifacts_unchanged": 11
+  },
+  "application_regression_scope": [
+    "Movie/series ranking and fallbacks",
+    "All existing algorithms, Adaptive/Hybrid and score attribution",
+    "Old/current JSON profile schemas and import/export",
+    "SQLite autosave, transaction rollback and installation isolation",
+    "Watched/watchlist, dismissal and Undo",
+    "Ukrainian/English UI, metadata fallback, artifact recovery and cache isolation"
+  ],
+  "github_checks": {
+    "existing_pr_heads": "All PR12/13/14 checks successful; exact SHA/status/URLs in reports/ml_v12_recovery_github.json",
+    "windows": "Windows Python 3.11 tests verified on all three existing PR heads; new follow-up checked separately on GitHub",
+    "follow_up": "Consult current PR checks; this receipt records local execution, not future CI conclusions"
+  },
+  "limits": [
+    "No live quality or TV-series interaction benchmark",
+    "No private data accessed or rewritten",
+    "No Windows CPU encoder latency test",
+    "No local CodeQL execution; verified GitHub workflow results instead",
+    "Test fixtures do not replace missing real experiment evidence"
+  ]
+}

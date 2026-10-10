@@ -37,7 +37,8 @@ recreate a claim of a fresh unseen test.
 [Model card](../docs/ml-v12-model-card.md) ·
 [Machine-readable report](ml_v12.json) ·
 [Integrity receipt](ml_v12_integrity.json) ·
-[GitHub PR/check snapshot](ml_v12_recovery_github.json)
+[GitHub PR/check snapshot](ml_v12_recovery_github.json) ·
+[Executed regression/security checks](ml_v12_recovery_checks.json)
 
 Owner merge order: #12 → #13 → #14 → recovery follow-up. After each prerequisite
 merges, retarget the next PR to `main` and refresh checks. Engineering work is
