@@ -171,7 +171,7 @@ The separate [v1.2 recovery report](reports/ml_v12.md) verifies a saved protocol
 with disjoint 171-user validation and 326-user test cohorts. Final selection and
 outcome artifacts are missing, so the failed session's reported +17.8% gain is
 **unverified** and does not change the application's recommendation policy.
-[Recovery methodology](docs/ml-v12-research.md) · [Experimental model card](docs/ml-v12-model-card.md)
+[Engineering release preparation](docs/release-v12.md) · [Recovery methodology](docs/ml-v12-research.md) · [Experimental model card](docs/ml-v12-model-card.md)
 
 To reproduce the content/experiment, after installing the expanded catalog:
 
