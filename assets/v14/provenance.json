@@ -1,0 +1,126 @@
+{
+  "date": "2026-10-10",
+  "source_commit": "68381751b5175bf1326a0ad53379328232e62274",
+  "entry": "app/portfolio_app.py",
+  "profile": "Clearly synthetic seed and intentional QA actions; no owner data",
+  "artwork_enabled": false,
+  "capture": "Actual running Chromium 153 / Playwright 1.63, no synthetic compositing",
+  "browser": {
+    "browser": "Chromium",
+    "version": "153.0.8010.12",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ]
+    ],
+    "flows": [
+      "first launch",
+      "discovery",
+      "Ukrainian/year search",
+      "media filters/no results",
+      "movie/series details",
+      "watchlist",
+      "Undo",
+      "rating",
+      "original ML + heuristic sections",
+      "library",
+      "UK/EN/UK language",
+      "independent visitors",
+      "reset",
+      "empty profile",
+      "refresh reset",
+      "offline metadata",
+      "keyboard focus",
+      "research limitations",
+      "mobile/tablet navigation"
+    ],
+    "timings": {
+      "home_ready_ms": 6060.1726150016475,
+      "uk_search_ready_ms": 2042.7136870021059
+    },
+    "page_errors": [],
+    "request_failures": [],
+    "accessibility": [
+      {
+        "page": "desktop discovery",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "filtered Ukrainian search",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "movie details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "For You",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "English library",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "mobile details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "tablet details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    ],
+    "keyboard_focus": {
+      "tag": "BUTTON",
+      "label": "Почати з чистого профілю",
+      "outline": "solid",
+      "width": "3px",
+      "shadow": "rgba(145, 96, 31, 0.5) 0px 0px 0px 3.2px"
+    },
+    "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation."
+  },
+  "screenshots": {
+    "desktop-for-you.png": "0a87114844d11486918c0d0122ea2d753618218d41b400003fa3b9a0bc72cc31",
+    "tablet-details.png": "5495f8e51ac8fa7631a01b84b777fe7afc0d3e64fb8bde496dbea1d80ba03014",
+    "desktop-research.png": "e28330c62df45226c0a81d039f4442c39e88a59e5a12a18d54a58bac2e00b248",
+    "tablet-discover.png": "2235f99c31db3d22a98e536f8d66c315b6b81d4e5bee359d541bdd44ee55d006",
+    "desktop-collections.png": "9bfaa618ff7d5a8ac0c4c1c76de33e2cba5970c8f524abb99f162591adb72fcc",
+    "desktop-ml-cards.png": "9dc3e3a172f08b3ba80c1972e6f2d3b980acf6a6ac2cccc5ae6fd28f137d293e",
+    "desktop-discover.png": "475c30370b8ff3d6627fcdddaad2603cd101286b4537f385d068090a326b992d",
+    "desktop-library.png": "e3821f53f9282d69ac9164731f6ea05c24347c4e625cbd309ff487a7061ffc04",
+    "desktop-search.png": "3deb57214d02808cb12eb6218a391562fc26d16a076c886a1b9323e99ccf61b3",
+    "mobile-discover.png": "9f9f75ea17ed55dc7bfb1172996b5c7ac97cbc871865d5a6c79df6df58d0d6f4",
+    "desktop-movie-details.png": "490dbb8e259fc293bb9b86a756c1c788b9354deed850fbf9c6284735704b3997",
+    "mobile-details.png": "2b45c41b813470fe950e5350cb811c4bd4bcf62c10f00f4104aa6d92497f2299",
+    "desktop-series-details.png": "3e7d3eae3036a0d6932eec2ad2629ba3a9eaef5dc27cda8d8376d5f1df1b2821"
+  },
+  "video": {
+    "status": "Local-only; no upload/publication permission; not a narrated finished presentation",
+    "local_output": "/workspace/cinematch-v14/media/qa-walkthrough.mp4",
+    "source": "actual browser WebM, transcoded to H.264",
+    "uploaded": false
+  }
+}
