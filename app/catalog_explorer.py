@@ -9,6 +9,9 @@ import streamlit as st
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
+from src.catalog_view import CatalogView  # noqa: E402
+from src.discovery_collections import collections  # noqa: E402
+from src.discovery_search import SearchIndex, catalog_records  # noqa: E402
 from src.modern_catalog import ModernCatalog  # noqa: E402
 from src.providers import JsonCache, ProviderClient, provider_search, refresh_catalog  # noqa: E402
 
@@ -67,7 +70,30 @@ def main():
     )
     if not catalog.titles:
         st.info("Refresh or search to save a provider snapshot. No titles are invented.")
-    for title in list(catalog.titles.values())[:12]:
+    view = CatalogView(None, catalog)
+    local_query = st.text_input(
+        "Search saved titles / Пошук у збереженому каталозі", key="local_query", max_chars=160
+    )
+    media = st.selectbox("Media / Тип", ["All", "Movie", "Series"], key="catalog_media")
+    genres = st.multiselect(
+        "Genres / Жанри", sorted({g for title in catalog.titles.values() for g in title.genres})
+    )
+    sort = st.selectbox(
+        "Sort / Порядок", ["relevance", "newest", "title", "rating"], key="catalog_sort"
+    )
+    shelf = st.radio("Collection / Колекція", ["Browse", "Recent", "Upcoming"], horizontal=True)
+    matches = SearchIndex(catalog_records(view)).search(
+        local_query, media_type=media, genres=genres, sort=sort, limit=None
+    )
+    if shelf != "Browse":
+        allowed = set(collections(view, limit=5000)["recent" if shelf == "Recent" else "upcoming"])
+        matches = [hit for hit in matches if hit.item_id in allowed]
+        st.caption(
+            "Recent: released in the past 730 days. Upcoming: verified future dates within 180 days."
+        )
+    st.caption(f"{len(matches)} matching titles · showing at most 12")
+    for hit in matches[:12]:
+        title = view.titles[hit.item_id]
         with st.container(border=True):
             st.subheader(title.title("uk"))
             st.caption(f"{title.year or '—'} · {title.media_type} · {title.provider}")
