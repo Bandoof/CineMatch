@@ -168,6 +168,7 @@ Hosted run https://github.com/Bandoof/CineMatch/actions/runs/37924477380
 (source commit 25b982a40d97e7468c1a8b5b830a294f9ddbebde) completed
 successfully: both Python 3.10 and 3.11 jobs passed Ruff and pytest.
 This confirms hosted checks separately from the historical local records below.
+
 ## v1.2 recovery verification — 2026-10-10
 
 The combined #12/#13/#14 code and recovery verifier passed **159 tests, zero
@@ -193,6 +194,12 @@ security and CodeQL checks, verified via GitHub API and saved with exact SHAs in
 locally. Current follow-up checks must be read on its PR; historical success is
 not a guarantee for later commits. Ancestry and three `git merge-tree` operations
 confirmed the stack combines without conflicts at those heads.
+
+The initial follow-up Windows job caught Git newline conversion changing
+`reports/performance_v11.json`. Git attributes now preserve exact committed bytes
+for report/config evidence and Python source, retaining original CRLF/LF files
+without changing historical artifacts. A checkout with `core.autocrlf=true` and
+new hosted Windows checks validate the repair.
 
 The real final test cohort was not evaluated. Original selection, validation and
 final metric files are missing. The quoted +17.8% gain and interval remain

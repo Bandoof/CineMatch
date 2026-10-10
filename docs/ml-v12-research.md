@@ -156,6 +156,11 @@ is needed. In this managed proxy the explicit certifi context needed the runtime
 CA bundle. Recovery selected it process-locally with TLS verification intact;
 pinned research source stayed unchanged.
 
+Git attributes disable newline conversion for report/config evidence and Python
+source. Historical artifacts contain both original CRLF and LF files; their bytes
+are preserved rather than normalized. Windows checkout therefore retains the
+same evidence hashes and frozen-source fingerprints as Linux.
+
 If original outputs become available, preserve bytes in a new directory. Verify
 manifest/config/input/selection/source/vector hashes with the exact frozen source
 checkout and reconcile validation selection with final embedded selection.
