@@ -171,11 +171,12 @@ blocked by missing frozen evidence.
 
 ## Owner integration
 
-Recommended order: **#12 → #13 → #14 → recovery follow-up**. The follow-up starts
+Recommended order: **#12 → #13 → #14 → [#15](https://github.com/Bandoof/CineMatch/pull/15)**. The follow-up starts
 at #14; all prerequisites are its ancestors. Keep the existing stack before
 merging. After each owner-approved prerequisite merge, retarget the next PR to
 `main`, inspect its narrowed diff and refresh CI/CodeQL. Prefer merge commits to
 preserve ancestry; squash/rebase merges require reconciling dependent branches.
-Engineering integration is reviewable subject to follow-up checks. A scientifically
+Engineering integration is reviewable: local QA and the repair commit
+passed Ubuntu/Windows/security/CodeQL. Check the current PR head before merging. A scientifically
 verified v1.2 quality release is blocked on missing final evidence. No PR is
 merged, no production policy changed, and no application publicly deployed.

@@ -199,7 +199,9 @@ The initial follow-up Windows job caught Git newline conversion changing
 `reports/performance_v11.json`. Git attributes now preserve exact committed bytes
 for report/config evidence and Python source, retaining original CRLF/LF files
 without changing historical artifacts. A checkout with `core.autocrlf=true` and
-new hosted Windows checks validate the repair.
+new hosted Windows checks validated the repair. The repair commit
+`828bfe75c4fc650985d6240f07cb02c26253489e` passed Ubuntu Python 3.10/3.11,
+Windows Python 3.11, security and CodeQL; exact check URLs are in the QA receipt.
 
 The real final test cohort was not evaluated. Original selection, validation and
 final metric files are missing. The quoted +17.8% gain and interval remain

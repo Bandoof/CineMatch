@@ -83,7 +83,74 @@
   "github_checks": {
     "existing_pr_heads": "All PR12/13/14 checks successful; exact SHA/status/URLs in reports/ml_v12_recovery_github.json",
     "windows": "Windows Python 3.11 tests verified on all three existing PR heads; new follow-up checked separately on GitHub",
-    "follow_up": "Consult current PR checks; this receipt records local execution, not future CI conclusions"
+    "follow_up": {
+      "pr": 15,
+      "url": "https://github.com/Bandoof/CineMatch/pull/15",
+      "head_sha": "828bfe75c4fc650985d6240f07cb02c26253489e",
+      "checks": [
+        {
+          "conclusion": "success",
+          "name": "CodeQL",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/runs/114222017814"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878118"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878088"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221878036"
+        },
+        {
+          "conclusion": "success",
+          "name": "security",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118333/job/114221877886"
+        },
+        {
+          "conclusion": "success",
+          "name": "Python analysis",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055118252/job/114221877309"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (windows-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866162"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.11)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866155"
+        },
+        {
+          "conclusion": "success",
+          "name": "Test (ubuntu-latest, Python 3.10)",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221866146"
+        },
+        {
+          "conclusion": "success",
+          "name": "security",
+          "status": "completed",
+          "url": "https://github.com/Bandoof/CineMatch/actions/runs/38055114704/job/114221865952"
+        }
+      ],
+      "scope": "Verified on repair commit; later report-only commits have their own live PR checks"
+    }
   },
   "limits": [
     "No live quality or TV-series interaction benchmark",
@@ -91,5 +158,13 @@
     "No Windows CPU encoder latency test",
     "No local CodeQL execution; verified GitHub workflow results instead",
     "Test fixtures do not replace missing real experiment evidence"
-  ]
+  ],
+  "windows_checkout_repair": {
+    "initial_failure": "Git autocrlf checkout changed reports/performance_v11.json, invalidating its historical SHA-256",
+    "fix": "Disable newline conversion for reports/configs/Python with Git attributes; historical blob bytes remain unchanged",
+    "local_verification": "autocrlf=true clone passed six evidence tests; exact report/config bytes and all SOURCE_PATHS fingerprints equal original checkout",
+    "local_verification_passed": true,
+    "fixed_code_commit": "828bfe75c4fc650985d6240f07cb02c26253489e",
+    "hosted_ci": "Passed Ubuntu 3.10/3.11, Windows 3.11, security and CodeQL on repair commit"
+  }
 }

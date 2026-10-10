@@ -40,7 +40,7 @@ recreate a claim of a fresh unseen test.
 [GitHub PR/check snapshot](ml_v12_recovery_github.json) ·
 [Executed regression/security checks](ml_v12_recovery_checks.json)
 
-Owner merge order: #12 → #13 → #14 → recovery follow-up. After each prerequisite
+Owner merge order: #12 → #13 → #14 → [#15](https://github.com/Bandoof/CineMatch/pull/15). After each prerequisite
 merges, retarget the next PR to `main` and refresh checks. Engineering work is
 reviewable; verified model-quality integration is blocked on original final
 artifacts. Production policy and private data are unchanged.
