@@ -37,6 +37,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             ).click()
 
         def expand(page, title):
+            settled(page)
             label = page.get_by_text(title, exact=True)
             if label.locator("xpath=ancestor::details[1]").get_attribute("open") is None:
                 label.click()
@@ -59,7 +60,9 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
                 expand(page, "Ваша демосесія")
                 page.get_by_text("Показувати постери", exact=True).click()
                 expect(
-                    page.get_by_role("checkbox", name="Показувати постери", exact=True)
+                    page.get_by_role(
+                        "checkbox", name="Показувати постери", exact=True, include_hidden=True
+                    )
                 ).not_to_be_checked()
                 page.get_by_text("Ваша демосесія", exact=True).click()
             settled(page)
@@ -219,10 +222,12 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         # Offline internet scenario: posters disabled and external HTTPS blocked;
         # the local Streamlit websocket remains available.
         expand(page, "Ваша демосесія")
-        if page.get_by_role("checkbox", name="Показувати постери", exact=True).is_checked():
+        if page.get_by_role(
+            "checkbox", name="Показувати постери", exact=True, include_hidden=True
+        ).is_checked():
             page.get_by_text("Показувати постери", exact=True).click()
         expect(
-            page.get_by_role("checkbox", name="Показувати постери", exact=True)
+            page.get_by_role("checkbox", name="Показувати постери", exact=True, include_hidden=True)
         ).not_to_be_checked()
         blocked = []
 
