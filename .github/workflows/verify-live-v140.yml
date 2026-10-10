@@ -27,11 +27,6 @@ jobs:
               result["checks"][name] = True
               print("PASS " + name, flush=True)
           
-          with urllib.request.urlopen(URL + "_stcore/health", timeout=45) as response:
-              body = response.read().decode()
-              result["health"] = {"status": response.status, "body": body[:80]}
-              assert response.status == 200 and body.strip() == "ok", result["health"]
-          passed("Streamlit health")
           with sync_playwright() as p:
               browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
               a = browser.new_context()
@@ -76,6 +71,10 @@ jobs:
                   page.goto(URL, wait_until="domcontentloaded", timeout=90000)
                   ready(page)
                   passed("public synthetic demo initializes without visitor login")
+                  health = page.request.get(URL + "_stcore/health", timeout=45000)
+                  result["health"] = {"status": health.status, "body": health.text()[:80]}
+                  assert health.status == 200 and health.text().strip() == "ok", result["health"]
+                  passed("Streamlit health")
                   result["ml_pack_loaded"] = page.get_by_text("Історичну ML-модель не завантажено.", exact=False).count() == 0
                   initial = summary(page)
                   result["initial_synthetic_counts"] = initial
