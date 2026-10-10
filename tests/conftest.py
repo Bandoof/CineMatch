@@ -37,5 +37,8 @@ def dataset_dir(sample, tmp_path):
     return tmp_path
 @pytest.fixture(autouse=True)
 def isolate_service_mode(tmp_path, monkeypatch):
+    # Existing UI regressions exercise the explicitly supported classic surface.
+    # Product UI tests override this to exercise the new default entry point.
+    monkeypatch.setenv("CINEMATCH_UI", "classic")
     monkeypatch.setenv("CINEMATCH_MAINTENANCE", "0")
     monkeypatch.setenv("CINEMATCH_MAINTENANCE_FILE", str(tmp_path / "maintenance.flag"))

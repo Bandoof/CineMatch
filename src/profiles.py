@@ -54,6 +54,10 @@ def export_profile(engine, ratings, blocked, not_seen=None, watched=None, watchl
         raise ValueError("Topic feedback must refer to dismissed titles.")
     document = {"schema_version": 5, "app": "CineMatch", "ratings": records, "topic_blocked": topics,
                 "blocked": hidden, "not_seen": skipped, "watched": sorted(seen), "watchlist": later}
+    if hasattr(engine, "export_references"):
+        references = engine.export_references(set(ratings) | set(hidden) | set(skipped) | seen | set(later))
+        if references:
+            document.update(schema_version=6, catalog_refs=references)
     return json.dumps(document, ensure_ascii=False, indent=2)
 
 
@@ -69,11 +73,24 @@ def import_discovery_profile(engine, payload):
 
 def import_library_profile(engine, payload):
     document = parse_profile(payload)
+    candidate = engine
+    if document.get("schema_version") == 6:
+        if not hasattr(engine, "with_references"):
+            raise ValueError("This catalog cannot restore provider references.")
+        candidate = engine.with_references(document.get("catalog_refs"))
+    result = _import_library_document(candidate, document)
+    # Commit restored identities only after the entire profile validates.
+    if candidate is not engine:
+        engine.adopt_references(candidate)
+    return result
+
+
+def _import_library_document(engine, document):
     if "schema_version" not in document:
         # Compatibility with the original {"movie_id": rating} export.
         ratings = engine.validate_profile(document)
         return ratings, set(), set(), set(ratings), set()
-    if document["schema_version"] not in (2, 3, 4, 5) or document.get("app") != "CineMatch":
+    if document["schema_version"] not in (2, 3, 4, 5, 6) or document.get("app") != "CineMatch":
         raise ValueError("Unsupported profile schema.")
     rows, blocked = document.get("ratings"), document.get("blocked", [])
     skipped = document.get("not_seen", []) if document["schema_version"] >= 3 else []
@@ -95,12 +112,20 @@ def import_library_profile(engine, payload):
     seen = {engine.normalize_id(mid) for mid in watched} | set(ratings)
     not_seen = {engine.normalize_id(mid) for mid in skipped} - seen
     later = {engine.normalize_id(mid) for mid in watchlist} - seen
-    import_topics(engine, payload)
+    _import_topics_document(engine, document)
     return ratings, hidden, not_seen, seen, later
 
 
 def import_topics(engine, payload):
     document = parse_profile(payload)
+    if document.get("schema_version") == 6:
+        if not hasattr(engine, "with_references"):
+            raise ValueError("This catalog cannot restore provider references.")
+        engine = engine.with_references(document.get("catalog_refs"))
+    return _import_topics_document(engine, document)
+
+
+def _import_topics_document(engine, document):
     if "schema_version" not in document:
         return set()
     values = document.get("topic_blocked", document.get("blocked", []))
