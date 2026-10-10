@@ -1,5 +1,2 @@
-# Frozen evidence hashes cover exact committed bytes, including original CRLF.
-reports/** -text
-configs/** -text
-# Research source fingerprints must survive cross-platform checkouts unchanged.
-*.py -text
+# Preserve the committed metadata snapshot bytes on Windows (coverage SHA-256).
+assets/demo/*.json text eol=lf
