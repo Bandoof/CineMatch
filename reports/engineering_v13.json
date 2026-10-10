@@ -1,0 +1,256 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "baseline_main": "36d90f15cb874c4f7dd435d1d17b96221da3b83d",
+  "baseline_synthetic": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 20,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 72.72439600001235,
+    "engine_init_ms": 41.95311700004822,
+    "app_cold_ms": 298.76098500062653,
+    "app_warm_rerun_ms": 46.428743000433315,
+    "recommend_median_ms": {
+      "Adaptive": 1.3034820003667846,
+      "Hybrid": 1.4321814996947069,
+      "Content-based": 1.310912500230188
+    },
+    "mmr_10000_median_ms": 1.7158709997602273,
+    "mmr_peak_allocated_bytes": 2171696,
+    "sqlite_write_median_ms": 0.1351445002910623,
+    "process_peak_rss_mib": 168.7734375,
+    "output_sha256": "9efaf4a62d7ab31c21cf4c93e386532074c645a5564012c3e849b1ef69929679",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "current_synthetic": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 20,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 65.18086500000209,
+    "engine_init_ms": 57.219906000682386,
+    "app_cold_ms": 366.8264480002108,
+    "app_warm_rerun_ms": 16.344427000149153,
+    "recommend_median_ms": {
+      "Adaptive": 1.5169225007412024,
+      "Hybrid": 2.351501500015729,
+      "Content-based": 2.260961500724079
+    },
+    "mmr_10000_median_ms": 1.5860894991419627,
+    "mmr_peak_allocated_bytes": 2171696,
+    "sqlite_write_median_ms": 0.1464670003770152,
+    "process_peak_rss_mib": 169.5390625,
+    "output_sha256": "9efaf4a62d7ab31c21cf4c93e386532074c645a5564012c3e849b1ef69929679",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "synthetic_search": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "items": 10000,
+    "repetitions": 20,
+    "index_build_ms": 841.0751430001255,
+    "queries": {
+      "The Last Signal": {
+        "legacy": {
+          "median_ms": 72.30398650017378,
+          "p95_ms": 107.56975500044064
+        },
+        "indexed": {
+          "median_ms": 6.993159000103333,
+          "p95_ms": 7.575569999971776
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Останній сигнал": {
+        "legacy": {
+          "median_ms": 73.29324450029162,
+          "p95_ms": 78.65595699968253
+        },
+        "indexed": {
+          "median_ms": 0.035877999835065566,
+          "p95_ms": 0.05133499962539645
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Last Sign": {
+        "legacy": {
+          "median_ms": 60.477837499547604,
+          "p95_ms": 81.98744699984672
+        },
+        "indexed": {
+          "median_ms": 0.037895999867032515,
+          "p95_ms": 0.05065500045020599
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "ostannii syhnal": {
+        "legacy": {
+          "median_ms": 83.82284050003364,
+          "p95_ms": 101.37428500001988
+        },
+        "indexed": {
+          "median_ms": 0.023329999748966657,
+          "p95_ms": 0.03033499979210319
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "Останній Signal": {
+        "legacy": {
+          "median_ms": 74.60023049998199,
+          "p95_ms": 79.27732000007381
+        },
+        "indexed": {
+          "median_ms": 0.03858699983538827,
+          "p95_ms": 0.05468099971039919
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "The Last Singal": {
+        "legacy": {
+          "median_ms": 67.92167599996901,
+          "p95_ms": 76.18234000074153
+        },
+        "indexed": {
+          "median_ms": 7.436535000124422,
+          "p95_ms": 8.234253999944485
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      }
+    },
+    "expected_top1_passes": 6,
+    "cases": 6,
+    "scope": "Deterministic synthetic title retrieval; no network, images or scientific evaluation."
+  },
+  "actual_public_catalog": {
+    "counts": {
+      "films": 10123,
+      "series": 973,
+      "total": 11096,
+      "modern_movies": 0,
+      "series_since_2023": 32,
+      "synopses": 968,
+      "posters": 971,
+      "recent_730_days": 27,
+      "training_events": 200528,
+      "uk_provider_titles": 0
+    },
+    "fresh_engine_including_data_load_ms": 8534.57183700084,
+    "index_build_ms": 950.9122740000748,
+    "search": {
+      "The Last of Us": {
+        "median_ms": 16.075722000095993,
+        "p95_ms": 20.07303000027605
+      },
+      "Interstellar": {
+        "median_ms": 8.518684499904339,
+        "p95_ms": 9.126287999606575
+      },
+      "Breaking Bad": {
+        "median_ms": 8.256927499132871,
+        "p95_ms": 9.331933000794379
+      },
+      "Intouchables": {
+        "median_ms": 8.442531500804762,
+        "p95_ms": 9.431885000594775
+      }
+    },
+    "repeat_details_cache": {
+      "requests": 0,
+      "hits": 2,
+      "status": "cache"
+    },
+    "scope": "Actual public development metadata and original full-data defaults on local Linux CPU; no benchmark/holdout evaluation, no owner profiles.",
+    "facade_build_before_ms": 2625.6828080004198,
+    "facade_build_after_ms": 265.43156300067494
+  },
+  "tests": {
+    "local_with_optional_cpu_encoder": 220,
+    "optional_cpu_tests": 2,
+    "warnings": "14 existing Matplotlib/Pyparsing deprecation warnings"
+  },
+  "audit": {
+    "requirements": {
+      "dependencies": 101,
+      "vulnerabilities": 0
+    },
+    "installed": {
+      "dependencies": 107,
+      "vulnerabilities": 0
+    }
+  },
+  "scientific_scope": "Historical +17.8% unverified; 326-user cohort consumed; no new holdout or policy change.",
+  "browser": {
+    "browser": "Chromium",
+    "version": "153.0.8010.12",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ]
+    ],
+    "flows": [
+      "first launch",
+      "discovery",
+      "search",
+      "details",
+      "watchlist",
+      "undo",
+      "rating",
+      "recommendations",
+      "library",
+      "language switch",
+      "reload",
+      "autosave restoration",
+      "mobile navigation"
+    ],
+    "timings": {
+      "home_ready_ms": 9104.01174099934,
+      "search_ready_ms": 476.7997069993726
+    },
+    "page_errors": [],
+    "request_failures": [],
+    "scope": "Real local browser; public catalogs and isolated QA profile. Timings include browser/Streamlit transport; not Windows or ML quality."
+  },
+  "checks": {
+    "ruff": "passed",
+    "configured_mypy": "passed",
+    "pre_commit": "passed",
+    "historical_evidence_hashes": "verified",
+    "ci": "See final PR status; ordinary CI skips the two opt-in CPU encoder tests."
+  },
+  "primary_button_configured_contrast": 4.7540830268648735,
+  "delivery": {
+    "integration_order": [
+      16,
+      17,
+      18,
+      19
+    ],
+    "merged": false,
+    "released": false,
+    "deployed": false
+  }
+}

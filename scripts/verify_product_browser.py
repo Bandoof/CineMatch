@@ -83,8 +83,12 @@ def verify(url, output):
         page.get_by_role("combobox").first.click()
         page.get_by_role("option", name="English", exact=True).click()
         page.get_by_role("heading", name="Your cinema shelf", exact=True).wait_for()
-        expect(page.get_by_role("combobox").nth(1)).to_have_text("All")
-        expect(page.get_by_role("combobox").nth(2)).to_have_text("Title")
+        expect(page.get_by_role("combobox").nth(1)).to_have_accessible_name(
+            "Selected All. Library media"
+        )
+        expect(page.get_by_role("combobox").nth(2)).to_have_accessible_name(
+            "Selected Title. Library sort"
+        )
         expect(page.get_by_role("radio", name="My Library", exact=True)).to_be_checked()
         expect(page.locator(".st-key-card_library_-169")).to_have_count(1)
         page.mouse.wheel(0, -10000)
