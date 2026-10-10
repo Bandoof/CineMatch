@@ -1,0 +1,47 @@
+name: Finalize verified live demo release notes
+on:
+  push:
+    branches: ['release/v1.4.0-publication']
+    paths: ['.github/workflows/finalize-live-v140.yml']
+permissions:
+  contents: write
+  actions: read
+jobs:
+  finalize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GH_REPO: Bandoof/CineMatch
+    steps:
+      - name: Update release notes after successful live checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(gh api repos/$GH_REPO/actions/runs/38079237734 --jq .conclusion)" = success
+          test "$(gh api repos/$GH_REPO/git/ref/tags/v1.4.0 --jq .object.sha)" = f755bffcf5d4ebf520aa58679383051ee204e86b
+          cat > "$RUNNER_TEMP/notes.md" <<'NOTES'
+          ## CineMatch v1.4.0
+          
+          - v1.1: reliable local profiles, library actions and transparent recommendation controls.
+          - v1.2: reproducible offline ML research workflows and preserved evaluation evidence.
+          - v1.3: bilingual movie/series discovery, provider-aware metadata and product QA.
+          - v1.4: Ukrainian discovery, a session-isolated synthetic portfolio demo, explicit recommendation modes, browser QA and a bilingual engineering case study.
+          
+          The dedicated public-demo entry point is app/portfolio_app.py. It uses temporary per-visitor preferences, avoids SQLite/profile stores and provider credentials, and supports reset. The optional bounded public MovieLens pack remains separate from Git; without it, the interface explicitly uses metadata/genre heuristics.
+          
+          ML research features and algorithm demonstrations are not newly validated accuracy improvements. Modern-title heuristics and missing-model fallbacks are disclosed. No new training experiment, final holdout or historical benchmark was run for this release.
+          
+          Validation: final-main Linux/Windows tests, Ruff/Mypy, dependency audit and CodeQL; existing successful browser QA covers the unchanged application code, including startup/health, search, recommendations, reset, refresh and two-visitor isolation. No private databases, user profiles or research caches are attached.
+          
+          Public demo: https://try-cinematch.streamlit.app/
+          
+          Essential verification on the actual public instance passed on 2026-10-10: anonymous synthetic-demo initialization, Streamlit health (200 ok), Ukrainian search, recommendation cards, reset, refresh, independent-session clearing and rating isolation, with no browser page errors. Evidence: https://github.com/Bandoof/CineMatch/actions/runs/38079237734
+          
+          Hosted scope: the bounded public ML pack is not provisioned. The live application explicitly uses real metadata and genre heuristics; this is not a hosted demonstration of the historical ML model.
+          
+          The README live URL and verification notes were added after tagging, in documentation commit 82a4d855028d5074925fb45d140758fa32d354e7. The immutable v1.4.0 tag still points to f755bffcf5d4ebf520aa58679383051ee204e86b; application code is unchanged. No private data or release assets were added.
+          
+          NOTES
+          jq -n --rawfile body "$RUNNER_TEMP/notes.md" '{body: $body}' > "$RUNNER_TEMP/release.json"
+          gh api --method PATCH repos/$GH_REPO/releases/409135648 --input "$RUNNER_TEMP/release.json" --jq .html_url
