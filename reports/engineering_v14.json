@@ -513,6 +513,152 @@
       "refresh reset",
       "offline metadata",
       "keyboard focus",
+      "research limitations",
+      "mobile/tablet navigation"
+    ],
+    "timings": {
+      "home_ready_ms": 5461.598175999825,
+      "uk_search_ready_ms": 305.24822200095514
+    },
+    "page_errors": [],
+    "request_failures": [],
+    "accessibility": [
+      {
+        "page": "desktop discovery",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "filtered Ukrainian search",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "movie details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "For You",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "English library",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "mobile details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "tablet details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    ],
+    "keyboard_focus": {
+      "tag": "BUTTON",
+      "label": "Почати з чистого профілю",
+      "outline": "solid",
+      "width": "3px",
+      "shadow": "rgba(145, 96, 31, 0.5) 0px 0px 0px 3.2px"
+    },
+    "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation."
+  },
+  "docker_health": {
+    "health": "ok",
+    "startup_ms": 10106.954539998696,
+    "network": "none",
+    "published_ports": {},
+    "user": "cine",
+    "command": [
+      "streamlit",
+      "run",
+      "app/portfolio_app.py",
+      "--server.address=0.0.0.0",
+      "--server.port=8501"
+    ],
+    "stats": {
+      "BlockIO": "401kB / 0B",
+      "CPUPerc": "0.42%",
+      "MemPerc": "0.48%",
+      "MemUsage": "47.99MiB / 9.735GiB",
+      "NetIO": "0B / 0B",
+      "PIDs": "5"
+    },
+    "scope": "Local explicit portfolio image, no networking or published ports; server health only, browser functionality separately tested."
+  },
+  "audit": {
+    "requirements": {
+      "dependencies": 100,
+      "known_vulnerabilities": 0
+    },
+    "installed": {
+      "dependencies": 113,
+      "known_vulnerabilities": 0
+    }
+  },
+  "checks": {
+    "ruff": "passed",
+    "mypy": "configured 3 modules passed",
+    "pre_commit": "passed",
+    "v12_evidence": "unchanged surviving hashes"
+  },
+  "scientific_scope": "Historical +17.8% remains unverified; 326-user cohort consumed; no new holdout or production score policy change. Engineering fixtures and bounded public demo development pack are not quality evaluations.",
+  "delivery": "v1.4 PRs unmerged; no deployment, tag or Release. Fresh GitHub heads/check links tracked in docs/progress-v14.md.",
+  "invalid_pack_browser": {
+    "flows": [
+      "invalid pack visible fallback"
+    ],
+    "page_errors": [],
+    "request_failures": []
+  },
+  "capture_artwork": false,
+  "browser_with_artwork": {
+    "browser": "Chromium",
+    "version": "153.0.8010.12",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ]
+    ],
+    "flows": [
+      "first launch",
+      "discovery",
+      "Ukrainian/year search",
+      "media filters/no results",
+      "movie/series details",
+      "watchlist",
+      "Undo",
+      "rating",
+      "original ML + heuristic sections",
+      "library",
+      "UK/EN/UK language",
+      "independent visitors",
+      "reset",
+      "empty profile",
+      "refresh reset",
+      "offline metadata",
+      "keyboard focus",
       "mobile/tablet navigation"
     ],
     "timings": {
@@ -578,53 +724,5 @@
       "shadow": "rgba(145, 96, 31, 0.5) 0px 0px 0px 3.2px"
     },
     "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation."
-  },
-  "docker_health": {
-    "health": "ok",
-    "startup_ms": 10106.954539998696,
-    "network": "none",
-    "published_ports": {},
-    "user": "cine",
-    "command": [
-      "streamlit",
-      "run",
-      "app/portfolio_app.py",
-      "--server.address=0.0.0.0",
-      "--server.port=8501"
-    ],
-    "stats": {
-      "BlockIO": "401kB / 0B",
-      "CPUPerc": "0.42%",
-      "MemPerc": "0.48%",
-      "MemUsage": "47.99MiB / 9.735GiB",
-      "NetIO": "0B / 0B",
-      "PIDs": "5"
-    },
-    "scope": "Local explicit portfolio image, no networking or published ports; server health only, browser functionality separately tested."
-  },
-  "audit": {
-    "requirements": {
-      "dependencies": 100,
-      "known_vulnerabilities": 0
-    },
-    "installed": {
-      "dependencies": 113,
-      "known_vulnerabilities": 0
-    }
-  },
-  "checks": {
-    "ruff": "passed",
-    "mypy": "configured 3 modules passed",
-    "pre_commit": "passed",
-    "v12_evidence": "unchanged surviving hashes"
-  },
-  "scientific_scope": "Historical +17.8% remains unverified; 326-user cohort consumed; no new holdout or production score policy change. Engineering fixtures and bounded public demo development pack are not quality evaluations.",
-  "delivery": "v1.4 PRs unmerged; no deployment, tag or Release. Fresh GitHub heads/check links tracked in docs/progress-v14.md.",
-  "invalid_pack_browser": {
-    "flows": [
-      "invalid pack visible fallback"
-    ],
-    "page_errors": [],
-    "request_failures": []
   }
 }

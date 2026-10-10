@@ -75,3 +75,8 @@ research capture and settled-state synchronization, so fresh checks must finish
 before review-ready status. Artwork-free shareable captures are in progress.
 Recovery: finish the first remaining media/docs checkbox and inspect actual GitHub
 heads. Main remains 40eb03f; do not merge v1.4 or deploy without owner approval.
+
+Final shareable capture: 19 journeys including Research, all three viewports,
+0 page errors / failed requests, posters disabled. Invalid-pack fallback also
+passed independently. Real files are ready for the presentation PR; no narrated
+3–5 minute video has been recorded. Only actual silent QA footage is available.
