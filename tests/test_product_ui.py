@@ -156,3 +156,54 @@ def test_search_index_cache_and_metadata_invalidation(product):
     healthy(app)
     assert app.session_state["_search_index"] is not first
     assert app.button(key="details_search_-102")
+
+
+def test_provider_failure_keeps_cached_titles_and_private_ratings(product, monkeypatch):
+    import urllib.error
+
+    import app.product_ui as ui
+    from src.providers import JsonCache, ProviderClient
+
+    app, paths = product
+
+    def unavailable(url, headers):
+        raise urllib.error.URLError("synthetic outage with a secret that must not render")
+
+    client = ProviderClient(
+        JsonCache(paths["CINEMATCH_DISCOVERY_DIR"] / "responses"),
+        transport=unavailable,
+        token="",
+        sleep=lambda _: None,
+    )
+    monkeypatch.setattr(ui, "provider_client", lambda *args: client)
+    app.run()
+    original = (paths["CINEMATCH_DISCOVERY_DIR"] / "catalog.json").read_bytes()
+    app.button(key="refresh_catalog").click().run()
+    healthy(app)
+    assert -101 in app.session_state["_catalog_view"].rows
+    assert (paths["CINEMATCH_DISCOVERY_DIR"] / "catalog.json").read_bytes() == original
+    assert client.requests == 1  # Failure cooldown prevents a second TVmaze call.
+    assert app.session_state["ratings"] == {}
+    assert not any("secret" in w.value for w in app.caption)
+
+
+def test_unwritable_profile_store_preserves_session_actions_and_neutral_error(product, monkeypatch):
+    app, paths = product
+    monkeypatch.setenv(
+        "CINEMATCH_PROFILE_DB", str(paths["CINEMATCH_ARTIFACT_ROOT"])
+    )  # A directory cannot be SQLite.
+    app.run()
+    healthy(app)
+    app.button(key="watch_discover_-101").click().run()
+    healthy(app)
+    assert app.session_state["watchlist"] == {-101}
+    assert app.warning and app.session_state["_memory_error"] == "memory_failed"
+
+
+def test_historical_only_discovery_has_useful_default(product):
+    app, paths = product
+    (paths["CINEMATCH_DISCOVERY_DIR"] / "catalog.json").unlink()
+    app.run()
+    healthy(app)
+    assert app.selectbox(key="discovery_shelf").value == "popular"
+    assert any(str(button.key).startswith("details_discover_") for button in app.button)

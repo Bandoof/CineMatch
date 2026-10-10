@@ -148,7 +148,7 @@ def poster(view, mid):
 def artwork(view, mid, width=None):
     url = poster(view, mid) if st.session_state.get("posters", True) else ""
     if url:
-        st.image(url, width=width, use_container_width=width is None)
+        st.image(url, width=width or "stretch")
     else:
         with st.container(key="poster_missing" if width else f"missing_{mid}"):
             st.caption("◉  CineMatch")
@@ -187,7 +187,7 @@ def cards(view, identities, prefix, reasons=None):
             with col, st.container(border=True, key=f"card_{prefix}_{mid}"):
                 # Every item occupies one bounded native column; mobile stacks natively.
                 if poster(view, mid) and st.session_state.get("posters", True):
-                    st.image(poster(view, mid), use_container_width=True)
+                    st.image(poster(view, mid), width="stretch")
                 else:
                     with st.container(height=240, border=False):
                         st.write("◉")
@@ -214,15 +214,15 @@ def cards(view, identities, prefix, reasons=None):
                 if st.button(
                     s("Детальніше", "Details"),
                     key=f"details_{prefix}_{mid}",
-                    use_container_width=True,
+                    width="stretch",
                 ):
                     open_details(mid)
                 if st.button(
                     s("Прибрати зі списку", "Remove from watchlist")
                     if mid in st.session_state.watchlist
-                    else s("＋ Дивитися пізніше", "＋ Watchlist"),
+                    else s("Дивитися пізніше", "Watchlist"),
                     key=f"watch_{prefix}_{mid}",
-                    use_container_width=True,
+                    width="stretch",
                     disabled=mid in st.session_state.watched,
                 ):
                     perform(mid, "watchlist")
@@ -257,7 +257,7 @@ def provider_controls(view, directory):
             st.rerun()
         if st.session_state.get("provider_status"):
             statuses = st.session_state.provider_status.values()
-            if any(value not in ("fresh", "cache", "cached") for value in statuses):
+            if any(value not in ("fetched", "cache") for value in statuses):
                 st.caption(
                     s(
                         "Частина джерел недоступна; використовуємо збережені дані.",
@@ -274,6 +274,7 @@ def provider_controls(view, directory):
 
 def discover(view):
     shelves = collections(view, st.session_state.ratings, exclusions(), limit=6)
+    st.session_state.setdefault("discovery_shelf", "recent" if shelves["recent"] else "popular")
     with st.container(key="cinema_hero"):
         st.caption(s("ВАШ НАСТУПНИЙ КІНОВЕЧІР", "YOUR NEXT MOVIE NIGHT"))
         st.title(s("Історії, що залишаються з вами.", "Stories that stay with you."))
@@ -455,7 +456,7 @@ def details(view, directory, mid):
         st.rerun()
     row, title = view.rows[mid], view.titles.get(mid)
     if title and title.backdrop_url and st.session_state.get("posters", True):
-        st.image(title.backdrop_url, use_container_width=True)
+        st.image(title.backdrop_url, width="stretch")
     image, content = st.columns([1, 2], gap="large")
     with image:
         artwork(view, mid, width=320)
@@ -485,9 +486,7 @@ def details(view, directory, mid):
             if title.cast:
                 st.write(s("У ролях: ", "Cast: ") + ", ".join(title.cast))
             if title.creators:
-                st.write(
-                    s("Автори / режисери: ", "Creators / directors: ") + ", ".join(title.creators)
-                )
+                st.write(s("Автори та команда: ", "Creators & crew: ") + ", ".join(title.creators))
             if title.trailer_url:
                 st.link_button(s("Офіційний трейлер ↗", "Official trailer ↗"), title.trailer_url)
             st.link_button(title.provider + s(" · джерело ↗", " · source ↗"), title.source_url)
@@ -552,20 +551,33 @@ def details(view, directory, mid):
         if a.button(
             s("Прибрати зі списку", "Remove from watchlist")
             if mid in st.session_state.watchlist
-            else s("＋ Дивитися пізніше", "＋ Watchlist"),
+            else s("Дивитися пізніше", "Watchlist"),
             key="detail_watchlist",
             disabled=mid in st.session_state.watched,
-            use_container_width=True,
+            width="stretch",
         ):
             perform(mid, "watchlist")
         if b.button(
             s("✓ Переглянуто", "✓ Watched"),
             key="detail_watched",
             disabled=mid in st.session_state.watched,
-            use_container_width=True,
+            width="stretch",
         ):
             perform(mid, "watched")
         with st.expander(s("Інші дії", "More actions")):
+            if mid in st.session_state.watched:
+                st.caption(
+                    s(
+                        "Щоб повернути оцінену назву до непереглянутих, спершу приберіть свою оцінку.",
+                        "To mark a rated title unwatched, first remove your rating.",
+                    )
+                )
+                if st.button(
+                    s("Позначити непереглянутим", "Mark unwatched"),
+                    key="detail_unwatch",
+                    disabled=mid in st.session_state.ratings,
+                ):
+                    perform(mid, "unwatch")
             if st.button(
                 s("Повернути до рекомендацій", "Show in recommendations again")
                 if mid in st.session_state.blocked
@@ -776,13 +788,21 @@ def library(view):
         horizontal=True,
         key="library_group",
     )
-    query = st.text_input(
+    query_col, media_col, sort_col = st.columns([2, 1, 1])
+    query = query_col.text_input(
         s("Пошук у бібліотеці", "Search your library"), max_chars=160, key="library_query"
     )
-    media = st.selectbox(
-        s("Тип у бібліотеці", "Library media"), ["All", "Movie", "Series"], key="library_media"
+    media = media_col.selectbox(
+        s("Тип у бібліотеці", "Library media"),
+        ["All", "Movie", "Series"],
+        key="library_media",
+        format_func={
+            "All": s("Усе", "All"),
+            "Movie": s("Фільми", "Movies"),
+            "Series": s("Серіали", "Series"),
+        }.get,
     )
-    sort = st.selectbox(
+    sort = sort_col.selectbox(
         s("Порядок бібліотеки", "Library sort"),
         ["title", "newest", "rating"],
         key="library_sort",
@@ -979,7 +999,7 @@ def _main(memory):
             s("Показувати постери", "Show posters"), value=state.get("posters", True), key="posters"
         )
         if st.button(
-            s("↶ Скасувати останню дію", "↶ Undo last action"),
+            s("Скасувати останню дію", "Undo last action"),
             key="library_undo_button",
             disabled="library_undo" not in state,
         ):

@@ -49,6 +49,23 @@ def test_invalid_rating_preserves_last_undo():
     assert values["library_undo"] is previous and values["watchlist"] == {1}
 
 
+def test_unwatch_never_erases_ratings_and_undo_restores_activity():
+    values = state()
+    change(values, 1, "watchlist")
+    first_activity = dict(values["session_activity"])
+    change(values, 2, "watched")
+    undo(values)
+    assert values["session_activity"] == first_activity and not values["watched"]
+    change(values, 1, "rate", 4)
+    change(values, 1, "unwatch")
+    assert values["ratings"] == {1: 4} and values["watched"] == {1}
+    change(values, 1, "remove_rating")
+    change(values, 1, "unwatch")
+    assert not values["ratings"] and not values["watched"]
+    undo(values)
+    assert values["watched"] == {1}
+
+
 def test_modern_profile_roundtrip_and_old_schemas_keep_format(sample):
     base = Recommender(*sample)
     title = CatalogTitle(
