@@ -10,7 +10,11 @@ familiar films, compare recommender algorithms and keep a local library.
 метадані, український та англійський пошук, прозорі рекомендації й особиста бібліотека.
 
 **Status / Статус:** v1.4.0 release code is integrated and verified; PR #20–#23
-are merged. **Public deployment is pending; no verified live-demo URL is available.**
+are merged. **[Live portfolio demo / Живе демо](https://try-cinematch.streamlit.app/)**
+was verified on 2026-10-10: anonymous startup, health, Ukrainian search,
+recommendations, reset/refresh and independent visitor sessions.
+**Hosted scope:** real metadata and genre heuristics; the public ML pack is not yet
+provisioned. Preferences are synthetic and temporary. No visitor account is required.
 [GitHub release v1.4.0](https://github.com/Bandoof/CineMatch/releases/tag/v1.4.0).
 Run the safe demonstration locally; paid services, accounts and TMDB are optional.
 
@@ -154,7 +158,8 @@ No API keys, private SQLite files or owner history are included.
 Local data stays local. Portfolio preferences live in one visitor session; the
 app has no shared writable user store or visitor file import. Enabled posters
 send browser network information to TVmaze; they can be disabled. Hosting
-isolation was tested locally/CI, not certified on a public platform. Attribution
+isolation was verified with two independent browser contexts on the public demo;
+this is not a host security certification. Attribution
 was reviewed; complete third-party legal compliance is not claimed.
 
 ## Roadmap and contribution / Розвиток і внесок
@@ -162,11 +167,14 @@ was reviewed; complete third-party legal compliance is not claimed.
 PR [#20](https://github.com/Bandoof/CineMatch/pull/20) →
 [#21](https://github.com/Bandoof/CineMatch/pull/21) →
 [#22](https://github.com/Bandoof/CineMatch/pull/22) → [#23](https://github.com/Bandoof/CineMatch/pull/23)
-are merged. Public Streamlit Community Cloud deployment is authorized but pending
-operator access and verification on the hosted instance. Use `app/portfolio_app.py`
+are merged. The [Streamlit Community Cloud demo](https://try-cinematch.streamlit.app/)
+is deployed; [essential live verification](https://github.com/Bandoof/CineMatch/actions/runs/38079237734)
+passed on 2026-10-10. Use `app/portfolio_app.py`
 with no private files or secrets; visitor preferences are temporary and session-isolated.
 The bounded public ML pack is separate from Git and must be provisioned for ML modes;
-without it, the demo explicitly uses metadata/genre heuristics. Manual accessibility
+the current hosted demo explicitly uses metadata/genre heuristics. The live URL and
+verification notes are a documentation revision after the immutable v1.4.0 tag;
+application code remains unchanged from that release. Manual accessibility
 review and narrated recording remain future work. [Hosting comparison](docs/hosting-v14.md).
 
 Future v2.0 research: a newly registered untouched evaluation, carefully sourced
