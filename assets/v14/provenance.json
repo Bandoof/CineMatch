@@ -121,6 +121,23 @@
     "status": "Local-only; no upload/publication permission; not a narrated finished presentation",
     "local_output": "/workspace/cinematch-v14/media/qa-walkthrough.mp4",
     "source": "actual browser WebM, transcoded to H.264",
-    "uploaded": false
+    "uploaded": false,
+    "sha256": "dee03b6bc85b460fdcaeb9cd5d6c63051930147417b31f6d289052a2ccac6b74",
+    "probe": {
+      "programs": [],
+      "stream_groups": [],
+      "streams": [
+        {
+          "codec_name": "h264",
+          "width": 1280,
+          "height": 720
+        }
+      ],
+      "format": {
+        "duration": "65.440000",
+        "size": "1021653"
+      }
+    },
+    "review": "Representative frames at 10/35/55 seconds inspected; silent QA capture only. Full narrated presentation not recorded."
   }
 }

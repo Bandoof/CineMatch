@@ -160,7 +160,7 @@ was reviewed; complete third-party legal compliance is not claimed.
 
 Owner review of [#20](https://github.com/Bandoof/CineMatch/pull/20) →
 [#21](https://github.com/Bandoof/CineMatch/pull/21) →
-[#22](https://github.com/Bandoof/CineMatch/pull/22) → presentation PR; then manual
+[#22](https://github.com/Bandoof/CineMatch/pull/22) → [#23](https://github.com/Bandoof/CineMatch/pull/23); then manual
 accessibility review and the narrated recording. [Hosting comparison](docs/hosting-v14.md)
 recommends Community Cloud as the initial free candidate, subject to separate
 owner approval. No automatic v1.4 merge, deployment, tag or GitHub Release.
