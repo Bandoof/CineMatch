@@ -26,9 +26,12 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             page.on("pageerror", lambda error: errors.append(str(error)))
             page.on("requestfailed", lambda r: failures.append({"url": r.url, "error": r.failure}))
 
-        def open_choice(widget):
+        def settled(page):
             page.locator('[data-testid="stStatusWidget"]').wait_for(state="hidden", timeout=30000)
             page.wait_for_timeout(500)
+
+        def open_choice(widget):
+            settled(page)
             widget.locator("xpath=ancestor::*[.//button[@aria-label='Open']][1]").get_by_role(
                 "button", name="Open", exact=True
             ).click()
@@ -59,6 +62,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
                     page.get_by_role("checkbox", name="Показувати постери", exact=True)
                 ).not_to_be_checked()
                 page.get_by_text("Ваша демосесія", exact=True).click()
+            settled(page)
 
         def screenshot(page, name):
             print(f"Capturing {name}", flush=True)
@@ -103,6 +107,9 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
                 "request_failures": failures,
             }
         screenshot(page, "desktop-discover.png")
+        page.mouse.wheel(0, 760)
+        page.wait_for_timeout(400)
+        page.screenshot(path=str(output / "desktop-collections.png"), full_page=True)
         accessibility(page, "desktop discovery")
         page.get_by_text("Пошук", exact=True).first.click()
         query = page.get_by_role("textbox", name="Назва, рік або частина назви", exact=True)
@@ -121,6 +128,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         page.get_by_role("heading", name="Інтерстеллар (2014)", exact=True).wait_for()
         screenshot(page, "desktop-search.png")
         accessibility(page, "filtered Ukrainian search")
+        settled(page)
         page.get_by_role("button", name="Детальніше", exact=True).first.click()
         page.get_by_role("button", name="← Повернутися", exact=True).wait_for()
         expect(
@@ -137,6 +145,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         open_choice(media)
         page.get_by_role("option", name="Серіали", exact=True).click()
         card = page.locator(".st-key-card_search_-169")
+        settled(page)
         card.get_by_role("button", name="Детальніше", exact=True).click()
         page.get_by_role("button", name="← Повернутися", exact=True).wait_for()
         screenshot(page, "desktop-series-details.png")
@@ -159,6 +168,9 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         page.get_by_role("option", name=re.compile(r"^Collaborative ·")).click()
         page.get_by_role("heading", name="Знайомий каталог · Collaborative", exact=True).wait_for()
         screenshot(page, "desktop-for-you.png")
+        page.mouse.wheel(0, 600)
+        page.wait_for_timeout(400)
+        page.screenshot(path=str(output / "desktop-ml-cards.png"), full_page=True)
         accessibility(page, "For You")
         page.get_by_text("Моя бібліотека", exact=True).first.click()
         page.get_by_role("heading", name="Ваша кінополиця", exact=True).wait_for()
@@ -183,6 +195,8 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         )
         second_query.fill("Breaking Bad")
         second_query.press("Enter")
+        second.locator(".st-key-card_search_-169").wait_for()
+        settled(second)
         second.locator(".st-key-card_search_-169").get_by_role(
             "button", name="Детальніше", exact=True
         ).click()
@@ -235,6 +249,9 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         assert focus["tag"] in ("BUTTON", "INPUT", "A") and (
             focus["outline"] != "none" or focus["shadow"] != "none"
         )
+        page.get_by_text("Дослідження", exact=True).first.click()
+        expect(page.get_by_text("Історичні +17,8% не підтверджено.", exact=False)).to_be_visible()
+        screenshot(page, "desktop-research.png")
         context.close()
         other.close()
         viewports = []
@@ -252,6 +269,8 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             q = small.get_by_role("textbox", name="Назва, рік або частина назви", exact=True)
             q.fill("Останні з нас")
             q.press("Enter")
+            small.locator(".st-key-card_search_-46562").wait_for()
+            settled(small)
             small.locator(".st-key-card_search_-46562").get_by_role(
                 "button", name="Детальніше", exact=True
             ).click()
@@ -287,6 +306,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             "refresh reset",
             "offline metadata",
             "keyboard focus",
+            "research limitations",
             "mobile/tablet navigation",
         ],
         "timings": timings,
