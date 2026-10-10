@@ -193,7 +193,11 @@ def artwork(view, mid, width=None):
     else:
         with st.container(key="poster_missing" if width else f"missing_{mid}"):
             st.caption("◉  CineMatch")
-            st.caption(s("Постер недоступний", "Poster unavailable"))
+            st.caption(
+                s("Постер недоступний", "Poster unavailable")
+                if st.session_state.get("posters", True)
+                else s("Постери вимкнено", "Posters disabled")
+            )
 
 
 def source_rating(view, mid):
@@ -235,9 +239,15 @@ def cards(view, identities, prefix, reasons=None, empty_text=None):
                         alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
                     )
                 else:
-                    with st.container(height=240, border=False):
-                        st.write("◉")
-                        st.caption(s("Постер недоступний", "Poster unavailable"))
+                    with st.container(
+                        height=120, border=False, key=f"artwork_fallback_{prefix}_{mid}"
+                    ):
+                        st.write("◉ CineMatch")
+                        st.caption(
+                            s("Постер недоступний", "Poster unavailable")
+                            if st.session_state.get("posters", True)
+                            else s("Постери вимкнено", "Posters disabled")
+                        )
                 row = view.rows[mid]
                 st.subheader(view.display_title(mid, language()))
                 st.caption(

@@ -7,6 +7,10 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 3px solid #e6b35a !important; outline-offset: 3px;
 }
 .st-key-brand { margin-bottom: .4rem; }
+[class*="st-key-artwork_fallback_"] {
+  background: linear-gradient(135deg, #151f2c, #233044);
+  border-radius: .7rem; padding: 1rem; color: #e6b35a;
+}
 .st-key-cinema_hero {
   background: #151f2c; border-radius: 1.25rem;
   border: 1px solid #2b394b; padding: clamp(1rem,3vw,2.4rem);
