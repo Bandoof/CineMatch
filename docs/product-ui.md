@@ -7,6 +7,9 @@ provide CineMatch's own visual identity. CSS in `app/product.css` styles only
 our public `st-key-*` container classes and standard elements. Keyboard focus
 is visible; reduced-motion preferences are respected. No arbitrary HTML, scripts
 or private Streamlit DOM selectors are used by this surface.
+The primary amber is deliberately darker than the decorative focus accent:
+configured foreground/background contrast is 4.75:1. Classic headings inherit
+the current theme foreground so the compatibility surface remains readable.
 
 Українська та англійська доступні в перемикачі мови. Пошук враховує обидві
 мови незалежно від мови інтерфейсу. Деталі показують лише доступні поля джерела,

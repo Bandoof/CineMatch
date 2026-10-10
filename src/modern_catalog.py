@@ -245,8 +245,29 @@ class ModernCatalog:
             temporary_path.unlink(missing_ok=True)
 
 
-def resolve_mapping(title, movies):
+def identity_index(movies):
+    """Build explicit identity evidence once, retaining duplicate ambiguity."""
+    provider, imdb = {}, {}
+    for row in movies.itertuples(index=False):
+        if getattr(row, "source", "") == "TVmaze":
+            provider.setdefault(int(row.movie_id), []).append(row.media_type)
+        value = getattr(row, "imdb_id", "")
+        if isinstance(value, str) and value:
+            key = (value, row.media_type, row.year)
+            imdb.setdefault(key, []).append(int(row.movie_id))
+    return provider, imdb
+
+
+def resolve_mapping(title, movies, indexed=None):
     """Explicit identity evidence only: provider ID, or unique IMDb + type + year."""
+    if indexed is not None:
+        provider, imdb = indexed
+        if title.provider == "TVmaze" and provider.get(title.canonical_id) == ["Series"]:
+            return title.canonical_id, "provider_identity"
+        matches = imdb.get((title.imdb_id, title.media_type, title.year), [])
+        if title.imdb_id and title.year and len(matches) == 1:
+            return matches[0], "unique_imdb_type_year"
+        return title.canonical_id, "separate_provider_identity"
     if title.provider == "TVmaze":
         same = movies[(movies.movie_id == title.canonical_id) & (movies.source == "TVmaze")]
         if len(same) == 1 and same.iloc[0].media_type == "Series":

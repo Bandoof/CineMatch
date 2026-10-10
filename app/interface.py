@@ -50,7 +50,7 @@ def _main(memory):
     st.markdown("""<style>
     .block-container{max-width:1230px;padding-top:1.3rem;padding-bottom:3rem}
     .brand{padding-left:40px;padding-top:.2rem;font-weight:750;font-size:1.05rem}
-    h1,h2,h3{letter-spacing:-.035em;color:#17253a}
+    h1,h2,h3{letter-spacing:-.035em;color:inherit}
     header[data-testid="stHeader"]{background:transparent}
     .hero{padding:.7rem 1.5rem;border-radius:18px;background:#17253a;
     margin-bottom:1rem;position:relative;overflow:hidden}

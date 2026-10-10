@@ -7,7 +7,7 @@ import pandas as pd
 
 from src.catalog import integer_id
 from src.content_based import ContentBased
-from src.modern_catalog import CatalogTitle, ModernCatalog, resolve_mapping
+from src.modern_catalog import CatalogTitle, ModernCatalog, identity_index, resolve_mapping
 
 
 class CatalogView:
@@ -31,9 +31,10 @@ class CatalogView:
             "imdb_id",
         ]
         original = self.base.movies if self.base is not None else pd.DataFrame(columns=columns)
+        indexed = identity_index(original)
         self.titles, self.mapping_provenance, self.external_ids = {}, {}, {}
         for title in self.catalog.titles.values():
-            mid, provenance = resolve_mapping(title, original)
+            mid, provenance = resolve_mapping(title, original, indexed)
             self.external_ids[title.external_key] = mid
             self.mapping_provenance[title.external_key] = provenance
             previous = self.titles.get(mid)

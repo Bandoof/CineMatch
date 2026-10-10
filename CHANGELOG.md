@@ -2,6 +2,23 @@
 
 Changes are recorded by engineering milestone; these headings are not published tags.
 
+## Unreleased — v1.3 Modern Movie Discovery
+
+- Separate validated TVmaze/optional TMDB catalog, stable namespaces and explicit
+  identity provenance; bounded API caches, offline snapshots and provider attribution.
+- Indexed Ukrainian/English/original title search, typos, transliteration, mixed
+  queries, remake disambiguation, filters and stable sorts.
+- Dark native consumer navigation, responsive bounded poster cards, actual title
+  details and clearly defined discovery shelves. One page renders per rerun.
+- Existing ML algorithms/weights remain fixed; modern cold titles use disclosed
+  genre/source-quality ranking. Research controls remain accessible separately.
+- Reversible library actions, autosave/CAS, named/JSON profiles and atomic optional
+  schema-6 identity restoration; schemas 2–5 remain compatible.
+- Real desktop/mobile Chromium QA, reproducible synthetic measurements and bilingual
+  setup/limits. No merge, tag, Release, deployment or new real holdout was performed.
+- Historical +17.8% remains unverified and all surviving research bytes preserved.
+- See [v1.3 verification and review order](docs/release-v13.md).
+
 ## Unreleased — v1.2 engineering and research infrastructure
 
 - Reproducible offline research with pinned data, disjoint cohorts, validation-only

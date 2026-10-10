@@ -75,6 +75,7 @@ def benchmark(items=1500, repetitions=30):
             "CINEMATCH_SERIES_FILE": str(directory / "absent-series.json"),
             "CINEMATCH_METADATA_FILE": str(directory / "absent-metadata.json"),
             "CINEMATCH_CONTENT_FILE": str(directory / "absent-content.json"),
+            "CINEMATCH_DISCOVERY_DIR": str(directory / "isolated-discovery"),
             "CINEMATCH_PROFILE_DB": str(directory / "isolated.sqlite3"),
             "CINEMATCH_LOCAL_PROFILES": "0",
             "CINEMATCH_AUTOSAVE": "0",

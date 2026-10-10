@@ -16,9 +16,14 @@ def change(state, mid, action, rating=None):
         "snooze",
         "not_seen",
         "remove_rating",
+        "unwatch",
     ):
         raise ValueError("Unknown library action.")
-    previous = {"ratings": dict(state["ratings"]), **{key: set(state[key]) for key in SETS}}
+    previous = {
+        "ratings": dict(state["ratings"]),
+        "session_activity": dict(state.get("session_activity", {})),
+        **{key: set(state[key]) for key in SETS},
+    }
     # Invalid ratings must fail before replacing the previous Undo record.
     if action == "rate":
         rate_title(state, mid, rating)
@@ -47,6 +52,9 @@ def change(state, mid, action, rating=None):
                 state["not_seen"].add(mid)
         elif action == "remove_rating":
             state["ratings"].pop(mid, None)
+        elif action == "unwatch":
+            if mid not in state["ratings"]:
+                state["watched"].discard(mid)
     state["library_undo"] = previous
     activity = dict(state.get("session_activity", {}))
     activity[mid] = datetime.now(timezone.utc).isoformat()
@@ -58,5 +66,3 @@ def undo(state):
     if previous is not None:
         remember_change(state)
         state.update(previous)
-        # Activity is deliberately session-only, never an invented historical date.
-        state["session_activity"] = {}
