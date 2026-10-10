@@ -87,9 +87,15 @@ jobs:
                   page = appframe(top_a)
                   ready(page)
                   passed("public synthetic demo initializes without visitor login")
-                  health = a.request.get(URL + "_stcore/health", timeout=45000)
-                  result["health"] = {"status": health.status, "body": health.text()[:80]}
-                  assert health.status == 200 and health.text().strip() == "ok", result["health"]
+                  parsed = urlparse(page.url)
+                  print("APP_FRAME " + parsed.scheme + "://" + parsed.netloc + parsed.path, flush=True)
+                  health = page.evaluate("""async () => {
+                      const url = new URL("_stcore/health", window.location.href);
+                      const response = await fetch(url, {credentials: "same-origin", signal: AbortSignal.timeout(45000)});
+                      return {status: response.status, body: await response.text(), path: url.pathname};
+                  }""")
+                  result["health"] = {"status": health["status"], "body": health["body"][:80], "path": health["path"]}
+                  assert health["status"] == 200 and health["body"].strip() == "ok", result["health"]
                   passed("Streamlit health")
                   result["ml_pack_loaded"] = page.get_by_text("Історичну ML-модель не завантажено.", exact=False).count() == 0
                   initial = summary(page)
