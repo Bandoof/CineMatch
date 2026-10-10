@@ -94,6 +94,11 @@ def test_first_launch_and_all_pages_render_only_active_controls(product):
     for page in ("for_you", "movies", "series", "search", "library", "research", "discover"):
         app.radio(key=f"navigation_{app.session_state['ui_language']}").set_value(page).run()
         healthy(app)
+        if page == "for_you":
+            assert app.selectbox(key="for_you_algorithm").value == "Adaptive"
+            app.selectbox(key="for_you_algorithm").set_value("Collaborative").run()
+            healthy(app)
+            assert any("Known catalog · Collaborative" in h.value for h in app.subheader)
     app.button(key="hero_search").click().run()
     assert app.radio(key=f"navigation_{app.session_state['ui_language']}").value == "search"
     healthy(app)
@@ -111,7 +116,8 @@ def test_search_details_watchlist_rating_undo_and_fresh_restore(product):
     app.button(key="library_undo_button").click().run()
     assert app.session_state["watchlist"] == set()
     app.button(key="detail_watchlist").click().run()
-    app.select_slider(key="stars_-101").set_value(4.5).run()
+    # A browser form sends the edited value with its submit, without an intermediate rerun.
+    app.select_slider(key="stars_-101").set_value(4.5)
     next(w for w in app.button if w.label == "Save rating").click().run()
     healthy(app)
     assert app.session_state["ratings"] == {-101: 4.5}
