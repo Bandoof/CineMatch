@@ -100,7 +100,7 @@ def test_duplicate_names_keep_distinct_identities_and_atomic_snapshot(tmp_path):
     catalog.save(path)
     restored = ModernCatalog.load(path)
     assert restored.titles == catalog.titles and len(restored.titles) == 3
-    raw = json.loads(path.read_text())
+    raw = json.loads(path.read_text(encoding="utf-8"))
     raw["titles"].append(raw["titles"][0])
     path.write_text(json.dumps(raw))
     with pytest.raises(ValueError, match="Duplicate"):
