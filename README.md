@@ -9,8 +9,9 @@ familiar films, compare recommender algorithms and keep a local library.
 Двомовний локальний застосунок для відкриття фільмів і серіалів: справжні
 метадані, український та англійський пошук, прозорі рекомендації й особиста бібліотека.
 
-**Status / Статус:** v1.3 is integrated and verified. v1.4 is a portfolio candidate
-in unmerged review PRs. **No public live demo, deployment or Release exists.**
+**Status / Статус:** v1.4.0 release code is integrated and verified; PR #20–#23
+are merged. **Public deployment is pending; no verified live-demo URL is available.**
+[GitHub release v1.4.0](https://github.com/Bandoof/CineMatch/releases/tag/v1.4.0).
 Run the safe demonstration locally; paid services, accounts and TMDB are optional.
 
 [Quick start / Запуск](#quick-start--швидкий-старт) ·
@@ -158,12 +159,15 @@ was reviewed; complete third-party legal compliance is not claimed.
 
 ## Roadmap and contribution / Розвиток і внесок
 
-Owner review of [#20](https://github.com/Bandoof/CineMatch/pull/20) →
+PR [#20](https://github.com/Bandoof/CineMatch/pull/20) →
 [#21](https://github.com/Bandoof/CineMatch/pull/21) →
-[#22](https://github.com/Bandoof/CineMatch/pull/22) → [#23](https://github.com/Bandoof/CineMatch/pull/23); then manual
-accessibility review and the narrated recording. [Hosting comparison](docs/hosting-v14.md)
-recommends Community Cloud as the initial free candidate, subject to separate
-owner approval. No automatic v1.4 merge, deployment, tag or GitHub Release.
+[#22](https://github.com/Bandoof/CineMatch/pull/22) → [#23](https://github.com/Bandoof/CineMatch/pull/23)
+are merged. Public Streamlit Community Cloud deployment is authorized but pending
+operator access and verification on the hosted instance. Use `app/portfolio_app.py`
+with no private files or secrets; visitor preferences are temporary and session-isolated.
+The bounded public ML pack is separate from Git and must be provisioned for ML modes;
+without it, the demo explicitly uses metadata/genre heuristics. Manual accessibility
+review and narrated recording remain future work. [Hosting comparison](docs/hosting-v14.md).
 
 Future v2.0 research: a newly registered untouched evaluation, carefully sourced
 Ukrainian coverage, calibrated explanations and measured hosted resource limits.
