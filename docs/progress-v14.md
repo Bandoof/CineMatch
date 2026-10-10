@@ -30,9 +30,9 @@ Portable summarized evidence will be saved in `reports/engineering_v14.json`.
 
 ## Stage B acceptance checklist
 
-- [ ] Credential-free dated real film/series metadata; traceable legitimate UK
+- [x] Credential-free dated real film/series metadata; traceable legitimate UK
   labels, namespaces/dedup tests, bounded explicit refresh; no invented ratings.
-- [ ] Correct provider error feedback, useful empty/offline states and preserved
+- [x] Correct provider error feedback, useful empty/offline states and preserved
   bilingual selections; no misleading saved-success messages.
 - [ ] Labeled synthetic demo profile with positive/negative ratings, watched and
   watchlist; independent visitor state, reset, no local private storage access.
@@ -46,3 +46,11 @@ Portable summarized evidence will be saved in `reports/engineering_v14.json`.
 No public deployment, tag, GitHub Release, private infrastructure modification or
 v1.4 merge is authorized. Recovery: fetch/read current GitHub PR state; resume the
 first unchecked item. Never repeat completed v1.3 merges or research holdouts.
+
+Product/catalog checkpoint: 30 real titles (22 films / 8 series), 30 source UK
+labels, 25 UK short descriptions, 8 poster URLs / attributed community ratings.
+19 titles have source release years >=2023; 5 precise dates within 730 days.
+9 ambiguous/missing precise dates are withheld while source years remain useful.
+Initial capture 14 live requests; label-priority refinement 4 live / 10 hits;
+final reconstruction 0 live / 14 hits. TMDB credential absent; no live claim.
+Wikidata/TVmaze data license is separate from code; no artwork bundled.

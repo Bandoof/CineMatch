@@ -105,8 +105,11 @@ def load_view():
     catalog_path = discovery_dir / "catalog.json"
     view_key = (id(base), artifact_signature([catalog_path]))
     if st.session_state.get("_view_key") != view_key:
+        bundled_sample = base is None and not catalog_path.exists()
         try:
-            catalog = ModernCatalog.load(catalog_path)
+            catalog = ModernCatalog.load(
+                ROOT / "assets/demo/catalog.json" if bundled_sample else catalog_path
+            )
         except (OSError, ValueError):
             catalog = ModernCatalog()
             st.warning(
@@ -117,6 +120,7 @@ def load_view():
             )
         old = st.session_state.get("_catalog_view")
         view = CatalogView(base, catalog)
+        view.bundled_sample = bundled_sample
         if old is not None:
             ids = set(st.session_state.get("ratings", {}))
             for key in ("blocked", "watched", "watchlist", "not_seen", "snoozed"):
@@ -186,11 +190,12 @@ def source_rating(view, mid):
     return ""
 
 
-def cards(view, identities, prefix, reasons=None):
+def cards(view, identities, prefix, reasons=None, empty_text=None):
     ids = list(dict.fromkeys(int(mid) for mid in identities if mid in view.rows))[:12]
     if not ids:
         st.info(
-            s(
+            empty_text
+            or s(
                 "Тут поки немає назв. Спробуйте інший жанр, пошук або додайте кілька оцінок.",
                 "No titles here yet. Try another genre, a search, or a few ratings.",
             )
@@ -255,6 +260,13 @@ def provider_controls(view, directory):
             )
         )
         st.caption(f"{len(view.movies)} " + s("назв", "titles"))
+        if getattr(view, "bundled_sample", False):
+            st.caption(
+                s(
+                    "Невелика датована демонстраційна добірка. Це не повний сучасний каталог.",
+                    "Small dated demonstration selection. This is not a complete contemporary catalog.",
+                )
+            )
         st.caption(
             s(
                 "Нові фільми: необов’язковий TMDB. Серіали: TVmaze без ключа.",
@@ -266,7 +278,7 @@ def provider_controls(view, directory):
             titles, statuses = refresh_catalog(client, online=True)
             if titles:
                 view.add_titles(titles)
-                save_catalog(view.catalog, directory)
+                st.session_state._metadata_save_failed = not save_catalog(view.catalog, directory)
             st.session_state.provider_status = statuses
             st.rerun()
         if st.session_state.get("provider_status"):
@@ -286,9 +298,52 @@ def provider_controls(view, directory):
         provider_credits(view.catalog)
 
 
+def provider_feedback():
+    statuses = st.session_state.get("provider_status", {})
+    messages = {
+        "missing_credentials": s(
+            "не налаштовано необов’язковий токен", "optional token is not configured"
+        ),
+        "offline": s("офлайн; збережені назви доступні", "offline; saved titles remain available"),
+        "stale": s("використано давніший кеш", "older cached metadata was used"),
+        "rate_limited": s("ліміт запитів; повторіть пізніше", "rate limited; try later"),
+        "unavailable": s(
+            "джерело недоступне; дані збережено", "source unavailable; existing data preserved"
+        ),
+    }
+    failures = [
+        f"{source}: {messages[value]}"
+        for source, value in statuses.items()
+        if value in messages
+        and source
+        in {"TVmaze", "TVmaze schedule", "TMDB", "TMDB now_playing", "TMDB upcoming", "Wikidata"}
+    ]
+    if failures:
+        st.warning(" · ".join(failures))
+    if st.session_state.get("_metadata_save_failed"):
+        st.warning(
+            s(
+                "Метадані доступні лише в цій сесії: запис кешу не вдався.",
+                "Metadata is available in this session only: the cache could not be saved.",
+            )
+        )
+
+
 def discover(view):
     shelves = collections(view, st.session_state.ratings, exclusions(), limit=6)
-    st.session_state.setdefault("discovery_shelf", "recent" if shelves["recent"] else "popular")
+    sample = getattr(view, "bundled_sample", False)
+    if sample:
+        eligible = [
+            mid
+            for mid in view.rows
+            if mid not in exclusions() and mid not in st.session_state.ratings
+        ]
+        shelves["sample"] = [mid for mid in eligible if view.rows[mid].media_type == "Series"][
+            :3
+        ] + [mid for mid in shelves["recent"] if view.rows[mid].media_type == "Movie"][:3]
+    st.session_state.setdefault(
+        "discovery_shelf", "sample" if sample else "recent" if shelves["recent"] else "popular"
+    )
     with st.container(key="cinema_hero"):
         st.caption(s("ВАШ НАСТУПНИЙ КІНОВЕЧІР", "YOUR NEXT MOVIE NIGHT"))
         st.title(s("Історії, що залишаються з вами.", "Stories that stay with you."))
@@ -306,8 +361,10 @@ def discover(view):
         )
     shelf = choice(
         s("Що відкриємо сьогодні?", "What shall we discover?"),
-        ["recent", "popular", "hidden_gems", "upcoming", "tonight", "because_liked"],
+        (["sample"] if sample else [])
+        + ["recent", "popular", "hidden_gems", "upcoming", "tonight", "because_liked"],
         labels={
+            "sample": s("Добірка для знайомства", "Portfolio selection"),
             "recent": s("Нещодавно вийшли", "Recently released"),
             "popular": s("Популярні в MovieLens", "Popular in MovieLens"),
             "hidden_gems": s("Приховані перлини", "Hidden gems"),
@@ -318,6 +375,10 @@ def discover(view):
         key="discovery_shelf",
     )
     definitions = {
+        "sample": s(
+            "Невелика датована добірка реальних серіалів і фільмів. Це не рейтинг популярності.",
+            "Small dated selection of real series and films. This is not a popularity ranking.",
+        ),
         "recent": s(
             "Перша дата виходу за останні 730 днів; тільки підтверджені дати провайдерів.",
             "First release within 730 days; verified provider dates only.",
@@ -444,7 +505,15 @@ def browse(view, directory, page):
         )
     )
     st.caption(f"{len(hits)} " + s("результатів", "results"))
-    cards(view, [hit.item_id for hit in hits[(number - 1) * 12 : number * 12]], page)
+    cards(
+        view,
+        [hit.item_id for hit in hits[(number - 1) * 12 : number * 12]],
+        page,
+        empty_text=s(
+            "Збігів немає. Спробуйте іншу назву, приберіть рік або послабте фільтри. Збережений каталог може бути неповним.",
+            "No matches. Try another title, remove the year or relax filters. The saved catalog may be incomplete.",
+        ),
+    )
     if query.strip():
         with st.expander(s("Шукати поза збереженим каталогом", "Search beyond the saved catalog")):
             st.caption(
@@ -457,15 +526,18 @@ def browse(view, directory, page):
                 client = provider_client(
                     str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", "")
                 )
-                titles, statuses = provider_search(client, query, online=True)
+                titles, statuses = provider_search(client, query, media_type=media, online=True)
                 if titles:
                     view.add_titles(titles)
-                    save_catalog(view.catalog, directory)
+                    st.session_state._metadata_save_failed = not save_catalog(
+                        view.catalog, directory
+                    )
                 st.session_state.provider_status = statuses
-                st.session_state._feedback = s(
-                    "Пошук завершено; доступні результати збережено.",
-                    "Search complete; available results saved.",
-                )
+                if titles:
+                    st.session_state._feedback = s(
+                        "Знайдені метадані додано до каталогу",
+                        "Matching metadata added to the catalog",
+                    )
                 st.rerun()
 
 
@@ -488,6 +560,16 @@ def details(view, directory, mid):
         if source_rating(view, mid):
             st.write(source_rating(view, mid))
         if title:
+            short = (
+                title.short_description_uk if language() == "uk" else ""
+            ) or title.short_description_en
+            if short:
+                st.caption(s("Короткий опис Wikidata: ", "Wikidata short description: ") + short)
+            if title.localization_source:
+                st.link_button(
+                    s("Джерело української назви ↗", "Ukrainian title source ↗"),
+                    title.localization_source,
+                )
             if title.release_date:
                 st.caption(s("Перша дата виходу: ", "First release: ") + title.release_date)
             if title.runtime:
@@ -528,7 +610,9 @@ def details(view, directory, mid):
                 refreshed, status = title_details(client, title, online=True)
                 if refreshed.fetched_utc:
                     view.add_titles([refreshed])
-                    save_catalog(view.catalog, directory)
+                    st.session_state._metadata_save_failed = not save_catalog(
+                        view.catalog, directory
+                    )
                 st.session_state.provider_status = {title.provider: status}
                 st.rerun()
         else:
@@ -866,7 +950,15 @@ def library(view):
             key="library_page",
         )
     )
-    cards(view, [h.item_id for h in hits[(page - 1) * 12 : page * 12]], "library")
+    cards(
+        view,
+        [h.item_id for h in hits[(page - 1) * 12 : page * 12]],
+        "library",
+        empty_text=s(
+            "У цій колекції немає збігів. Додайте назву з деталей або змініть фільтри бібліотеки.",
+            "No matching titles in this collection. Add one from Details or change library filters.",
+        ),
+    )
     with st.expander(s("Ваш смак у цифрах", "Your taste in numbers")):
         counts = {}
         for mid in st.session_state.ratings:
@@ -1030,8 +1122,10 @@ def _main(memory):
             state._feedback = s("Дію скасовано", "Action undone")
             st.rerun()
         provider_controls(view, directory)
-    if state.pop("_feedback", None):
-        st.toast(s("Бібліотеку оновлено", "Library updated"))
+    feedback = state.pop("_feedback", None)
+    if feedback:
+        st.toast(feedback)
+    provider_feedback()
     page = choice(
         s("Навігація", "Navigation"),
         PAGES,

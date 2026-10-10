@@ -1,6 +1,7 @@
 """Consumer catalog facade. The training engine and its scores stay unchanged."""
 
 import math
+from dataclasses import replace
 
 import numpy as np
 import pandas as pd
@@ -32,15 +33,41 @@ class CatalogView:
         ]
         original = self.base.movies if self.base is not None else pd.DataFrame(columns=columns)
         indexed = identity_index(original)
+        known = set(original.movie_id)
         self.titles, self.mapping_provenance, self.external_ids = {}, {}, {}
-        for title in self.catalog.titles.values():
+        priority = {"TVmaze": 0, "TMDB": 1, "Wikidata": 2}
+        titles = sorted(
+            self.catalog.titles.values(), key=lambda t: (priority[t.provider], t.provider_id)
+        )
+        groups = {}
+        for title in titles:
+            if title.imdb_id and title.year:
+                groups.setdefault((title.imdb_id, title.media_type, title.year), []).append(title)
+        joins = {}
+        for group in groups.values():
+            if len(group) > 1 and len({t.provider for t in group}) == len(group):
+                primary, _ = resolve_mapping(group[0], original, indexed)
+                for title in group:
+                    mapped, _ = resolve_mapping(title, original, indexed)
+                    if mapped in known:
+                        primary = mapped
+                joins.update({t.external_key: primary for t in group})
+        for title in titles:
             mid, provenance = resolve_mapping(title, original, indexed)
+            if title.external_key in joins and mid != joins[title.external_key]:
+                mid, provenance = joins[title.external_key], "unique_cross_provider_imdb_type_year"
             self.external_ids[title.external_key] = mid
             self.mapping_provenance[title.external_key] = provenance
             previous = self.titles.get(mid)
-            if previous is None or title.title_uk or not previous.title_uk:
+            if previous is None:
                 self.titles[mid] = title
-        known = set(original.movie_id)
+            elif not previous.title_uk and title.title_uk:
+                self.titles[mid] = replace(
+                    previous,
+                    title_uk=title.title_uk,
+                    localization_source=title.localization_source,
+                    short_description_uk=title.short_description_uk,
+                )
         for mid, title in sorted(self.titles.items()):
             if mid not in known:
                 records.append(
@@ -61,6 +88,7 @@ class CatalogView:
         self.movie_ids = self.movies.movie_id.to_numpy(dtype=np.int64)
         self.aliases = dict(self.base.aliases) if self.base is not None else {}
         self.aliases.update({mid: mid for mid in self.rows if mid not in known})
+        self.aliases.update({t.canonical_id: self.external_ids[t.external_key] for t in titles})
         self.content = ContentBased(self.movies) if len(self.movies) else None
         self.reference_only &= set(self.rows)
 
@@ -158,11 +186,15 @@ class CatalogView:
             "release_date",
             "genres",
         )
-        return {
+        result = {
             str(mid): {key: self.titles[mid].to_dict()[key] for key in fields}
             for mid in sorted(identities)
             if mid in self.titles and (self.base is None or mid not in self.base.positions)
         }
+        for key, record in result.items():
+            if self.titles[int(key)].release_year:
+                record["release_year"] = self.titles[int(key)].release_year
+        return result
 
     def with_references(self, references):
         if not isinstance(references, dict) or len(references) > 5000:
@@ -179,6 +211,7 @@ class CatalogView:
                 "title_uk",
                 "release_date",
                 "genres",
+                "release_year",
             }:
                 raise ValueError("Invalid saved identity fields.")
             title = CatalogTitle.from_dict(record)
