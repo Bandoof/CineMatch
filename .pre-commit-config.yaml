@@ -10,12 +10,12 @@ repos:
         name: Ruff imports (incremental scope)
         entry: python -m ruff check --select I
         language: system
-        files: ^src/(profile_actions|hybrid|ranking)\.py$
+        files: ^(src/(profile_actions|hybrid|ranking|research_[a-z_]+)|scripts/(prepare_research|research_v12|download_research)|tests/test_research_[a-z_]+)\.py$
       - id: ruff-format
         name: Ruff format (incremental scope)
         entry: python -m ruff format --check
         language: system
-        files: ^(src/(profile_actions|hybrid|ranking)|tests/(test_profile_actions|test_state_reliability|test_performance_equivalence|test_search_ui|test_runtime_reliability)|scripts/benchmark_performance)\.py$
+        files: ^(src/(profile_actions|hybrid|ranking)|tests/(test_profile_actions|test_state_reliability|test_performance_equivalence|test_search_ui|test_runtime_reliability)|scripts/(benchmark_performance|prepare_research|research_v12|download_research)|src/research_[a-z_]+|tests/test_research_[a-z_]+)\.py$
       - id: mypy
         name: Mypy (incremental scope)
         entry: python -m mypy
