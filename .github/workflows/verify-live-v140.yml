@@ -18,7 +18,8 @@ jobs:
         shell: bash
         run: |
           cat > "$RUNNER_TEMP/verify-live.py" <<'PY'
-          import json, re, urllib.request
+          import json, re, time
+          from urllib.parse import urlparse
           from playwright.sync_api import sync_playwright, expect
           
           URL = "https://try-cinematch.streamlit.app/"
@@ -33,15 +34,29 @@ jobs:
               b = browser.new_context()
               page = a.new_page()
               other = b.new_page()
+              top_a, top_b = page, other
               for pg in (page, other):
                   pg.set_default_timeout(30000)
                   pg.on("pageerror", lambda error: result["errors"].append(str(error)))
+          
+              def appframe(pg):
+                  for attempt in range(60):
+                      for frame in pg.frames:
+                          if frame.get_by_role("button", name="Знайти свою історію", exact=True).count():
+                              return frame
+                      pg.wait_for_timeout(1000)
+                  print("PUBLIC_PAGE_DIAGNOSTICS", flush=True)
+                  for frame in pg.frames:
+                      parsed = urlparse(frame.url)
+                      print(json.dumps({"origin_path": parsed.scheme + "://" + parsed.netloc + parsed.path, "text": frame.locator("body").inner_text()[:3500], "iframes": frame.locator("iframe").count()}, ensure_ascii=False), flush=True)
+                  print("HTML_TAGS " + pg.locator("body").evaluate("(e) => e.outerHTML.replace(/<script[\\s\\S]*?<\\/script>/g,'').slice(0,3500)"), flush=True)
+                  raise RuntimeError("The hosted demo did not initialize in any browser frame")
           
               def settled(pg):
                   pg.locator('[data-testid="stStatusWidget"]').wait_for(state="hidden", timeout=60000)
                   pg.wait_for_timeout(500)
               def ready(pg):
-                  pg.get_by_role("button", name="Знайти свою історію", exact=True).wait_for(timeout=180000)
+                  pg.get_by_role("button", name="Знайти свою історію", exact=True).wait_for(timeout=60000)
                   expect(pg.get_by_text("Демонстрація · синтетичний профіль, реальні назви", exact=True)).to_be_visible()
                   settled(pg)
               def expand(pg):
@@ -68,10 +83,11 @@ jobs:
                   settled(pg)
           
               try:
-                  page.goto(URL, wait_until="domcontentloaded", timeout=90000)
+                  top_a.goto(URL, wait_until="domcontentloaded", timeout=60000)
+                  page = appframe(top_a)
                   ready(page)
                   passed("public synthetic demo initializes without visitor login")
-                  health = page.request.get(URL + "_stcore/health", timeout=45000)
+                  health = a.request.get(URL + "_stcore/health", timeout=45000)
                   result["health"] = {"status": health.status, "body": health.text()[:80]}
                   assert health.status == 200 and health.text().strip() == "ok", result["health"]
                   passed("Streamlit health")
@@ -91,7 +107,8 @@ jobs:
                   assert page.get_by_role("button", name="Детальніше", exact=True).count() > 0
                   passed("recommendation cards render")
           
-                  other.goto(URL, wait_until="domcontentloaded", timeout=90000)
+                  top_b.goto(URL, wait_until="domcontentloaded", timeout=60000)
+                  other = appframe(top_b)
                   ready(other)
                   assert summary(other) == initial
                   page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
@@ -120,7 +137,8 @@ jobs:
                   page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
                   ready(page)
                   assert summary(page) == (0, 0)
-                  page.reload(wait_until="domcontentloaded")
+                  top_a.reload(wait_until="domcontentloaded")
+                  page = appframe(top_a)
                   ready(page)
                   assert summary(page) == initial
                   passed("refresh starts a fresh synthetic session")
