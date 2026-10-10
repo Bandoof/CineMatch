@@ -36,9 +36,9 @@ Portable summarized evidence will be saved in `reports/engineering_v14.json`.
   bilingual selections; no misleading saved-success messages.
 - [x] Labeled synthetic demo profile with positive/negative ratings, watched and
   watchlist; independent visitor state, reset, no local private storage access.
-- [ ] Desktop/mobile/tablet browser journeys, independent contexts, reset/refresh,
+- [x] Desktop/mobile/tablet browser journeys, independent contexts, reset/refresh,
   controlled offline/errors, basic accessibility checks with manual gaps disclosed.
-- [ ] Same benchmark fixtures/output hash; resource/session and Docker checks.
+- [x] Same benchmark fixtures/output hash; resource/session and Docker checks.
 - [ ] Bilingual portfolio README/case study/architecture, real screenshots,
   3–5 minute scripts/storyboard/subtitles and hosting/threat-model documentation.
 - [ ] All tests/security/evidence checks pass; focused v1.4 PRs pushed, unmerged.
@@ -62,3 +62,21 @@ official archives: 222 titles / 30,000 input events (29,974 canonical latest eve
 248 combined identities. Seven recommendation modes exercised on the real pack.
 Source files/DBs/models remain outside Git. No owner DB created.
 PR #20: https://github.com/Bandoof/CineMatch/pull/20 (main base, unmerged).
+
+QA checkpoint: PR #22 https://github.com/Bandoof/CineMatch/pull/22 (base #21).
+233 local / 231 Docker + 2 optional skips; exact original score hash preserved.
+Streamlit 1.54 native ARIA defects motivated 1.65; native form submissions tested
+with batched input, without changing the expected rating. Real 18-flow browser
+run and independent GitHub browser CI passed with 0 page errors/failed requests.
+Seven axe views: no violations, one incomplete ARIA item needing manual review.
+Invalid pack warning/fallback tested separately, no SQLite sentinel created.
+Fresh Linux/Windows/security/CodeQL checks passed on 796c44f; the follow-up adds
+research capture and settled-state synchronization, so fresh checks must finish
+before review-ready status. Artwork-free shareable captures are in progress.
+Recovery: finish the first remaining media/docs checkbox and inspect actual GitHub
+heads. Main remains 40eb03f; do not merge v1.4 or deploy without owner approval.
+
+Final shareable capture: 19 journeys including Research, all three viewports,
+0 page errors / failed requests, posters disabled. Invalid-pack fallback also
+passed independently. Real files are ready for the presentation PR; no narrated
+3–5 minute video has been recorded. Only actual silent QA footage is available.

@@ -185,11 +185,19 @@ def poster(view, mid):
 def artwork(view, mid, width=None):
     url = poster(view, mid) if st.session_state.get("posters", True) else ""
     if url:
-        st.image(url, width=width or "stretch")
+        st.image(
+            url,
+            width=width or "stretch",
+            alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
+        )
     else:
         with st.container(key="poster_missing" if width else f"missing_{mid}"):
             st.caption("◉  CineMatch")
-            st.caption(s("Постер недоступний", "Poster unavailable"))
+            st.caption(
+                s("Постер недоступний", "Poster unavailable")
+                if st.session_state.get("posters", True)
+                else s("Постери вимкнено", "Posters disabled")
+            )
 
 
 def source_rating(view, mid):
@@ -225,11 +233,21 @@ def cards(view, identities, prefix, reasons=None, empty_text=None):
             with col, st.container(border=True, key=f"card_{prefix}_{mid}"):
                 # Every item occupies one bounded native column; mobile stacks natively.
                 if poster(view, mid) and st.session_state.get("posters", True):
-                    st.image(poster(view, mid), width="stretch")
+                    st.image(
+                        poster(view, mid),
+                        width="stretch",
+                        alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
+                    )
                 else:
-                    with st.container(height=240, border=False):
-                        st.write("◉")
-                        st.caption(s("Постер недоступний", "Poster unavailable"))
+                    with st.container(
+                        height=120, border=False, key=f"artwork_fallback_{prefix}_{mid}"
+                    ):
+                        st.write("◉ CineMatch")
+                        st.caption(
+                            s("Постер недоступний", "Poster unavailable")
+                            if st.session_state.get("posters", True)
+                            else s("Постери вимкнено", "Posters disabled")
+                        )
                 row = view.rows[mid]
                 st.subheader(view.display_title(mid, language()))
                 st.caption(
@@ -271,7 +289,8 @@ def exclusions():
 
 
 def provider_controls(view, directory):
-    with st.sidebar.expander(s("Каталог і джерела", "Catalog & sources")):
+    target = st if portfolio.enabled(st.session_state) else st.sidebar
+    with target.expander(s("Каталог і джерела", "Catalog & sources")):
         if portfolio.enabled(st.session_state):
             st.caption(
                 s(
@@ -528,11 +547,7 @@ def browse(view, directory, page):
         st.session_state[f"page_{page}"] = 1
         st.session_state[f"browse_signature_{page}"] = signature
     pages = max(1, (len(hits) + 11) // 12)
-    number = int(
-        st.number_input(
-            s("Сторінка", "Page"), min_value=1, max_value=pages, step=1, key=f"page_{page}"
-        )
-    )
+    number = int(st.selectbox(s("Сторінка", "Page"), range(1, pages + 1), key=f"page_{page}"))
     st.caption(f"{len(hits)} " + s("результатів", "results"))
     cards(
         view,
@@ -577,7 +592,7 @@ def details(view, directory, mid):
         st.rerun()
     row, title = view.rows[mid], view.titles.get(mid)
     if title and title.backdrop_url and st.session_state.get("posters", True):
-        st.image(title.backdrop_url, width="stretch")
+        st.image(title.backdrop_url, width="stretch", alt=view.display_title(mid, language()))
     image, content = st.columns([1, 2], gap="large")
     with image:
         artwork(view, mid, width=320)
@@ -788,9 +803,16 @@ def for_you(view):
                 s("Ця відповідь не є негативною оцінкою.", "This answer is not a negative rating.")
             )
     if view.base is not None:
+        ui_language = language()
+        algorithm = st.selectbox(
+            s("Алгоритм рекомендацій", "Recommendation algorithm"),
+            ALGORITHMS,
+            key="for_you_algorithm",
+            format_func=lambda value: f"{value} · {model_name(value, ui_language)}",
+        )
         results = view.recommend_known(
             st.session_state.ratings,
-            "Adaptive",
+            algorithm,
             k=6,
             blocked=st.session_state.blocked,
             watched=st.session_state.watched,
@@ -799,7 +821,21 @@ def for_you(view):
             language=language(),
             min_ratings=0,
         )
-        st.subheader(s("Знайомий каталог · Adaptive", "Known catalog · Adaptive"))
+        st.subheader(s("Знайомий каталог · ", "Known catalog · ") + algorithm)
+        if algorithm == "Adaptive" and not view.base.has_learned_policy:
+            st.caption(
+                s(
+                    "Навчену Adaptive-політику не підключено: для відомих фільмів діє резервний підбір за якістю спільноти. Для матричної факторизації виберіть Collaborative.",
+                    "No learned Adaptive policy is connected: known films use the community-quality fallback. Select Collaborative for matrix factorization.",
+                )
+            )
+        if algorithm == "Semantic" and view.base.semantic is None:
+            st.caption(
+                s(
+                    "Текстову модель не завантажено: Semantic використовує наявний жанровий резервний режим.",
+                    "The text model is not loaded: Semantic uses the existing genre fallback.",
+                )
+            )
         st.caption(
             s(
                 "Наявна модель працює з оцінками відомих їй назв. Нові назви не додають вигаданих взаємодій.",
@@ -981,11 +1017,9 @@ def library(view):
         st.session_state.library_page = 1
         st.session_state.library_signature = signature
     page = int(
-        st.number_input(
+        st.selectbox(
             s("Сторінка бібліотеки", "Library page"),
-            min_value=1,
-            max_value=max(1, (len(hits) + 11) // 12),
-            step=1,
+            range(1, max(1, (len(hits) + 11) // 12) + 1),
             key="library_page",
         )
     )
@@ -1117,16 +1151,25 @@ def _main(memory):
             )
             st.caption(
                 s(
-                    "Ці прикладні оцінки не є історією людини. Зміни живуть лише у вашій сесії; оновлення сторінки відновить початковий стан. Без акаунтів і спільного збереження.",
-                    "These example ratings are not a person's history. Changes live only in your session; refreshing restores the initial state. No accounts or shared persistence.",
+                    "Лише ваша сесія · оновлення сторінки відновлює приклад · без акаунтів. Постери TVmaze необов’язкові.",
+                    "Your session only · refresh restores the example · no accounts. TVmaze posters are optional.",
                 )
             )
-            st.caption(
-                s(
-                    "Постери завантажуються з TVmaze і передають цьому сайту мережеві дані. Вимкніть постери для повністю офлайн-перегляду.",
-                    "Posters load from TVmaze and share network information with that site. Disable posters for fully offline browsing.",
+            with st.expander(
+                s("Приватність і межі демонстрації", "Privacy & demonstration limits")
+            ):
+                st.caption(
+                    s(
+                        "Ці прикладні оцінки не є історією людини. Зміни живуть лише у вашій сесії; оновлення сторінки відновить початковий стан. Без акаунтів і спільного збереження.",
+                        "These example ratings are not a person's history. Changes live only in your session; refreshing restores the initial state. No accounts or shared persistence.",
+                    )
                 )
-            )
+                st.caption(
+                    s(
+                        "Постери завантажуються з TVmaze і передають цьому сайту мережеві дані. Вимкніть постери для повністю офлайн-перегляду.",
+                        "Posters load from TVmaze and share network information with that site. Disable posters for fully offline browsing.",
+                    )
+                )
             if view.base is None:
                 st.info(
                     s(
@@ -1198,7 +1241,12 @@ def _main(memory):
         if memory:
             memory["ready"] = False
         return
-    with st.sidebar:
+    controls = (
+        st.expander(s("Ваша демосесія", "Your demo session"))
+        if portfolio.enabled(state)
+        else st.sidebar
+    )
+    with controls:
         st.subheader(s("Ваш кінопростір", "Your cinema"))
         st.caption(s("Особисто. Локально. У вашому смаку.", "Personal. Local. Your taste."))
         st.caption(
@@ -1207,7 +1255,8 @@ def _main(memory):
             + f" · {len(state.ratings)} "
             + s("оцінок", "ratings")
         )
-        local_memory.controls(memory, lambda key: tr(key, language()))
+        if not portfolio.enabled(state):
+            local_memory.controls(memory, lambda key: tr(key, language()))
         st.checkbox(
             s("Показувати постери", "Show posters"), value=state.get("posters", True), key="posters"
         )

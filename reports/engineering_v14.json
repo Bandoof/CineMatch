@@ -1,0 +1,728 @@
+{
+  "schema_version": 1,
+  "date": "2026-10-10",
+  "v13_main": "40eb03ff0b0d8ecdfad83d22db08eaf5e552db0d",
+  "integration": {
+    "16": "2adde7975b3e353a7dfc1a9445bbf19c00e96405",
+    "17": "71594c7c5e34a56afdd4a54847d5638b8d3eef53",
+    "18": "d64fb0e1d9ddd53fd5493bd2b55ccecf85679940",
+    "19": "40eb03ff0b0d8ecdfad83d22db08eaf5e552db0d"
+  },
+  "stage_a_tests": {
+    "local": [
+      220,
+      0,
+      0
+    ],
+    "each_ci_platform_and_docker": [
+      218,
+      0,
+      2
+    ]
+  },
+  "tests": {
+    "local_cached_cpu_encoder": [
+      233,
+      0,
+      0
+    ],
+    "network_disabled_docker": [
+      231,
+      0,
+      2
+    ]
+  },
+  "environment": {
+    "python": "3.12.14",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "streamlit": "1.65.0",
+    "cgroup_cpu_quota": "2 CPU equivalents",
+    "cgroup_memory_limit": "8 GiB",
+    "blas_threads": 1
+  },
+  "baseline_synthetic": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 20,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 88.00001100098598,
+    "engine_init_ms": 59.458343999722274,
+    "app_cold_ms": 393.8720469996042,
+    "app_warm_rerun_ms": 14.989295999839669,
+    "recommend_median_ms": {
+      "Adaptive": 1.2880194999524974,
+      "Hybrid": 1.5836764996493002,
+      "Content-based": 1.4719205000801594
+    },
+    "mmr_10000_median_ms": 1.7067779999706545,
+    "mmr_peak_allocated_bytes": 2171696,
+    "sqlite_write_median_ms": 0.1301475003856467,
+    "process_peak_rss_mib": 169.46875,
+    "output_sha256": "9efaf4a62d7ab31c21cf4c93e386532074c645a5564012c3e849b1ef69929679",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "current_synthetic": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "numpy": "1.26.4",
+    "blas_threads": "1",
+    "items": 1500,
+    "users": 100,
+    "events": 2400,
+    "repetitions": 20,
+    "model_factors": 8,
+    "model_epochs": 3,
+    "fit_ms": 75.06737999938196,
+    "engine_init_ms": 109.39116500230739,
+    "app_cold_ms": 410.7326860030298,
+    "app_warm_rerun_ms": 20.474726999964332,
+    "recommend_median_ms": {
+      "Adaptive": 1.5101975004654378,
+      "Hybrid": 1.6693375000613742,
+      "Content-based": 1.4548710005328758
+    },
+    "mmr_10000_median_ms": 1.6781654994701967,
+    "mmr_peak_allocated_bytes": 2171696,
+    "sqlite_write_median_ms": 0.1365115003864048,
+    "process_peak_rss_mib": 173.875,
+    "output_sha256": "9efaf4a62d7ab31c21cf4c93e386532074c645a5564012c3e849b1ef69929679",
+    "scope": "Synthetic engineering fixture; not live latency or ML quality."
+  },
+  "baseline_search": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "items": 10000,
+    "repetitions": 20,
+    "index_build_ms": 672.9739410002367,
+    "queries": {
+      "The Last Signal": {
+        "legacy": {
+          "median_ms": 71.44175599933078,
+          "p95_ms": 78.49010000063572
+        },
+        "indexed": {
+          "median_ms": 7.053518499560596,
+          "p95_ms": 7.630021000295528
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Останній сигнал": {
+        "legacy": {
+          "median_ms": 74.2926709999665,
+          "p95_ms": 80.81883399972867
+        },
+        "indexed": {
+          "median_ms": 0.039348500649794005,
+          "p95_ms": 0.07352900138357654
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Last Sign": {
+        "legacy": {
+          "median_ms": 62.09081100041658,
+          "p95_ms": 65.03103199975158
+        },
+        "indexed": {
+          "median_ms": 0.02104599934682483,
+          "p95_ms": 0.08525599878339563
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "ostannii syhnal": {
+        "legacy": {
+          "median_ms": 65.98389700047846,
+          "p95_ms": 106.7711830000917
+        },
+        "indexed": {
+          "median_ms": 0.02275300084875198,
+          "p95_ms": 0.03408099837542977
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "Останній Signal": {
+        "legacy": {
+          "median_ms": 71.84782099920994,
+          "p95_ms": 75.40936599980341
+        },
+        "indexed": {
+          "median_ms": 0.04151150005782256,
+          "p95_ms": 0.05710400000680238
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "The Last Singal": {
+        "legacy": {
+          "median_ms": 65.62819199916703,
+          "p95_ms": 70.29003800016653
+        },
+        "indexed": {
+          "median_ms": 6.480425499830744,
+          "p95_ms": 6.966058999751112
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      }
+    },
+    "expected_top1_passes": 6,
+    "cases": 6,
+    "scope": "Deterministic synthetic title retrieval; no network, images or scientific evaluation."
+  },
+  "current_search": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "items": 10000,
+    "repetitions": 20,
+    "index_build_ms": 666.2398839980597,
+    "queries": {
+      "The Last Signal": {
+        "legacy": {
+          "median_ms": 65.6367740011774,
+          "p95_ms": 79.98025800043251
+        },
+        "indexed": {
+          "median_ms": 7.107656998414313,
+          "p95_ms": 10.302539998519933
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Останній сигнал": {
+        "legacy": {
+          "median_ms": 76.55314650037326,
+          "p95_ms": 101.64450800220948
+        },
+        "indexed": {
+          "median_ms": 0.03907750033249613,
+          "p95_ms": 0.12349299868219532
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "Last Sign": {
+        "legacy": {
+          "median_ms": 62.74910499814723,
+          "p95_ms": 65.31738700141432
+        },
+        "indexed": {
+          "median_ms": 0.02204249904025346,
+          "p95_ms": 0.033319000067422166
+        },
+        "legacy_found_expected": true,
+        "indexed_top1_expected": true
+      },
+      "ostannii syhnal": {
+        "legacy": {
+          "median_ms": 65.06856249870907,
+          "p95_ms": 83.50162700298824
+        },
+        "indexed": {
+          "median_ms": 0.023784999939380214,
+          "p95_ms": 0.03594300142140128
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "Останній Signal": {
+        "legacy": {
+          "median_ms": 71.12744949881744,
+          "p95_ms": 98.51960200103349
+        },
+        "indexed": {
+          "median_ms": 0.039278498661587946,
+          "p95_ms": 0.04962300226907246
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      },
+      "The Last Singal": {
+        "legacy": {
+          "median_ms": 65.3356540005916,
+          "p95_ms": 68.42741400032537
+        },
+        "indexed": {
+          "median_ms": 6.755221000275924,
+          "p95_ms": 7.448350999766262
+        },
+        "legacy_found_expected": false,
+        "indexed_top1_expected": true
+      }
+    },
+    "expected_top1_passes": 6,
+    "cases": 6,
+    "scope": "Deterministic synthetic title retrieval; no network, images or scientific evaluation."
+  },
+  "bounded_public_sessions": {
+    "python": "3.11.16",
+    "platform": "Linux-6.18.44-x86_64-with-glibc2.41",
+    "blas_threads": "1",
+    "sessions": 5,
+    "training_items": 222,
+    "effective_training_events": 29974,
+    "catalog_items": 248,
+    "peak_process_rss_mib": 122.1328125,
+    "measurements": [
+      {
+        "engine_load_ms": 403.5276140020869,
+        "facade_ms": 10.412331997940782,
+        "index_ms": 49.18934499801253,
+        "uk_search_ms": 2.2541020007338375,
+        "modes": {
+          "Adaptive": {
+            "ms": 4.1923579992726445,
+            "results": 10
+          },
+          "Semantic": {
+            "ms": 1.4135989986243658,
+            "results": 10
+          },
+          "Hybrid": {
+            "ms": 1.3748619967373088,
+            "results": 10
+          },
+          "Collaborative": {
+            "ms": 0.8570770005462691,
+            "results": 10
+          },
+          "Item-KNN": {
+            "ms": 0.8594300015829504,
+            "results": 10
+          },
+          "Content-based": {
+            "ms": 1.2825459998566657,
+            "results": 10
+          },
+          "Popularity": {
+            "ms": 1.1397650014259852,
+            "results": 10
+          }
+        }
+      },
+      {
+        "engine_load_ms": 279.48766500048805,
+        "facade_ms": 11.188099000719376,
+        "index_ms": 23.77535599953262,
+        "uk_search_ms": 1.7406529987056274,
+        "modes": {
+          "Adaptive": {
+            "ms": 3.1668209994677454,
+            "results": 10
+          },
+          "Semantic": {
+            "ms": 1.3299359998200089,
+            "results": 10
+          },
+          "Hybrid": {
+            "ms": 1.8726989983406384,
+            "results": 10
+          },
+          "Collaborative": {
+            "ms": 0.8662610016472172,
+            "results": 10
+          },
+          "Item-KNN": {
+            "ms": 0.8680430000822525,
+            "results": 10
+          },
+          "Content-based": {
+            "ms": 1.7554549995111302,
+            "results": 10
+          },
+          "Popularity": {
+            "ms": 0.7836979966668878,
+            "results": 10
+          }
+        }
+      },
+      {
+        "engine_load_ms": 161.75104900321458,
+        "facade_ms": 10.206917999312282,
+        "index_ms": 20.84253099747002,
+        "uk_search_ms": 1.7786900025384966,
+        "modes": {
+          "Adaptive": {
+            "ms": 3.2550119976804126,
+            "results": 10
+          },
+          "Semantic": {
+            "ms": 1.497283999924548,
+            "results": 10
+          },
+          "Hybrid": {
+            "ms": 1.807280998036731,
+            "results": 10
+          },
+          "Collaborative": {
+            "ms": 0.8318500003952067,
+            "results": 10
+          },
+          "Item-KNN": {
+            "ms": 1.088990000425838,
+            "results": 10
+          },
+          "Content-based": {
+            "ms": 1.5022009974927641,
+            "results": 10
+          },
+          "Popularity": {
+            "ms": 0.8570069985580631,
+            "results": 10
+          }
+        }
+      },
+      {
+        "engine_load_ms": 157.13106499970309,
+        "facade_ms": 15.394005997222848,
+        "index_ms": 35.42211300009512,
+        "uk_search_ms": 2.7969539987680037,
+        "modes": {
+          "Adaptive": {
+            "ms": 5.843768998602172,
+            "results": 10
+          },
+          "Semantic": {
+            "ms": 3.0526629998348653,
+            "results": 10
+          },
+          "Hybrid": {
+            "ms": 24.068529997748556,
+            "results": 10
+          },
+          "Collaborative": {
+            "ms": 2.349643000343349,
+            "results": 10
+          },
+          "Item-KNN": {
+            "ms": 1.8076119995384943,
+            "results": 10
+          },
+          "Content-based": {
+            "ms": 2.899855997384293,
+            "results": 10
+          },
+          "Popularity": {
+            "ms": 1.739141000143718,
+            "results": 10
+          }
+        }
+      },
+      {
+        "engine_load_ms": 173.56994199872133,
+        "facade_ms": 16.049114001361886,
+        "index_ms": 23.627467002370395,
+        "uk_search_ms": 1.8076919986924622,
+        "modes": {
+          "Adaptive": {
+            "ms": 5.0000619994534645,
+            "results": 10
+          },
+          "Semantic": {
+            "ms": 1.6502189973834902,
+            "results": 10
+          },
+          "Hybrid": {
+            "ms": 1.655796997511061,
+            "results": 10
+          },
+          "Collaborative": {
+            "ms": 0.8513990032952279,
+            "results": 10
+          },
+          "Item-KNN": {
+            "ms": 0.9490230004303157,
+            "results": 10
+          },
+          "Content-based": {
+            "ms": 1.8866890022763982,
+            "results": 10
+          },
+          "Popularity": {
+            "ms": 1.2998620004509576,
+            "results": 10
+          }
+        }
+      }
+    ],
+    "global_profile_cache_growth": 0,
+    "scope": "Five bounded real public-pack service sessions, independent engines/caches. Not concurrent server throughput, Windows hardware, ML quality or DoS certification."
+  },
+  "catalog": {
+    "schema_version": 1,
+    "captured_utc": "2026-10-10T17:03:25.747103+00:00",
+    "snapshot_sha256": "1f9ff2d37d7bc20693bd9594da224778f7a91aaa4a3861b3bc41076cf62a5b45",
+    "total": 30,
+    "movies": 22,
+    "series": 8,
+    "uk_titles": 30,
+    "uk_short_descriptions": 25,
+    "posters": 8,
+    "community_ratings": 8,
+    "released_from_2023": 19,
+    "recent_730_days": 5,
+    "missing_or_ambiguous_release_dates": 9,
+    "requests": 0,
+    "cache_hits": 14,
+    "sources": [
+      "https://www.wikidata.org/wiki/Wikidata:Licensing",
+      "https://www.tvmaze.com/api#licensing"
+    ],
+    "scope": "Small real dated CC0/CC BY-SA metadata selection, not exhaustive coverage or current popularity. No TMDB token or individual training ratings."
+  },
+  "browser": {
+    "browser": "Chromium",
+    "version": "153.0.8010.12",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ]
+    ],
+    "flows": [
+      "first launch",
+      "discovery",
+      "Ukrainian/year search",
+      "media filters/no results",
+      "movie/series details",
+      "watchlist",
+      "Undo",
+      "rating",
+      "original ML + heuristic sections",
+      "library",
+      "UK/EN/UK language",
+      "independent visitors",
+      "reset",
+      "empty profile",
+      "refresh reset",
+      "offline metadata",
+      "keyboard focus",
+      "research limitations",
+      "mobile/tablet navigation"
+    ],
+    "timings": {
+      "home_ready_ms": 5461.598175999825,
+      "uk_search_ready_ms": 305.24822200095514
+    },
+    "page_errors": [],
+    "request_failures": [],
+    "accessibility": [
+      {
+        "page": "desktop discovery",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "filtered Ukrainian search",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "movie details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "For You",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "English library",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "mobile details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "tablet details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      }
+    ],
+    "keyboard_focus": {
+      "tag": "BUTTON",
+      "label": "Почати з чистого профілю",
+      "outline": "solid",
+      "width": "3px",
+      "shadow": "rgba(145, 96, 31, 0.5) 0px 0px 0px 3.2px"
+    },
+    "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation."
+  },
+  "docker_health": {
+    "health": "ok",
+    "startup_ms": 10106.954539998696,
+    "network": "none",
+    "published_ports": {},
+    "user": "cine",
+    "command": [
+      "streamlit",
+      "run",
+      "app/portfolio_app.py",
+      "--server.address=0.0.0.0",
+      "--server.port=8501"
+    ],
+    "stats": {
+      "BlockIO": "401kB / 0B",
+      "CPUPerc": "0.42%",
+      "MemPerc": "0.48%",
+      "MemUsage": "47.99MiB / 9.735GiB",
+      "NetIO": "0B / 0B",
+      "PIDs": "5"
+    },
+    "scope": "Local explicit portfolio image, no networking or published ports; server health only, browser functionality separately tested."
+  },
+  "audit": {
+    "requirements": {
+      "dependencies": 100,
+      "known_vulnerabilities": 0
+    },
+    "installed": {
+      "dependencies": 113,
+      "known_vulnerabilities": 0
+    }
+  },
+  "checks": {
+    "ruff": "passed",
+    "mypy": "configured 3 modules passed",
+    "pre_commit": "passed",
+    "v12_evidence": "unchanged surviving hashes"
+  },
+  "scientific_scope": "Historical +17.8% remains unverified; 326-user cohort consumed; no new holdout or production score policy change. Engineering fixtures and bounded public demo development pack are not quality evaluations.",
+  "delivery": "v1.4 PRs unmerged; no deployment, tag or Release. Fresh GitHub heads/check links tracked in docs/progress-v14.md.",
+  "invalid_pack_browser": {
+    "flows": [
+      "invalid pack visible fallback"
+    ],
+    "page_errors": [],
+    "request_failures": []
+  },
+  "capture_artwork": false,
+  "browser_with_artwork": {
+    "browser": "Chromium",
+    "version": "153.0.8010.12",
+    "viewports": [
+      [
+        1440,
+        1000
+      ],
+      [
+        390,
+        844
+      ],
+      [
+        768,
+        1024
+      ]
+    ],
+    "flows": [
+      "first launch",
+      "discovery",
+      "Ukrainian/year search",
+      "media filters/no results",
+      "movie/series details",
+      "watchlist",
+      "Undo",
+      "rating",
+      "original ML + heuristic sections",
+      "library",
+      "UK/EN/UK language",
+      "independent visitors",
+      "reset",
+      "empty profile",
+      "refresh reset",
+      "offline metadata",
+      "keyboard focus",
+      "mobile/tablet navigation"
+    ],
+    "timings": {
+      "home_ready_ms": 4521.144564998394,
+      "uk_search_ready_ms": 2218.770985997253
+    },
+    "page_errors": [],
+    "request_failures": [],
+    "accessibility": [
+      {
+        "page": "desktop discovery",
+        "violations": [],
+        "passes": 27,
+        "incomplete": []
+      },
+      {
+        "page": "filtered Ukrainian search",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "movie details",
+        "violations": [],
+        "passes": 26,
+        "incomplete": []
+      },
+      {
+        "page": "For You",
+        "violations": [],
+        "passes": 29,
+        "incomplete": [
+          {
+            "id": "aria-valid-attr-value",
+            "nodes": 1
+          }
+        ]
+      },
+      {
+        "page": "English library",
+        "violations": [],
+        "passes": 27,
+        "incomplete": []
+      },
+      {
+        "page": "mobile details",
+        "violations": [],
+        "passes": 27,
+        "incomplete": []
+      },
+      {
+        "page": "tablet details",
+        "violations": [],
+        "passes": 27,
+        "incomplete": []
+      }
+    ],
+    "keyboard_focus": {
+      "tag": "BUTTON",
+      "label": "Почати з чистого профілю",
+      "outline": "solid",
+      "width": "3px",
+      "shadow": "rgba(145, 96, 31, 0.5) 0px 0px 0px 3.2px"
+    },
+    "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation."
+  }
+}

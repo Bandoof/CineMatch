@@ -1,0 +1,64 @@
+name: Portfolio browser QA
+on:
+  pull_request:
+    paths:
+      - 'app/**'
+      - 'src/**'
+      - 'assets/demo/**'
+      - 'scripts/verify_portfolio_browser.py'
+      - 'scripts/prepare_portfolio.py'
+      - '.github/workflows/portfolio-browser.yml'
+  push:
+    branches: ['codex/v14-*']
+permissions:
+  contents: read
+concurrency:
+  group: portfolio-browser-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      OPENBLAS_NUM_THREADS: '1'
+      CINEMATCH_DEFAULT_LANGUAGE: uk
+      CINEMATCH_PORTFOLIO_DATA_DIR: /tmp/cinematch-public-pack
+      CINEMATCH_PROFILE_DB: /tmp/must-not-create.sqlite3
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.11'
+          cache: pip
+      - run: python -m pip install -r requirements-dev.txt playwright==1.63.0
+      - run: python -m playwright install --with-deps chromium
+      - run: npm install --prefix "$RUNNER_TEMP/cinematch-qa" axe-core@4.14.0 --ignore-scripts --no-audit
+      - run: python -m scripts.prepare_portfolio --directory "$CINEMATCH_PORTFOLIO_DATA_DIR"
+      - name: Local-only browser journeys and accessibility
+        shell: bash
+        run: |
+          python -m streamlit run app/portfolio_app.py --server.address=127.0.0.1 --server.port=8514 --browser.gatherUsageStats=false > "$RUNNER_TEMP/portfolio-server.log" 2>&1 &
+          qa_pid=$!
+          trap 'kill "$qa_pid" 2>/dev/null || true' EXIT
+          python - <<'PY'
+          import time, urllib.request
+          for attempt in range(60):
+              try:
+                  with urllib.request.urlopen('http://127.0.0.1:8514/_stcore/health', timeout=1) as r:
+                      if r.read() == b'ok': break
+              except OSError: pass
+              time.sleep(.5)
+          else: raise RuntimeError('Local server did not become ready')
+          PY
+          python -m scripts.verify_portfolio_browser --isolated-demo --output "$RUNNER_TEMP/portfolio-browser" --axe-script "$RUNNER_TEMP/cinematch-qa/node_modules/axe-core/axe.min.js"
+          test ! -e "$CINEMATCH_PROFILE_DB"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: always()
+        with:
+          name: portfolio-browser-evidence
+          path: |
+            ${{ runner.temp }}/portfolio-browser
+            ${{ runner.temp }}/portfolio-server.log
+          retention-days: 14
