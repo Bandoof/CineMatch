@@ -11,6 +11,7 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   background: linear-gradient(135deg, #151f2c, #233044);
   border-radius: .7rem; padding: 1rem; color: #e6b35a;
 }
+[class*="st-key-artwork_fallback_"] p { color: #edf1f7; opacity: 1; }
 .st-key-cinema_hero {
   background: #151f2c; border-radius: 1.25rem;
   border: 1px solid #2b394b; padding: clamp(1rem,3vw,2.4rem);
