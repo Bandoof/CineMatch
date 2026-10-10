@@ -142,6 +142,7 @@ class ProviderClient:
         patterns = {
             "TVmaze": r"/(shows(?:/\d+(?:/crew)?)?|search/shows|schedule/web|schedule)",
             "TMDB": r"/(movie/(now_playing|upcoming|\d+)|tv/\d+|search/(movie|tv))",
+            "Wikidata": r"/w/api\.php",
         }
         if provider not in patterns or not re.fullmatch(patterns[provider], endpoint):
             raise ValueError("Unsupported provider endpoint.")
@@ -156,6 +157,11 @@ class ProviderClient:
             "include_adult",
             "append_to_response",
             "embed",
+            "action",
+            "ids",
+            "props",
+            "languages",
+            "format",
         }:
             raise ValueError("Unsupported request parameters.")
         if any(
@@ -163,6 +169,17 @@ class ProviderClient:
             for v in params.values()
         ):
             raise ValueError("Invalid request parameters.")
+        if provider == "Wikidata" and (
+            params.get("action") != "wbgetentities"
+            or params.get("format") != "json"
+            or params.get("props") not in ("labels", "labels|descriptions|claims")
+            or params.get("languages") != "uk|en"
+            or not re.fullmatch(
+                r"Q[1-9]\d{0,8}(?:\|Q[1-9]\d{0,8}){0,19}", str(params.get("ids", ""))
+            )
+            or set(params) != {"action", "ids", "props", "languages", "format"}
+        ):
+            raise ValueError("Unsupported Wikidata read operation.")
         query = urllib.parse.urlencode(sorted(params.items()))
         key = f"{provider}:{endpoint}?{query}"
         now = self.clock()
@@ -178,14 +195,23 @@ class ProviderClient:
             return FetchResult(fallback, "stale" if cached else "missing_credentials", fetched_at)
         if now < self._cooldown.get(provider, 0):
             return FetchResult(fallback, "stale" if cached else "rate_limited", fetched_at)
-        base = "https://api.tvmaze.com" if provider == "TVmaze" else "https://api.themoviedb.org/3"
-        headers = {"User-Agent": "CineMatch/1.3 local discovery", "Accept": "application/json"}
+        base = {
+            "TVmaze": "https://api.tvmaze.com",
+            "TMDB": "https://api.themoviedb.org/3",
+            "Wikidata": "https://www.wikidata.org",
+        }[provider]
+        headers = {
+            "User-Agent": "CineMatch/1.4 (https://github.com/Bandoof/CineMatch)",
+            "Accept": "application/json",
+        }
         if provider == "TMDB":
             headers["Authorization"] = "Bearer " + self.token
         try:
             # Serialize requests and stay below TVmaze's 20 requests / 10 seconds.
             with self._lock:
-                delay = 0.6 - (self.clock() - self._last_request)
+                delay = (1.0 if provider == "Wikidata" else 0.6) - (
+                    self.clock() - self._last_request
+                )
                 if delay > 0:
                     self.sleep(delay)
                 self._last_request = self.clock()
@@ -490,6 +516,13 @@ def refresh_catalog(client, pages=1, online=False, today=None):
 
 
 def title_details(client, title, online=False):
+    if title.provider == "Wikidata":
+        from src.wikidata_catalog import wikidata_titles
+
+        titles, status = wikidata_titles(
+            client, [(f"Q{title.provider_id}", title.media_type)], online
+        )
+        return (titles[0] if titles else title), status
     if title.provider == "TVmaze":
         response = client.fetch(
             "TVmaze", f"/shows/{title.provider_id}", {"embed": "cast"}, online=online

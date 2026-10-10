@@ -24,13 +24,23 @@ def provider_client(directory, token):
 def save_catalog(catalog, directory):
     try:
         catalog.save(Path(directory) / "catalog.json")
+        return True
     except (OSError, ValueError):
         st.warning("Metadata could not be saved. Current results remain available.")
+        return False
 
 
 def provider_credits(catalog):
     st.caption("TVmaze metadata · CC BY-SA · Source links on every title")
     st.link_button("TVmaze · licensing", "https://www.tvmaze.com/api#licensing")
+    if any(
+        title.provider == "Wikidata" or title.localization_source
+        for title in catalog.titles.values()
+    ):
+        st.caption(
+            "Wikidata structured metadata / UK labels · CC0 · Dated sample, not a live release feed"
+        )
+        st.link_button("Wikidata · CC0", "https://www.wikidata.org/wiki/Wikidata:Licensing")
     if any(title.provider == "TMDB" for title in catalog.titles.values()):
         st.image(str(ROOT / "assets" / "tmdb-approved.svg"), width=90)
         st.caption("This product uses the TMDB API but is not endorsed or certified by TMDB.")

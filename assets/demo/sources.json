@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "scope": "Curated real title identities; no synthetic metadata. Wikidata QIDs resolved through exact IMDb claims, 2026-10-10.",
+  "titles": [
+    {
+      "wikidata": "Q1079",
+      "imdb": "tt0903747",
+      "media_type": "Series",
+      "tvmaze": 169
+    },
+    {
+      "wikidata": "Q60462338",
+      "imdb": "tt9253284",
+      "media_type": "Series",
+      "tvmaze": 52341
+    },
+    {
+      "wikidata": "Q60834962",
+      "imdb": "tt1160419",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q83495",
+      "imdb": "tt0133093",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q172241",
+      "imdb": "tt0111161",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q20382729",
+      "imdb": "tt2543164",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q55436290",
+      "imdb": "tt1517268",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q56276181",
+      "imdb": "tt2788316",
+      "media_type": "Series",
+      "tvmaze": 37336
+    },
+    {
+      "wikidata": "Q13417189",
+      "imdb": "tt0816692",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q83808444",
+      "imdb": "tt6710474",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q87131973",
+      "imdb": "tt3581920",
+      "media_type": "Series",
+      "tvmaze": 46562
+    },
+    {
+      "wikidata": "Q106679014",
+      "imdb": "tt13406094",
+      "media_type": "Series",
+      "tvmaze": 51394
+    },
+    {
+      "wikidata": "Q108839994",
+      "imdb": "tt15398776",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q109228991",
+      "imdb": "tt15239678",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q123185887",
+      "imdb": "tt28607951",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q124378349",
+      "imdb": "tt29623480",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q101096725",
+      "imdb": "tt11280740",
+      "media_type": "Series",
+      "tvmaze": 44933
+    },
+    {
+      "wikidata": "Q105553568",
+      "imdb": "tt13443470",
+      "media_type": "Series",
+      "tvmaze": 53647
+    },
+    {
+      "wikidata": "Q125622088",
+      "imdb": "tt4772188",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q113127312",
+      "imdb": "tt12637874",
+      "media_type": "Series",
+      "tvmaze": 49041
+    },
+    {
+      "wikidata": "Q113380226",
+      "imdb": "tt17526714",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q116025865",
+      "imdb": "tt13238346",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q116542843",
+      "imdb": "tt24082438",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q113877606",
+      "imdb": "tt22022452",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q116361132",
+      "imdb": "tt5040012",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q117085614",
+      "imdb": "tt30144839",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q28704028",
+      "imdb": "tt6685538",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q112977213",
+      "imdb": "tt12299608",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q114246242",
+      "imdb": "tt16311594",
+      "media_type": "Movie",
+      "tvmaze": null
+    },
+    {
+      "wikidata": "Q125473145",
+      "imdb": "tt31193180",
+      "media_type": "Movie",
+      "tvmaze": null
+    }
+  ]
+}

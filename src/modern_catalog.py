@@ -11,6 +11,8 @@ from src.metadata import trusted_url
 
 TMDB_MOVIE_OFFSET = 1_000_000_000_000
 TMDB_TV_OFFSET = 2_000_000_000_000
+WIKIDATA_OFFSET = 3_000_000_000_000
+WIKIDATA_TV_OFFSET = 4_000_000_000_000
 MAX_PROVIDER_ID = 999_999_999
 MAX_TITLES = 5000
 IMAGE_HOSTS = {"image.tmdb.org", "static.tvmaze.com", "upload.wikimedia.org", "thumb.wikimedia.org"}
@@ -24,6 +26,8 @@ def canonical_provider_id(provider, provider_id, media_type):
     if provider == "TMDB" and media_type in ("Movie", "Series"):
         offset = TMDB_MOVIE_OFFSET if media_type == "Movie" else TMDB_TV_OFFSET
         return -offset - provider_id
+    if provider == "Wikidata" and media_type in ("Movie", "Series"):
+        return -(WIKIDATA_OFFSET if media_type == "Movie" else WIKIDATA_TV_OFFSET) - provider_id
     raise ValueError("Unsupported provider or media type.")
 
 
@@ -70,6 +74,10 @@ class CatalogTitle:
     alternate_titles: tuple[str, ...] = ()
     summary_original: str = ""
     original_language: str = ""
+    short_description_en: str = ""
+    short_description_uk: str = ""
+    localization_source: str = ""
+    release_year: int = 0
 
     def __post_init__(self):
         canonical_provider_id(self.provider, self.provider_id, self.media_type)
@@ -82,12 +90,24 @@ class CatalogTitle:
             ("summary_uk", 5000),
             ("summary_original", 5000),
             ("status", 100),
+            ("short_description_en", 300),
+            ("short_description_uk", 300),
         ):
             value = getattr(self, name)
             if not isinstance(value, str) or value != clean_text(value, limit):
                 raise ValueError("Invalid metadata text.")
         if self.release_date != valid_date(self.release_date):
             raise ValueError("Invalid release date.")
+        if type(self.release_year) is not int or not (
+            self.release_year == 0 or 1800 <= self.release_year <= 2200
+        ):
+            raise ValueError("Invalid release year.")
+        if (
+            self.release_date
+            and self.release_year
+            and int(self.release_date[:4]) != self.release_year
+        ):
+            raise ValueError("Conflicting release year.")
         for name, limit, length in (
             ("genres", 30, 80),
             ("cast", 20, 150),
@@ -128,6 +148,10 @@ class CatalogTitle:
             raise ValueError("Invalid IMDb identity.")
         if self.original_language and not re.fullmatch(r"[a-z]{2,3}", self.original_language):
             raise ValueError("Invalid original language.")
+        if self.localization_source and not re.fullmatch(
+            r"https://www\.wikidata\.org/wiki/Q[1-9]\d{0,8}", self.localization_source
+        ):
+            raise ValueError("Invalid localization provenance.")
         if self.fetched_utc:
             try:
                 stamp = datetime.fromisoformat(self.fetched_utc)
@@ -146,10 +170,12 @@ class CatalogTitle:
 
     @property
     def year(self):
-        return int(self.release_date[:4]) if self.release_date else 0
+        return int(self.release_date[:4]) if self.release_date else self.release_year
 
     @property
     def source_url(self):
+        if self.provider == "Wikidata":
+            return f"https://www.wikidata.org/wiki/Q{self.provider_id}"
         if self.provider == "TVmaze":
             return f"https://www.tvmaze.com/shows/{self.provider_id}"
         kind = "movie" if self.media_type == "Movie" else "tv"

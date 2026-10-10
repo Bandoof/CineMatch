@@ -54,6 +54,37 @@ def healthy(app):
     assert not any("Temporarily unavailable" in heading.value for heading in app.subheader)
 
 
+def test_first_launch_without_downloads_uses_real_dated_sample(product, monkeypatch):
+    app, paths = product
+    (paths["CINEMATCH_DISCOVERY_DIR"] / "catalog.json").unlink()
+    monkeypatch.setenv("CINEMATCH_DATA_DIR", str(paths["CINEMATCH_ARTIFACT_ROOT"] / "absent"))
+    app.run()
+    healthy(app)
+    assert app.session_state["_catalog_view"].bundled_sample
+    assert len(app.session_state["_catalog_view"].rows) == 30
+    app.radio(key="navigation_en").set_value("search").run()
+    app.text_input(key="query_search").set_value("Інтерстеллар").run()
+    app.button(key="details_search_-3000013417189").click().run()
+    healthy(app)
+    assert any("Wikidata short description" in c.value for c in app.caption)
+    assert not app.session_state["ratings"] and not app.session_state["watched"]
+    assert not (paths["CINEMATCH_DISCOVERY_DIR"] / "catalog.json").exists()
+
+
+def test_provider_failure_has_visible_warning_without_false_saved_success(product, monkeypatch):
+    from src.providers import FetchResult, ProviderClient
+
+    app, _ = product
+    monkeypatch.setattr(ProviderClient, "fetch", lambda *a, **k: FetchResult(None, "unavailable"))
+    app.run().radio(key="navigation_en").set_value("search").run()
+    app.text_input(key="query_search").set_value("unavailable title").run()
+    app.button(key="remote_search").click().run()
+    healthy(app)
+    assert any("source unavailable" in w.value for w in app.warning)
+    assert not app.session_state["ratings"] and not app.session_state["watchlist"]
+    assert not any("saved" in t.value.casefold() for t in app.get("toast"))
+
+
 def test_first_launch_and_all_pages_render_only_active_controls(product):
     app, _ = product
     app.run()

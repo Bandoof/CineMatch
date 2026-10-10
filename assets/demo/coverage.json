@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "captured_utc": "2026-10-10T17:03:25.747103+00:00",
+  "snapshot_sha256": "1f9ff2d37d7bc20693bd9594da224778f7a91aaa4a3861b3bc41076cf62a5b45",
+  "total": 30,
+  "movies": 22,
+  "series": 8,
+  "uk_titles": 30,
+  "uk_short_descriptions": 25,
+  "posters": 8,
+  "community_ratings": 8,
+  "released_from_2023": 19,
+  "recent_730_days": 5,
+  "missing_or_ambiguous_release_dates": 9,
+  "requests": 0,
+  "cache_hits": 14,
+  "sources": [
+    "https://www.wikidata.org/wiki/Wikidata:Licensing",
+    "https://www.tvmaze.com/api#licensing"
+  ],
+  "scope": "Small real dated CC0/CC BY-SA metadata selection, not exhaustive coverage or current popularity. No TMDB token or individual training ratings."
+}
