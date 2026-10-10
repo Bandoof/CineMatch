@@ -1,0 +1,141 @@
+name: Verify public CineMatch demo
+on:
+  push:
+    branches: ['release/v1.4.0-publication']
+    paths: ['.github/workflows/verify-live-v140.yml']
+permissions:
+  contents: read
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install the isolated browser checker
+        run: |
+          python -m pip install playwright==1.63.0
+          python -m playwright install --with-deps chromium
+      - name: Essential checks on the actual public URL
+        shell: bash
+        run: |
+          cat > "$RUNNER_TEMP/verify-live.py" <<'PY'
+          import json, re, urllib.request
+          from playwright.sync_api import sync_playwright, expect
+          
+          URL = "https://try-cinematch.streamlit.app/"
+          result = {"url": URL, "checks": {}, "errors": []}
+          def passed(name):
+              result["checks"][name] = True
+              print("PASS " + name, flush=True)
+          
+          with urllib.request.urlopen(URL + "_stcore/health", timeout=45) as response:
+              body = response.read().decode()
+              result["health"] = {"status": response.status, "body": body[:80]}
+              assert response.status == 200 and body.strip() == "ok", result["health"]
+          passed("Streamlit health")
+          with sync_playwright() as p:
+              browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
+              a = browser.new_context()
+              b = browser.new_context()
+              page = a.new_page()
+              other = b.new_page()
+              for pg in (page, other):
+                  pg.set_default_timeout(30000)
+                  pg.on("pageerror", lambda error: result["errors"].append(str(error)))
+          
+              def settled(pg):
+                  pg.locator('[data-testid="stStatusWidget"]').wait_for(state="hidden", timeout=60000)
+                  pg.wait_for_timeout(500)
+              def ready(pg):
+                  pg.get_by_role("button", name="Знайти свою історію", exact=True).wait_for(timeout=180000)
+                  expect(pg.get_by_text("Демонстрація · синтетичний профіль, реальні назви", exact=True)).to_be_visible()
+                  settled(pg)
+              def expand(pg):
+                  label = pg.get_by_text("Ваша демосесія", exact=True)
+                  if label.locator("xpath=ancestor::details[1]").get_attribute("open") is None:
+                      label.click()
+                  settled(pg)
+              def summary(pg):
+                  expand(pg)
+                  text = pg.locator("body").inner_text()
+                  match = re.search(r"(\d+) у списку · (\d+) оцінок", text)
+                  assert match, text[-1500:]
+                  return tuple(int(v) for v in match.groups())
+              def breaking_bad(pg):
+                  pg.get_by_text("Пошук", exact=True).first.click()
+                  query = pg.get_by_role("textbox", name="Назва, рік або частина назви", exact=True)
+                  query.fill("Breaking Bad")
+                  query.press("Enter")
+                  card = pg.locator(".st-key-card_search_-169")
+                  card.wait_for()
+                  settled(pg)
+                  card.get_by_role("button", name="Детальніше", exact=True).click()
+                  pg.get_by_role("button", name="← Повернутися", exact=True).wait_for()
+                  settled(pg)
+          
+              try:
+                  page.goto(URL, wait_until="domcontentloaded", timeout=90000)
+                  ready(page)
+                  passed("public synthetic demo initializes without visitor login")
+                  result["ml_pack_loaded"] = page.get_by_text("Історичну ML-модель не завантажено.", exact=False).count() == 0
+                  initial = summary(page)
+                  result["initial_synthetic_counts"] = initial
+          
+                  page.get_by_text("Пошук", exact=True).first.click()
+                  query = page.get_by_role("textbox", name="Назва, рік або частина назви", exact=True)
+                  query.fill("Інтерстеллар 2014")
+                  query.press("Enter")
+                  expect(page.get_by_role("heading", name="Інтерстеллар (2014)", exact=True)).to_be_visible()
+                  passed("Ukrainian search")
+          
+                  page.get_by_text("Для вас", exact=True).first.click()
+                  expect(page.get_by_role("heading", name="Нові можливості", exact=True)).to_be_visible()
+                  assert page.get_by_role("button", name="Детальніше", exact=True).count() > 0
+                  passed("recommendation cards render")
+          
+                  other.goto(URL, wait_until="domcontentloaded", timeout=90000)
+                  ready(other)
+                  assert summary(other) == initial
+                  page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
+                  ready(page)
+                  assert summary(page) == (0, 0)
+                  assert summary(other) == initial
+                  passed("clearing visitor A does not alter visitor B")
+          
+                  page.get_by_role("button", name="Відновити приклад", exact=True).click()
+                  ready(page)
+                  assert summary(page) == initial
+                  breaking_bad(page)
+                  slider = page.get_by_role("slider").first
+                  slider.focus()
+                  slider.press("ArrowRight")
+                  page.get_by_role("button", name="Зберегти оцінку", exact=True).click()
+                  expect(page.get_by_text("Ваша оцінка · ★ 4.5/5", exact=True)).to_be_visible()
+                  breaking_bad(other)
+                  expect(other.get_by_text("Ваша оцінка · ★ 4.5/5", exact=True)).to_have_count(0)
+                  passed("visitor A rating is absent from visitor B")
+          
+                  page.get_by_role("button", name="Відновити приклад", exact=True).click()
+                  ready(page)
+                  assert summary(page) == initial
+                  passed("reset restores synthetic example")
+                  page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
+                  ready(page)
+                  assert summary(page) == (0, 0)
+                  page.reload(wait_until="domcontentloaded")
+                  ready(page)
+                  assert summary(page) == initial
+                  passed("refresh starts a fresh synthetic session")
+                  assert not result["errors"], result["errors"]
+                  passed("no browser page errors")
+              except Exception:
+                  print("FAILURE_PAGE_TEXT\n" + page.locator("body").inner_text()[:7000], flush=True)
+                  print(json.dumps(result, ensure_ascii=False), flush=True)
+                  raise
+              finally:
+                  a.close()
+                  b.close()
+                  browser.close()
+          print("LIVE_RESULTS " + json.dumps(result, ensure_ascii=False), flush=True)
+          
+          PY
+          python "$RUNNER_TEMP/verify-live.py"
