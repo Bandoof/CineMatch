@@ -12,6 +12,9 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .st-key-navigation_uk p, .st-key-navigation_en p { color: #edf1f7; }
 .st-key-navigation_uk [role="radio"][aria-checked="true"] p,
 .st-key-navigation_en [role="radio"][aria-checked="true"] p { color: #f4c76f; }
+[class*="st-key-years_"] p, [class*="st-key-stars_"] p,
+.st-key-rating_search p, .st-key-rating_movies p, .st-key-rating_series p,
+.st-key-minimum p, .st-key-diversity p, [class*="st-key-guide_"] p { color: #edf1f7; }
 [class*="st-key-card_"] h3 {
   font-size: 1.2rem; line-height: 1.3; min-height: 3.12rem;
   letter-spacing: -.015em; overflow-wrap: anywhere;
