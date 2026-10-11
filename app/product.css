@@ -6,24 +6,44 @@ button, a { transition: border-color .15s ease; }
 button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 3px solid #e6b35a !important; outline-offset: 3px;
 }
-.st-key-brand { margin-bottom: .4rem; }
-[class*="st-key-artwork_fallback_"] {
-  background: linear-gradient(135deg, #151f2c, #233044);
-  border-radius: .7rem; padding: 1rem; color: #e6b35a;
+.st-key-brand { margin-bottom: 0; }
+.st-key-brand h3 { margin: 0; font-size: 1.45rem; }
+/* Documented widget keys and ARIA state; never Streamlit's generated DOM classes. */
+.st-key-navigation_uk p, .st-key-navigation_en p { color: #edf1f7; }
+.st-key-navigation_uk [role="radio"][aria-checked="true"] p,
+.st-key-navigation_en [role="radio"][aria-checked="true"] p { color: #f4c76f; }
+[class*="st-key-years_"] p, [class*="st-key-stars_"] p,
+.st-key-rating_search p, .st-key-rating_movies p, .st-key-rating_series p,
+.st-key-minimum p, .st-key-diversity p, [class*="st-key-guide_"] p { color: #edf1f7; }
+[class*="st-key-card_"] h3 {
+  font-size: 1.2rem; line-height: 1.3; min-height: 3.12rem;
+  letter-spacing: -.015em; overflow-wrap: anywhere;
 }
-[class*="st-key-artwork_fallback_"] p { color: #edf1f7; opacity: 1; }
+[class*="st-key-card_"] p { font-size: .9rem; color: #d5deeb; }
+[class*="st-key-card_"] strong { color: #f4c76f; font-size: .95rem; }
+[class*="st-key-card_poster_"] img {
+  width: 100%; aspect-ratio: 2 / 3; object-fit: contain;
+  background: #131c2e; border-radius: .55rem;
+}
+.cinema-poster-fallback {
+  aspect-ratio: 2 / 3; box-sizing: border-box; border-radius: .55rem;
+  background: radial-gradient(ellipse at top, #34435a, #131c2e 75%);
+  border: 1px solid #34435a; padding: 1rem; display: flex;
+  flex-direction: column; justify-content: center; align-items: center;
+  gap: 1rem; text-align: center; color: #edf1f7;
+}
+.cinema-film-icon { font-size: 3rem; line-height: 1; color: #f4c76f; }
+.cinema-poster-title { font-size: 1rem; line-height: 1.4; overflow-wrap: anywhere; }
+.cinema-poster-notice { font-size: .8rem; color: #d5deeb; }
 .st-key-cinema_hero {
   background: #151f2c; border-radius: 1.25rem;
-  border: 1px solid #2b394b; padding: clamp(1rem,3vw,2.4rem);
-  margin: 1rem 0 1.5rem;
+  border: 1px solid #2b394b; padding: clamp(1rem,2vw,1.5rem);
+  margin: .35rem 0 .5rem;
 }
-.st-key-cinema_hero h1 { font-size: clamp(2rem,4vw,3.8rem); line-height: 1.05; }
-.st-key-poster_missing {
-  min-height: 240px; display: grid; place-content: center;
-  border-radius: .8rem; background: #182230; color: #c7d0dd;
-}
+.st-key-cinema_hero h1 { font-size: clamp(1.8rem,3vw,2.8rem); line-height: 1.1; }
 @media (prefers-reduced-motion: reduce) { button, a { transition: none; } }
 @media (max-width: 640px) {
   .st-key-cinema_hero { padding: 1rem; }
   h1 { overflow-wrap: anywhere; }
 }
+

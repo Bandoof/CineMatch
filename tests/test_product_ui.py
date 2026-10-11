@@ -62,7 +62,7 @@ def test_first_launch_without_downloads_uses_real_dated_sample(product, monkeypa
     healthy(app)
     assert app.session_state["_catalog_view"].bundled_sample
     assert len(app.session_state["_catalog_view"].rows) == 30
-    app.radio(key="navigation_en").set_value("search").run()
+    app.button_group(key="navigation_en").set_value("search").run()
     app.text_input(key="query_search").set_value("Інтерстеллар").run()
     app.button(key="details_search_-3000013417189").click().run()
     healthy(app)
@@ -76,7 +76,7 @@ def test_provider_failure_has_visible_warning_without_false_saved_success(produc
 
     app, _ = product
     monkeypatch.setattr(ProviderClient, "fetch", lambda *a, **k: FetchResult(None, "unavailable"))
-    app.run().radio(key="navigation_en").set_value("search").run()
+    app.run().button_group(key="navigation_en").set_value("search").run()
     app.text_input(key="query_search").set_value("unavailable title").run()
     app.button(key="remote_search").click().run()
     healthy(app)
@@ -92,7 +92,7 @@ def test_first_launch_and_all_pages_render_only_active_controls(product):
     assert any("Stories that stay" in title.value for title in app.title)
     assert not any(w.key == "query_search" for w in app.text_input)
     for page in ("for_you", "movies", "series", "search", "library", "research", "discover"):
-        app.radio(key=f"navigation_{app.session_state['ui_language']}").set_value(page).run()
+        app.button_group(key=f"navigation_{app.session_state['ui_language']}").set_value(page).run()
         healthy(app)
         if page == "for_you":
             assert app.selectbox(key="for_you_algorithm").value == "Adaptive"
@@ -100,13 +100,15 @@ def test_first_launch_and_all_pages_render_only_active_controls(product):
             healthy(app)
             assert any("Known catalog · Collaborative" in h.value for h in app.subheader)
     app.button(key="hero_search").click().run()
-    assert app.radio(key=f"navigation_{app.session_state['ui_language']}").value == "search"
+    assert app.button_group(key=f"navigation_{app.session_state['ui_language']}").value == "search"
     healthy(app)
 
 
 def test_search_details_watchlist_rating_undo_and_fresh_restore(product):
     app, paths = product
-    app.run().radio(key=f"navigation_{app.session_state['ui_language']}").set_value("search").run()
+    app.run().button_group(key=f"navigation_{app.session_state['ui_language']}").set_value(
+        "search"
+    ).run()
     app.text_input(key="query_search").set_value("Синтетичне сяйво").run()
     healthy(app)
     app.button(key="details_search_-101").click().run()
@@ -141,7 +143,9 @@ def test_ukrainian_ui_library_filters_named_profiles_and_navigation(product):
     healthy(app)
     app.button(key="details_discover_-101").click().run()
     app.button(key="detail_watchlist").click().run()
-    app.radio(key=f"navigation_{app.session_state['ui_language']}").set_value("library").run()
+    app.button_group(key=f"navigation_{app.session_state['ui_language']}").set_value(
+        "library"
+    ).run()
     healthy(app)
     assert not any(w.key == "detail_watchlist" for w in app.button)
     app.text_input(key="profile_name").set_value("Моя копія").run()
@@ -163,7 +167,9 @@ def test_modern_only_offline_first_launch_without_training_data(product, monkeyp
     app.run()
     healthy(app)
     assert app.session_state["_catalog_view"].base is None
-    app.radio(key=f"navigation_{app.session_state['ui_language']}").set_value("for_you").run()
+    app.button_group(key=f"navigation_{app.session_state['ui_language']}").set_value(
+        "for_you"
+    ).run()
     healthy(app)
     next(w for w in app.button if w.label == "Rate").click().run()
     assert app.session_state["ratings"] == {-101: 4.0}
@@ -182,7 +188,9 @@ def test_corrupt_snapshot_preserved_and_empty_states_render(product):
 
 def test_search_index_cache_and_metadata_invalidation(product):
     app, paths = product
-    app.run().radio(key=f"navigation_{app.session_state['ui_language']}").set_value("search").run()
+    app.run().button_group(key=f"navigation_{app.session_state['ui_language']}").set_value(
+        "search"
+    ).run()
     first = app.session_state["_search_index"]
     app.text_input(key="query_search").set_value("Test film").run()
     assert app.session_state["_search_index"] is first
@@ -251,13 +259,13 @@ def test_historical_only_discovery_has_useful_default(product):
 def test_language_switch_preserves_active_page_and_canonical_library_filters(product):
     app, _ = product
     app.run()
-    app.radio(key="navigation_en").set_value("library").run()
+    app.button_group(key="navigation_en").set_value("library").run()
     app.selectbox(key="library_media_en").set_value("Series").run()
     app.selectbox(key="library_sort_en").set_value("rating").run()
     app.radio(key="library_group_en").set_value("ratings").run()
     app.selectbox(key="ui_language").set_value("uk").run()
     healthy(app)
-    assert app.radio(key="navigation_uk").value == "library"
+    assert app.button_group(key="navigation_uk").value == "library"
     assert app.radio(key="library_group_uk").value == "ratings"
     assert app.selectbox(key="library_media_uk").value == "Series"
     assert app.selectbox(key="library_media_uk").options == ["Усе", "Фільми", "Серіали"]
@@ -266,5 +274,5 @@ def test_language_switch_preserves_active_page_and_canonical_library_filters(pro
     assert app.selectbox(key="library_media_en").options == ["All", "Movies", "Series"]
     assert app.selectbox(key="library_sort_en").options == ["Title", "Release year", "My rating"]
     assert app.selectbox(key="library_media_en").value == "Series"
-    assert app.radio(key="navigation_en").value == "library"
+    assert app.button_group(key="navigation_en").value == "library"
     healthy(app)

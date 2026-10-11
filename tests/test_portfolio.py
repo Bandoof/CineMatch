@@ -52,7 +52,7 @@ def test_two_sessions_changes_undo_reset_and_no_shared_storage(demo):
     )
     assert first_view is not second_view and first_view.catalog is not second_view.catalog
     baseline = dict(second.session_state["ratings"])
-    first.radio(key="navigation_en").set_value("search").run()
+    first.button_group(key="navigation_en").set_value("search").run()
     first.text_input(key="query_search").set_value("Пуститися берега").run()
     first.button(key="details_search_-169").click().run()
     first.button(key="detail_watchlist").click().run()
@@ -84,14 +84,57 @@ def test_no_file_import_private_profile_controls_or_remote_queries(demo):
     make, _ = demo
     app = make()
     for page in ("search", "library", "for_you", "research", "movies", "series"):
-        app.radio(key="navigation_en").set_value(page).run()
+        app.button_group(key="navigation_en").set_value(page).run()
         healthy(app)
-    app.radio(key="navigation_en").set_value("search").run()
+    app.button_group(key="navigation_en").set_value("search").run()
     app.text_input(key="query_search").set_value("must stay in this visitor session").run()
     healthy(app)
     assert not any(str(b.key).startswith("remote_") for b in app.button)
-    app.radio(key="navigation_en").set_value("library").run()
+    app.button_group(key="navigation_en").set_value("library").run()
     assert not app.get("file_uploader") and not any(w.key == "profile_name" for w in app.text_input)
+
+
+def test_demo_controls_and_navigation_preserve_language_and_profile(demo):
+    make, _ = demo
+    app = make()
+    baseline = dict(app.session_state["ratings"])
+    assert any(e.label == "Demo mode · Details" for e in app.expander)
+    app.button_group(key="navigation_en").set_value("search").run()
+    app.selectbox(key="ui_language").set_value("uk").run()
+    healthy(app)
+    assert app.button_group(key="navigation_uk").value == "search"
+    assert app.session_state["ratings"] == baseline
+    assert app.button(key="portfolio_reset") and app.button(key="portfolio_empty")
+    app.button(key="portfolio_empty").click().run()
+    assert not app.session_state["ratings"]
+    app.button(key="portfolio_reset").click().run()
+    assert app.session_state["ratings"] == baseline
+
+
+def test_all_sample_genres_localized_without_changing_provider_labels():
+    from src.i18n import genre_name
+
+    catalog = sample_catalog(ROOT)
+    for title in catalog.titles.values():
+        for genre in title.genres:
+            assert genre_name(genre, "en") == genre
+            assert genre_name(genre, "uk") != genre
+    assert genre_name("vampire film", "uk") == "Вампірське кіно"
+    assert genre_name("science fiction", "uk") == "Наукова фантастика"
+    assert genre_name("DRAMA", "uk") == "Драма"
+    assert genre_name("Unclassified provider genre", "uk") == "Unclassified provider genre"
+
+
+def test_offline_poster_escapes_provider_text():
+    def render():
+        from app.product_ui import poster_fallback
+
+        poster_fallback('<img src=x onerror="alert(1)">')
+
+    app = AppTest.from_function(render, default_timeout=30).run()
+    healthy(app)
+    markup = next(m.value for m in app.markdown if "cinema-poster-fallback" in m.value)
+    assert "<img" not in markup and "&lt;img" in markup
 
 
 def test_reset_is_an_independent_synthetic_profile_not_movie_metadata():

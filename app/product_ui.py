@@ -2,6 +2,7 @@
 
 import os
 import sqlite3
+from html import escape
 from pathlib import Path
 
 import numpy as np
@@ -45,15 +46,32 @@ def language():
     return st.session_state.ui_language
 
 
-def choice(label, options, key, labels, container=st, radio=False, **kwargs):
+def choice(label, options, key, labels, container=st, radio=False, segmented=False, **kwargs):
     """Keep canonical values while remounting translated native widget labels."""
     options = list(options)
     value = st.session_state.get(key, options[0])
     selected = options.index(value) if value in options else 0
-    render = container.radio if radio else container.selectbox
-    result = render(
-        label, options, index=selected, key=f"{key}_{language()}", format_func=labels.get, **kwargs
-    )
+    if segmented:
+        result = container.segmented_control(
+            label,
+            options,
+            default=options[selected],
+            required=True,
+            wrap=True,
+            key=f"{key}_{language()}",
+            format_func=labels.get,
+            **kwargs,
+        )
+    else:
+        render = container.radio if radio else container.selectbox
+        result = render(
+            label,
+            options,
+            index=selected,
+            key=f"{key}_{language()}",
+            format_func=labels.get,
+            **kwargs,
+        )
     st.session_state[key] = result
     return result
 
@@ -191,29 +209,47 @@ def artwork(view, mid, width=None):
             alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
         )
     else:
-        with st.container(key="poster_missing" if width else f"missing_{mid}"):
-            st.caption("◉  CineMatch")
-            st.caption(
-                s("Постер недоступний", "Poster unavailable")
-                if st.session_state.get("posters", True)
-                else s("Постери вимкнено", "Posters disabled")
-            )
+        poster_fallback(view.display_title(mid, language()))
+
+
+def poster_fallback(title):
+    """Decorative, escaped offline artwork; never a fabricated movie poster."""
+    notice = (
+        s("Постер недоступний", "Poster unavailable")
+        if st.session_state.get("posters", True)
+        else s("Постери вимкнено", "Posters disabled")
+    )
+    st.markdown(
+        '<div class="cinema-poster-fallback">'
+        f'<span class="cinema-film-icon" aria-hidden="true">{escape(title[:1].upper())}</span>'
+        f'<span class="cinema-poster-title">{escape(title)}</span>'
+        f'<span class="cinema-poster-notice">{escape(notice)}</span></div>',
+        unsafe_allow_html=True,
+    )
+
+
+def card_title(view, mid):
+    """Separate a known release year without changing catalog or search identities."""
+    title = view.display_title(mid, language())
+    year = view.rows[mid].year
+    suffix = f" ({year})"
+    return title[: -len(suffix)] if year and title.endswith(suffix) else title
 
 
 def source_rating(view, mid):
     title = view.titles.get(mid)
     if title and title.community_rating is not None:
-        return f"{title.provider} · {title.community_rating:g}/10"
+        return f"★ {title.community_rating:g}/10 · {title.provider}"
     if view.base is not None and mid in view.base.positions:
         i = view.base.positions[mid]
         if view.base.popularity.counts[i]:
             return (
-                f"MovieLens · {view.base.popularity.averages[i]:.1f}/5 · {int(view.base.popularity.counts[i])} "
+                f"★ {view.base.popularity.averages[i]:.1f}/5 · MovieLens · {int(view.base.popularity.counts[i])} "
                 + s("оцінок", "ratings")
             )
         value = view.base.rows[mid].provider_rating
         if np.isfinite(value):
-            return f"TVmaze · {value:g}/10"
+            return f"★ {value:g}/10 · TVmaze"
     return ""
 
 
@@ -228,34 +264,21 @@ def cards(view, identities, prefix, reasons=None, empty_text=None):
             )
         )
         return
-    for start in range(0, len(ids), 3):
-        for col, mid in zip(st.columns(3, gap="large"), ids[start : start + 3]):
-            with col, st.container(border=True, key=f"card_{prefix}_{mid}"):
-                # Every item occupies one bounded native column; mobile stacks natively.
-                if poster(view, mid) and st.session_state.get("posters", True):
-                    st.image(
-                        poster(view, mid),
-                        width="stretch",
-                        alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
-                    )
-                else:
-                    with st.container(
-                        height=120, border=False, key=f"artwork_fallback_{prefix}_{mid}"
-                    ):
-                        st.write("◉ CineMatch")
-                        st.caption(
-                            s("Постер недоступний", "Poster unavailable")
-                            if st.session_state.get("posters", True)
-                            else s("Постери вимкнено", "Posters disabled")
-                        )
+    # Native wrapping flex layout: at most four cards, fewer when the parent narrows.
+    with st.container(horizontal=True, gap=16, width=1088):
+        for mid in ids:
+            with st.container(border=True, width=260, gap="xsmall", key=f"card_{prefix}_{mid}"):
+                with st.container(key=f"card_poster_{prefix}_{mid}"):
+                    artwork(view, mid)
                 row = view.rows[mid]
-                st.subheader(view.display_title(mid, language()))
+                st.subheader(card_title(view, mid))
                 st.caption(
-                    s("Серіал", "Series") if row.media_type == "Series" else s("Фільм", "Movie")
+                    (str(row.year) + " · " if row.year else "")
+                    + (s("Серіал", "Series") if row.media_type == "Series" else s("Фільм", "Movie"))
                 )
-                st.caption(" · ".join(genre_name(g, language()) for g in row.genres[:3]))
                 if source_rating(view, mid):
-                    st.caption(source_rating(view, mid))
+                    st.markdown(f"**{source_rating(view, mid)}**")
+                st.caption(" · ".join(genre_name(g, language()) for g in row.genres[:2]))
                 if mid in st.session_state.ratings:
                     st.caption(
                         s("Ваша оцінка", "Your rating")
@@ -278,7 +301,8 @@ def cards(view, identities, prefix, reasons=None, empty_text=None):
                     if mid in st.session_state.watchlist
                     else s("Дивитися пізніше", "Watchlist"),
                     key=f"watch_{prefix}_{mid}",
-                    width="stretch",
+                    icon=":material/bookmark:",
+                    width="content",
                     disabled=mid in st.session_state.watched,
                 ):
                     perform(mid, "watchlist")
@@ -407,21 +431,22 @@ def discover(view):
             type="primary",
             on_click=search_page,
         )
-    shelf = choice(
-        s("Що відкриємо сьогодні?", "What shall we discover?"),
-        (["sample"] if sample else [])
-        + ["recent", "popular", "hidden_gems", "upcoming", "tonight", "because_liked"],
-        labels={
-            "sample": s("Добірка для знайомства", "Portfolio selection"),
-            "recent": s("Нещодавно вийшли", "Recently released"),
-            "popular": s("Популярні в MovieLens", "Popular in MovieLens"),
-            "hidden_gems": s("Приховані перлини", "Hidden gems"),
-            "upcoming": s("Незабаром", "Upcoming"),
-            "tonight": s("Фільми на вечір", "Movies for tonight"),
-            "because_liked": s("Тому що вам сподобалося", "Because you liked"),
-        },
-        key="discovery_shelf",
-    )
+    with st.container(width=360):
+        shelf = choice(
+            s("Що відкриємо сьогодні?", "What shall we discover?"),
+            (["sample"] if sample else [])
+            + ["recent", "popular", "hidden_gems", "upcoming", "tonight", "because_liked"],
+            labels={
+                "sample": s("Добірка для знайомства", "Portfolio selection"),
+                "recent": s("Нещодавно вийшли", "Recently released"),
+                "popular": s("Популярні в MovieLens", "Popular in MovieLens"),
+                "hidden_gems": s("Приховані перлини", "Hidden gems"),
+                "upcoming": s("Незабаром", "Upcoming"),
+                "tonight": s("Фільми на вечір", "Movies for tonight"),
+                "because_liked": s("Тому що вам сподобалося", "Because you liked"),
+            },
+            key="discovery_shelf",
+        )
     definitions = {
         "sample": s(
             "Невелика датована добірка реальних серіалів і фільмів. Це не рейтинг популярності.",
@@ -1116,6 +1141,94 @@ def research(view):
             st.session_state.recommendation_change = previous
 
 
+def demo_information(view):
+    st.write(
+        s(
+            "Демонстрація · синтетичний профіль, реальні назви",
+            "Demonstration · synthetic profile, real titles",
+        )
+    )
+    st.caption(
+        s(
+            "Лише ваша сесія · оновлення сторінки відновлює приклад · без акаунтів. Постери TVmaze необов’язкові.",
+            "Your session only · refresh restores the example · no accounts. TVmaze posters are optional.",
+        )
+    )
+    st.caption(
+        s(
+            "Ці прикладні оцінки не є історією людини. Зміни живуть лише у вашій сесії; оновлення сторінки відновить початковий стан. Без акаунтів і спільного збереження.",
+            "These example ratings are not a person's history. Changes live only in your session; refreshing restores the initial state. No accounts or shared persistence.",
+        )
+    )
+    st.caption(
+        s(
+            "Постери завантажуються з TVmaze і передають цьому сайту мережеві дані. Вимкніть постери для повністю офлайн-перегляду.",
+            "Posters load from TVmaze and share network information with that site. Disable posters for fully offline browsing.",
+        )
+    )
+    if view.base is None:
+        st.info(
+            s(
+                "У цій демонстрації доступні метадані й жанрові евристики. Історичну ML-модель не завантажено.",
+                "This demonstration uses metadata and genre heuristics. The historical ML model is not loaded.",
+            )
+        )
+    else:
+        st.caption(
+            s(
+                "Історичні рекомендації: окрема модель на обмеженому публічному development-наборі. Це не оцінка якості на holdout.",
+                "Historical recommendations: a separate model on a bounded public development subset. This is not a holdout quality evaluation.",
+            )
+        )
+    a, b = st.columns(2)
+
+    def reset_demo(empty):
+        portfolio.reset(st.session_state, view, empty=empty)
+        st.query_params.pop("title", None)
+
+    a.button(
+        s("Відновити приклад", "Reset example"),
+        key="portfolio_reset",
+        on_click=reset_demo,
+        args=(False,),
+        width="stretch",
+    )
+    b.button(
+        s("Почати з чистого профілю", "Start with an empty profile"),
+        key="portfolio_empty",
+        on_click=reset_demo,
+        args=(True,),
+        width="stretch",
+    )
+
+
+def session_controls(view, directory, memory):
+    st.subheader(s("Ваш кінопростір", "Your cinema"))
+    st.caption(s("Особисто. Локально. У вашому смаку.", "Personal. Local. Your taste."))
+    st.caption(
+        f"{len(st.session_state.watchlist)} "
+        + s("у списку", "watchlisted")
+        + f" · {len(st.session_state.ratings)} "
+        + s("оцінок", "ratings")
+    )
+    if not portfolio.enabled(st.session_state):
+        local_memory.controls(memory, lambda key: tr(key, language()))
+    st.checkbox(
+        s("Показувати постери", "Show posters"),
+        value=st.session_state.get("posters", True),
+        key="posters",
+    )
+    if st.button(
+        s("Скасувати останню дію", "Undo last action"),
+        key="library_undo_button",
+        disabled="library_undo" not in st.session_state,
+    ):
+        undo(st.session_state)
+        st.session_state._feedback = s("Дію скасовано", "Action undone")
+        st.rerun()
+    provider_controls(view, directory)
+
+
 def main():
     memory = None if portfolio.enabled(st.session_state) else local_memory.initialize(ROOT)
     try:
@@ -1131,84 +1244,24 @@ def _main(memory):
         "<style>" + (ROOT / "app" / "product.css").read_text(encoding="utf-8") + "</style>",
         unsafe_allow_html=True,
     )
-    with st.container(key="brand"):
-        brand, control = st.columns([3, 1])
-        brand.subheader("◉ CineMatch")
-        control.selectbox(
+    with st.container(key="brand", horizontal=True, vertical_alignment="center"):
+        st.subheader("◉ CineMatch", width="stretch")
+        st.selectbox(
             "Мова / Language",
             ["uk", "en"],
             key="ui_language",
+            width=180,
+            label_visibility="collapsed",
             format_func=lambda v: "Українська" if v == "uk" else "English",
         )
     view, directory = load_view()
-    if portfolio.enabled(state):
-        with st.container(border=True, key="portfolio_notice"):
-            st.write(
-                s(
-                    "Демонстрація · синтетичний профіль, реальні назви",
-                    "Demonstration · synthetic profile, real titles",
-                )
+    if st.session_state.get("_portfolio_pack_error"):
+        st.warning(
+            s(
+                "Підготовлений ML-набір не пройшов перевірку. Доступна демонстрація метаданих; збережені файли не змінено.",
+                "The prepared ML pack failed verification. Metadata demonstration remains available; saved files were preserved.",
             )
-            st.caption(
-                s(
-                    "Лише ваша сесія · оновлення сторінки відновлює приклад · без акаунтів. Постери TVmaze необов’язкові.",
-                    "Your session only · refresh restores the example · no accounts. TVmaze posters are optional.",
-                )
-            )
-            with st.expander(
-                s("Приватність і межі демонстрації", "Privacy & demonstration limits")
-            ):
-                st.caption(
-                    s(
-                        "Ці прикладні оцінки не є історією людини. Зміни живуть лише у вашій сесії; оновлення сторінки відновить початковий стан. Без акаунтів і спільного збереження.",
-                        "These example ratings are not a person's history. Changes live only in your session; refreshing restores the initial state. No accounts or shared persistence.",
-                    )
-                )
-                st.caption(
-                    s(
-                        "Постери завантажуються з TVmaze і передають цьому сайту мережеві дані. Вимкніть постери для повністю офлайн-перегляду.",
-                        "Posters load from TVmaze and share network information with that site. Disable posters for fully offline browsing.",
-                    )
-                )
-            if view.base is None:
-                st.info(
-                    s(
-                        "У цій демонстрації доступні метадані й жанрові евристики. Історичну ML-модель не завантажено.",
-                        "This demonstration uses metadata and genre heuristics. The historical ML model is not loaded.",
-                    )
-                )
-            else:
-                st.caption(
-                    s(
-                        "Історичні рекомендації: окрема модель на обмеженому публічному development-наборі. Це не оцінка якості на holdout.",
-                        "Historical recommendations: a separate model on a bounded public development subset. This is not a holdout quality evaluation.",
-                    )
-                )
-            if state.get("_portfolio_pack_error"):
-                st.warning(
-                    s(
-                        "Підготовлений ML-набір не пройшов перевірку. Доступна демонстрація метаданих; збережені файли не змінено.",
-                        "The prepared ML pack failed verification. Metadata demonstration remains available; saved files were preserved.",
-                    )
-                )
-            a, b = st.columns(2)
-
-            def reset_demo(empty):
-                portfolio.reset(state, view, empty=empty)
-                st.query_params.pop("title", None)
-
-            a.button(
-                s("Відновити приклад", "Reset example"),
-                key="portfolio_reset",
-                on_click=reset_demo,
-                args=(False,),
-            )
-            b.button(
-                s("Почати з чистого профілю", "Start with an empty profile"),
-                key="portfolio_empty",
-                on_click=reset_demo,
-                args=(True,),
-            )
+        )
     local_memory.restore(memory, view)
     for key, default in (
         ("ratings", {}),
@@ -1241,34 +1294,9 @@ def _main(memory):
         if memory:
             memory["ready"] = False
         return
-    controls = (
-        st.expander(s("Ваша демосесія", "Your demo session"))
-        if portfolio.enabled(state)
-        else st.sidebar
-    )
-    with controls:
-        st.subheader(s("Ваш кінопростір", "Your cinema"))
-        st.caption(s("Особисто. Локально. У вашому смаку.", "Personal. Local. Your taste."))
-        st.caption(
-            f"{len(state.watchlist)} "
-            + s("у списку", "watchlisted")
-            + f" · {len(state.ratings)} "
-            + s("оцінок", "ratings")
-        )
-        if not portfolio.enabled(state):
-            local_memory.controls(memory, lambda key: tr(key, language()))
-        st.checkbox(
-            s("Показувати постери", "Show posters"), value=state.get("posters", True), key="posters"
-        )
-        if st.button(
-            s("Скасувати останню дію", "Undo last action"),
-            key="library_undo_button",
-            disabled="library_undo" not in state,
-        ):
-            undo(state)
-            state._feedback = s("Дію скасовано", "Action undone")
-            st.rerun()
-        provider_controls(view, directory)
+    if not portfolio.enabled(state):
+        with st.sidebar:
+            session_controls(view, directory, memory)
     feedback = state.pop("_feedback", None)
     if feedback:
         st.toast(feedback)
@@ -1277,8 +1305,8 @@ def _main(memory):
         s("Навігація", "Navigation"),
         PAGES,
         key="navigation",
-        horizontal=True,
-        radio=True,
+        segmented=True,
+        label_visibility="collapsed",
         labels={k: labels[0 if language() == "uk" else 1] for k, labels in PAGE_LABELS.items()},
         on_change=navigate,
     )
@@ -1300,3 +1328,7 @@ def _main(memory):
         library(view)
     else:
         research(view)
+    if portfolio.enabled(state):
+        with st.expander(s("Демо-режим · Деталі", "Demo mode · Details"), expanded=False):
+            demo_information(view)
+            session_controls(view, directory, memory)
