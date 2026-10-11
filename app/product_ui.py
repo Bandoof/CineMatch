@@ -221,7 +221,7 @@ def poster_fallback(title):
     )
     st.markdown(
         '<div class="cinema-poster-fallback">'
-        '<span class="cinema-film-icon" aria-hidden="true">▣</span>'
+        f'<span class="cinema-film-icon" aria-hidden="true">{escape(title[:1].upper())}</span>'
         f'<span class="cinema-poster-title">{escape(title)}</span>'
         f'<span class="cinema-poster-notice">{escape(notice)}</span></div>',
         unsafe_allow_html=True,

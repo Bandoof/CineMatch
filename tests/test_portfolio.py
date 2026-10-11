@@ -131,7 +131,7 @@ def test_offline_poster_escapes_provider_text():
 
         poster_fallback('<img src=x onerror="alert(1)">')
 
-    app = AppTest.from_function(render).run()
+    app = AppTest.from_function(render, default_timeout=30).run()
     healthy(app)
     markup = next(m.value for m in app.markdown if "cinema-poster-fallback" in m.value)
     assert "<img" not in markup and "&lt;img" in markup

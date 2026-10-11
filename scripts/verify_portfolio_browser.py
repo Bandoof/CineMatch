@@ -46,6 +46,9 @@ def verify(
                 "overflow": page.evaluate("document.documentElement.scrollWidth > innerWidth+1"),
             }
             layouts.append(result)
+            (output / "layout-results.json").write_text(
+                json.dumps(layouts, indent=2), encoding="utf-8"
+            )
             return result
 
         if baseline_url:
@@ -243,16 +246,12 @@ def verify(
         open_choice(page.get_by_role("combobox").first)
         page.get_by_role("option", name="English", exact=True).click()
         page.get_by_role("heading", name="Your cinema shelf", exact=True).wait_for()
-        expect(page.get_by_role("button", name="My Library", exact=True)).to_have_attribute(
-            "aria-pressed", "true"
-        )
+        expect(page.get_by_role("radio", name="My Library", exact=True)).to_be_checked()
         screenshot(page, "desktop-library.png")
         accessibility(page, "English library")
         open_choice(page.get_by_role("combobox").first)
         page.get_by_role("option", name="Українська", exact=True).click()
-        expect(page.get_by_role("button", name="Моя бібліотека", exact=True)).to_have_attribute(
-            "aria-pressed", "true"
-        )
+        expect(page.get_by_role("radio", name="Моя бібліотека", exact=True)).to_be_checked()
         # Independent visitor: mutation/rating in A must not appear in B.
         other = browser.new_context(viewport={"width": 1440, "height": 1000})
         second = other.new_page()
