@@ -239,13 +239,42 @@ GENRES_UK = {"unknown": "Без жанру", "Action": "Бойовик", "Advent
 MODELS_UK = {"Hybrid": "Гібридна", "Collaborative": "Спільні оцінки (ALS)",
              "Item-KNN": "Схожі фільми (KNN)", "Content-based": "За жанрами", "Popularity": "Популярність"}
 
+# Display-only aliases from MovieLens, TVmaze and the bundled Wikidata metadata.
+GENRE_DISPLAY_UK = {name.casefold(): label for name, label in GENRES_UK.items()}
+GENRE_DISPLAY_UK.update({
+    "science fiction": "Наукова фантастика", "fantasy film": "Фентезі",
+    "vampire film": "Вампірське кіно", "historical film": "Історичне кіно",
+    "biographical film": "Біографічне кіно", "epic film": "Епічне кіно",
+    "speculative fiction film": "Фантастичне кіно",
+    "science fiction horror film": "Науково-фантастичні жахи",
+    "body horror film": "Тілесні жахи", "satirical film": "Сатиричне кіно",
+    "psychological thriller film": "Психологічний трилер",
+    "psychological horror film": "Психологічні жахи",
+    "psychological drama film": "Психологічна драма",
+    "monster film": "Кіно про монстрів", "splatter film": "Криваві жахи",
+    "black comedy film": "Чорна комедія", "coming-of-age film": "Кіно про дорослішання",
+    "comedy drama": "Комедійна драма", "sport film": "Спортивне кіно",
+    "war film": "Військове кіно", "family film": "Сімейне кіно",
+    "dystopian film": "Антиутопія", "time-travel film": "Подорожі в часі",
+    "hard science fiction": "Тверда наукова фантастика",
+    "buddy film": "Кіно про напарників", "prison film": "Кіно про в’язницю",
+    "mystery film": "Детектив", "musical film": "Мюзикл", "teen film": "Підліткове кіно",
+    "romance film": "Романтичне кіно", "musical comedy": "Музична комедія",
+    "fantasy comedy film": "Фентезійна комедія", "chick flick": "Кіно для жіночої аудиторії",
+    "cyberpunk": "Кіберпанк", "action thriller": "Бойовик-трилер",
+    "post-apocalyptic film": "Постапокаліптичне кіно", "film noir": "Нуар",
+    "superhero film": "Супергеройське кіно", "absurdist fiction": "Абсурдистська фантастика",
+    "martial arts film": "Кіно про бойові мистецтва", "psychedelic film": "Психоделічне кіно",
+})
+
 
 def tr(key, language="en", **values):
     return (UK if language == "uk" else EN)[key].format(**values)
 
 
 def genre_name(genre, language="en"):
-    return GENRES_UK.get(genre, genre) if language == "uk" else genre
+    # Unknown labels remain intact; internal genre identifiers never change.
+    return GENRE_DISPLAY_UK.get(genre.casefold(), genre) if language == "uk" else genre
 
 
 def model_name(model, language="en"):
@@ -372,3 +401,4 @@ UK.update({
  "reason_variety_order": "Різноманітність може змінити порядок за жанровою схожістю.",
  "reason_semantic": "Локальна змістова схожість назв, жанрів і наявних описів із джерел.",
 })
+

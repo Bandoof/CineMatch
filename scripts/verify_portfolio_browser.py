@@ -8,11 +8,20 @@ from pathlib import Path
 from urllib.parse import urlparse
 
 
-def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=False):
+def verify(
+    url,
+    output,
+    axe_script=None,
+    expect_pack_error=False,
+    no_artwork=False,
+    metadata_only=False,
+    baseline_url=None,
+):
     from playwright.sync_api import expect, sync_playwright
 
     output.mkdir(parents=True, exist_ok=True)
     errors, failures, audit, timings = [], [], [], {}
+    layouts = []
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True, args=["--no-sandbox"])
         context = browser.new_context(
@@ -21,6 +30,48 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             record_video_size={"width": 1280, "height": 720},
         )
         page = context.new_page()
+
+        def geometry(page, label):
+            cards = page.locator('[class*="st-key-card_discover_"]')
+            boxes = [cards.nth(i).bounding_box() for i in range(cards.count())]
+            boxes = [box for box in boxes if box]
+            assert boxes, "Discovery cards did not render"
+            top = min(box["y"] for box in boxes)
+            result = {
+                "label": label,
+                "viewport": page.viewport_size,
+                "first_card_y": round(top),
+                "first_row_cards": sum(abs(box["y"] - top) < 5 for box in boxes),
+                "card_width": round(boxes[0]["width"]),
+                "overflow": page.evaluate("document.documentElement.scrollWidth > innerWidth+1"),
+            }
+            layouts.append(result)
+            return result
+
+        if baseline_url:
+            for width, height, label in [
+                (1920, 1080, "wide"),
+                (1366, 768, "laptop"),
+                (390, 844, "mobile"),
+            ]:
+                before = browser.new_context(viewport={"width": width, "height": height})
+                baseline = before.new_page()
+                baseline.goto(baseline_url)
+                baseline.get_by_role("button", name="Знайти свою історію", exact=True).wait_for(
+                    timeout=60000
+                )
+                label_widget = baseline.get_by_text("Ваша демосесія", exact=True)
+                label_widget.click()
+                baseline.get_by_text("Показувати постери", exact=True).click()
+                baseline.get_by_text("Ваша демосесія", exact=True).click()
+                baseline.locator('[data-testid="stStatusWidget"]').wait_for(state="hidden")
+                baseline.mouse.wheel(0, -10000)
+                baseline.wait_for_timeout(500)
+                geometry(baseline, f"before-{label}")
+                baseline.screenshot(
+                    path=str(output / f"before-{label}-discover.png"), full_page=True
+                )
+                before.close()
 
         def observe(page):
             page.on("pageerror", lambda error: errors.append(str(error)))
@@ -48,23 +99,21 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             page.get_by_role("button", name="Знайти свою історію", exact=True).wait_for(
                 timeout=60000
             )
-            expect(
-                page.get_by_text("Демонстрація · синтетичний профіль, реальні назви", exact=True)
-            ).to_be_visible()
+            expect(page.get_by_text("Демо-режим · Деталі", exact=True)).to_be_visible()
             if (
                 no_artwork
                 and page.get_by_role(
                     "checkbox", name="Показувати постери", exact=True, include_hidden=True
                 ).is_checked()
             ):
-                expand(page, "Ваша демосесія")
+                expand(page, "Демо-режим · Деталі")
                 page.get_by_text("Показувати постери", exact=True).click()
                 expect(
                     page.get_by_role(
                         "checkbox", name="Показувати постери", exact=True, include_hidden=True
                     )
                 ).not_to_be_checked()
-                page.get_by_text("Ваша демосесія", exact=True).click()
+                page.get_by_text("Демо-режим · Деталі", exact=True).click()
             settled(page)
 
         def screenshot(page, name):
@@ -76,6 +125,16 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
                 timeout=30000,
             )
             page.screenshot(path=str(output / name), full_page=True)
+            if name in ("wide-discover.png", "laptop-discover.png", "mobile-discover.png"):
+                label = name.split("-")[0]
+                layout = geometry(page, f"after-{label}")
+                assert not layout["overflow"], f"{label} overflow"
+                assert layout["first_row_cards"] == (1 if label == "mobile" else 4), layout
+                fallback = page.locator(".cinema-poster-fallback").first.bounding_box()
+                assert abs(fallback["width"] / fallback["height"] - 2 / 3) < 0.02
+                if baseline_url and label != "mobile":
+                    before = next(item for item in layouts if item["label"] == f"before-{label}")
+                    assert layout["first_card_y"] < before["first_card_y"] - 150, (before, layout)
 
         def accessibility(page, name):
             if axe_script:
@@ -119,7 +178,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         query.fill("Інтерстеллар 2014")
         start = time.perf_counter()
         query.press("Enter")
-        page.get_by_role("heading", name="Інтерстеллар (2014)", exact=True).wait_for()
+        page.get_by_role("heading", name="Інтерстеллар", exact=True).wait_for()
         timings["uk_search_ready_ms"] = (time.perf_counter() - start) * 1000
         expand(page, "Фільтри та порядок")
         media = page.get_by_role("combobox", name=re.compile(r"Тип$"))
@@ -128,7 +187,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         page.get_by_text("Збігів немає.", exact=False).wait_for()
         open_choice(media)
         page.get_by_role("option", name="Фільми", exact=True).click()
-        page.get_by_role("heading", name="Інтерстеллар (2014)", exact=True).wait_for()
+        page.get_by_role("heading", name="Інтерстеллар", exact=True).wait_for()
         screenshot(page, "desktop-search.png")
         accessibility(page, "filtered Ukrainian search")
         settled(page)
@@ -154,7 +213,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         screenshot(page, "desktop-series-details.png")
         page.get_by_role("button", name="Дивитися пізніше", exact=True).first.click()
         page.get_by_role("button", name="Прибрати зі списку", exact=True).first.wait_for()
-        expand(page, "Ваша демосесія")
+        expand(page, "Демо-режим · Деталі")
         page.get_by_role("button", name="Скасувати останню дію", exact=True).click()
         expect(
             page.get_by_role("button", name="Дивитися пізніше", exact=True).first
@@ -165,11 +224,15 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         page.get_by_role("button", name="Зберегти оцінку", exact=True).click()
         expect(page.get_by_text("Ваша оцінка · ★ 4.5/5", exact=True)).to_be_visible()
         page.get_by_text("Для вас", exact=True).first.click()
-        page.get_by_role("heading", name="Знайомий каталог · Adaptive", exact=True).wait_for()
+        if not metadata_only:
+            page.get_by_role("heading", name="Знайомий каталог · Adaptive", exact=True).wait_for()
         page.get_by_role("heading", name="Нові можливості", exact=True).wait_for()
-        open_choice(page.get_by_role("combobox", name=re.compile(r"Алгоритм рекомендацій$")))
-        page.get_by_role("option", name=re.compile(r"^Collaborative ·")).click()
-        page.get_by_role("heading", name="Знайомий каталог · Collaborative", exact=True).wait_for()
+        if not metadata_only:
+            open_choice(page.get_by_role("combobox", name=re.compile(r"Алгоритм рекомендацій$")))
+            page.get_by_role("option", name=re.compile(r"^Collaborative ·")).click()
+            page.get_by_role(
+                "heading", name="Знайомий каталог · Collaborative", exact=True
+            ).wait_for()
         screenshot(page, "desktop-for-you.png")
         page.mouse.wheel(0, 600)
         page.wait_for_timeout(400)
@@ -180,12 +243,16 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         open_choice(page.get_by_role("combobox").first)
         page.get_by_role("option", name="English", exact=True).click()
         page.get_by_role("heading", name="Your cinema shelf", exact=True).wait_for()
-        expect(page.get_by_role("radio", name="My Library", exact=True)).to_be_checked()
+        expect(page.get_by_role("button", name="My Library", exact=True)).to_have_attribute(
+            "aria-pressed", "true"
+        )
         screenshot(page, "desktop-library.png")
         accessibility(page, "English library")
         open_choice(page.get_by_role("combobox").first)
         page.get_by_role("option", name="Українська", exact=True).click()
-        expect(page.get_by_role("radio", name="Моя бібліотека", exact=True)).to_be_checked()
+        expect(page.get_by_role("button", name="Моя бібліотека", exact=True)).to_have_attribute(
+            "aria-pressed", "true"
+        )
         # Independent visitor: mutation/rating in A must not appear in B.
         other = browser.new_context(viewport={"width": 1440, "height": 1000})
         second = other.new_page()
@@ -208,11 +275,13 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         expect(
             second.get_by_role("button", name="Дивитися пізніше", exact=True).first
         ).to_be_enabled()
+        expand(page, "Демо-режим · Деталі")
         page.get_by_role("button", name="Відновити приклад", exact=True).click()
         ready(page)
+        expand(page, "Демо-режим · Деталі")
         page.get_by_role("button", name="Почати з чистого профілю", exact=True).click()
         ready(page)
-        expand(page, "Ваша демосесія")
+        expand(page, "Демо-режим · Деталі")
         expect(page.get_by_text("0 у списку · 0 оцінок", exact=True)).to_be_visible()
         page.get_by_text("Для вас", exact=True).first.click()
         page.get_by_text("Оцініть кілька знайомих історій", exact=False).wait_for()
@@ -221,7 +290,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         expect(page.get_by_text("0 у списку · 0 оцінок", exact=True)).to_have_count(0)
         # Offline internet scenario: posters disabled and external HTTPS blocked;
         # the local Streamlit websocket remains available.
-        expand(page, "Ваша демосесія")
+        expand(page, "Демо-режим · Деталі")
         if page.get_by_role(
             "checkbox", name="Показувати постери", exact=True, include_hidden=True
         ).is_checked():
@@ -245,6 +314,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         ).click()
         page.get_by_role("button", name="← Повернутися", exact=True).wait_for()
         assert not blocked, "Offline browsing attempted a remote request"
+        expand(page, "Демо-режим · Деталі")
         button = page.get_by_role("button", name="Відновити приклад", exact=True)
         button.focus()
         button.press("Tab")
@@ -260,7 +330,11 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
         context.close()
         other.close()
         viewports = []
-        for width, height, label in [(390, 844, "mobile"), (768, 1024, "tablet")]:
+        for width, height, label in [
+            (1920, 1080, "wide"),
+            (1366, 768, "laptop"),
+            (390, 844, "mobile"),
+        ]:
             responsive = browser.new_context(viewport={"width": width, "height": height})
             small = responsive.new_page()
             observe(small)
@@ -302,7 +376,7 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             "watchlist",
             "Undo",
             "rating",
-            "original ML + heuristic sections",
+            "metadata heuristics" if metadata_only else "original ML + heuristic sections",
             "library",
             "UK/EN/UK language",
             "independent visitors",
@@ -312,14 +386,16 @@ def verify(url, output, axe_script=None, expect_pack_error=False, no_artwork=Fal
             "offline metadata",
             "keyboard focus",
             "research limitations",
-            "mobile/tablet navigation",
+            "wide/laptop/mobile navigation",
         ],
         "timings": timings,
+        "layouts": layouts,
         "page_errors": errors,
         "request_failures": failures,
         "accessibility": audit,
         "keyboard_focus": focus,
-        "scope": "Actual local session-isolated demo/public ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation.",
+        "metadata_only": metadata_only,
+        "scope": "Actual local session-isolated demo; metadata-only mode does not train or provision an ML pack. Internet-offline means disabled artwork plus blocked external HTTPS with working localhost. Automated checks are not WCAG certification. Videos are unedited silent QA capture, not a narrated finished presentation.",
     }
 
 
@@ -333,6 +409,8 @@ def main():
     parser.add_argument(
         "--no-artwork", action="store_true", help="Capture without third-party artwork"
     )
+    parser.add_argument("--metadata-only", action="store_true")
+    parser.add_argument("--baseline-url")
     args = parser.parse_args()
     parsed = urlparse(args.url)
     if (
@@ -341,7 +419,17 @@ def main():
         or parsed.scheme != "http"
     ):
         parser.error("Use only a local dedicated portfolio server and --isolated-demo")
-    result = verify(args.url, args.output, args.axe_script, args.expect_pack_error, args.no_artwork)
+    if args.baseline_url and urlparse(args.baseline_url).hostname not in ("127.0.0.1", "localhost"):
+        parser.error("The baseline must also be a local dedicated portfolio server")
+    result = verify(
+        args.url,
+        args.output,
+        args.axe_script,
+        args.expect_pack_error,
+        args.no_artwork,
+        args.metadata_only,
+        args.baseline_url,
+    )
     (args.output / "browser-results.json").write_text(
         json.dumps(result, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
     )
