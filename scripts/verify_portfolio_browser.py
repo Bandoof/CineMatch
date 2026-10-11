@@ -150,7 +150,9 @@ def verify(
                 )
                 audit.append({"page": name, **result})
                 if result["violations"]:
-                    print(json.dumps(result["violations"], ensure_ascii=False, indent=2), flush=True)
+                    print(
+                        json.dumps(result["violations"], ensure_ascii=False, indent=2), flush=True
+                    )
                     (output / "accessibility-failure.json").write_text(
                         json.dumps(audit, indent=2), encoding="utf-8"
                     )
