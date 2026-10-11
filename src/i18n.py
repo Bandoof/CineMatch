@@ -239,6 +239,7 @@ GENRES_UK = {"unknown": "Без жанру", "Action": "Бойовик", "Advent
 MODELS_UK = {"Hybrid": "Гібридна", "Collaborative": "Спільні оцінки (ALS)",
              "Item-KNN": "Схожі фільми (KNN)", "Content-based": "За жанрами", "Popularity": "Популярність"}
 
+
 # Display-only aliases from MovieLens, TVmaze and the bundled Wikidata metadata.
 GENRE_DISPLAY_UK = {name.casefold(): label for name, label in GENRES_UK.items()}
 GENRE_DISPLAY_UK.update({
@@ -266,7 +267,6 @@ GENRE_DISPLAY_UK.update({
     "superhero film": "Супергеройське кіно", "absurdist fiction": "Абсурдистська фантастика",
     "martial arts film": "Кіно про бойові мистецтва", "psychedelic film": "Психоделічне кіно",
 })
-
 
 def tr(key, language="en", **values):
     return (UK if language == "uk" else EN)[key].format(**values)
@@ -401,4 +401,3 @@ UK.update({
  "reason_variety_order": "Різноманітність може змінити порядок за жанровою схожістю.",
  "reason_semantic": "Локальна змістова схожість назв, жанрів і наявних описів із джерел.",
 })
-
