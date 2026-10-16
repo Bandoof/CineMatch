@@ -4,5 +4,5 @@ scipy==1.14.1
 scikit-learn==1.5.2
 streamlit==1.65.0
 pillow==12.3.0
-pyarrow==25.0.1
+pyarrow==26.0.0
 certifi>=2024.2.2
