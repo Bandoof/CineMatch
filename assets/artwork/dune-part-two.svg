@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Dune: Part Two — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#823d30"/><stop offset="1" stop-color="#211523"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#f9c482" stop-opacity=".15"/><stop offset="1" stop-color="#f9c482" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#211523" stop-opacity="0"/><stop offset="1" stop-color="#211523"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="270" cy="137" r="65" fill="#eeb783" /><circle cx="280" cy="128" r="57" fill="#8b4734" /><path d="M0 300Q100 230 235 315T430 310V600H0Z" fill="#b46740" /><path d="M0 365Q170 270 400 390V600H0Z" fill="#63332c" /><path d="M0 425Q240 320 400 410V600H0Z" fill="#321d26" /><path d="M210 347L198 385" fill="none" stroke="#f7c589" stroke-width="3" /><circle cx="212" cy="342" r="3" fill="#f7c589" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#f9c482" opacity=".65"/>
+  <path d="M25 469H67" stroke="#f9c482" stroke-width="2"/>
+</svg>

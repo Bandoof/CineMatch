@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Oppenheimer — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#2b1520"/><stop offset="1" stop-color="#100e18"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#ffb960" stop-opacity=".15"/><stop offset="1" stop-color="#ffb960" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#100e18" stop-opacity="0"/><stop offset="1" stop-color="#100e18"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="200" cy="250" r="115" fill="none" stroke="#f4a45a" stroke-width="1" opacity="0.5"/><circle cx="200" cy="250" r="98" fill="none" stroke="#f4a45a" stroke-width="2" opacity="0.8"/><circle cx="200" cy="250" r="70" fill="none" stroke="#f4a45a" stroke-width="1" opacity="0.5"/><circle cx="200" cy="250" r="40" fill="none" stroke="#f4a45a" stroke-width="10" opacity="0.4"/><circle cx="200" cy="250" r="27" fill="#fff0be" /><path d="M200 250L30 80" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L378 52" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L45 415" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L360 400" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L200 45" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L380 250" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M200 250L20 250" fill="none" stroke="#ec9852" stroke-width="1" opacity=".5"/><path d="M0 430L85 405 143 420 205 401 275 432 350 416 400 432V600H0Z" fill="#110f18" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#ffb960" opacity=".65"/>
+  <path d="M25 469H67" stroke="#ffb960" stroke-width="2"/>
+</svg>

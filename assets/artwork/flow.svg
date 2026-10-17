@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Flow / Straume — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#3d6a78"/><stop offset="1" stop-color="#172b43"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#d6e0be" stop-opacity=".15"/><stop offset="1" stop-color="#d6e0be" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#172b43" stop-opacity="0"/><stop offset="1" stop-color="#172b43"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="103" cy="138" r="57" fill="#a9c6c3" opacity=".6"/><path d="M-20 270Q90 245 220 270T430 270" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 298Q90 273 220 298T430 298" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 326Q90 301 220 326T430 326" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 354Q90 329 220 354T430 354" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 382Q90 357 220 382T430 382" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 410Q90 385 220 410T430 410" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M-20 438Q90 413 220 438T430 438" fill="none" stroke="#83b0b4" stroke-width="2" opacity=".4"/><path d="M100 333Q200 369 300 333L268 378H135Z" fill="#243342" stroke="#b4c9bc" stroke-width="2"/><path d="M181 334V297L172 281 188 287Q201 278 212 287L225 281 219 298V334Z" fill="#102335" /><circle cx="193" cy="303" r="2" fill="#d6dfab" /><circle cx="210" cy="303" r="2" fill="#d6dfab" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#d6e0be" opacity=".65"/>
+  <path d="M25 469H67" stroke="#d6e0be" stroke-width="2"/>
+</svg>

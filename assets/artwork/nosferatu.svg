@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Nosferatu — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#3c4854"/><stop offset="1" stop-color="#10121f"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#d9e2df" stop-opacity=".15"/><stop offset="1" stop-color="#d9e2df" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#10121f" stop-opacity="0"/><stop offset="1" stop-color="#10121f"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="270" cy="125" r="62" fill="#ccd6d3" opacity=".7"/><path d="M60 430V199L110 126 160 199V430ZM80 430V270H260V430ZM220 430V170L264 107 308 170V430Z" fill="#161c2b" /><path d="M170 400V270Q200 222 230 270V400Z" fill="#b2bcb4" opacity=".35"/><path d="M60 460L177 298 218 298 350 460Z" fill="#080f1a" opacity=".8"/><path d="M20 100L-20 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M48 100L8 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M76 100L36 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M104 100L64 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M132 100L92 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M160 100L120 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M188 100L148 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M216 100L176 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M244 100L204 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M272 100L232 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M300 100L260 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M328 100L288 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M356 100L316 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M384 100L344 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/><path d="M412 100L372 470" fill="none" stroke="#80939c" stroke-width="1" opacity=".2"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#d9e2df" opacity=".65"/>
+  <path d="M25 469H67" stroke="#d9e2df" stroke-width="2"/>
+</svg>

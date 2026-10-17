@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Mickey 17 — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#234355"/><stop offset="1" stop-color="#101829"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#b5ecf5" stop-opacity=".15"/><stop offset="1" stop-color="#b5ecf5" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#101829" stop-opacity="0"/><stop offset="1" stop-color="#101829"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="200" cy="235" r="116" fill="none" stroke="#75b6c9" stroke-width="2"/><path d="M50 405L130 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M80 405L141 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M110 405L152 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M140 405L163 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M170 405L174 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M200 405L185 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M230 405L196 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M260 405L207 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M290 405L218 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M320 405L229 70" fill="none" stroke="#b6e5e9" opacity=".16"/><path d="M350 405L240 70" fill="none" stroke="#b6e5e9" opacity=".16"/><rect x="147" y="170" width="106" height="181" fill="#152d40" rx="50" stroke="#c4edf0" stroke-width="2"/><circle cx="200" cy="225" r="36" fill="#314e62" /><path d="M164 225L235 225" fill="none" stroke="#a9dde6" stroke-width="2" /><path d="M0 420L90 365 175 415 260 376 400 432V600H0Z" fill="#0c1c2c" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#b5ecf5" opacity=".65"/>
+  <path d="M25 469H67" stroke="#b5ecf5" stroke-width="2"/>
+</svg>

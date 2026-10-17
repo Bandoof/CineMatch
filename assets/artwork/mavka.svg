@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Мавка. Лісова пісня — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#235845"/><stop offset="1" stop-color="#102c34"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#d9eeb1" stop-opacity=".15"/><stop offset="1" stop-color="#d9eeb1" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#102c34" stop-opacity="0"/><stop offset="1" stop-color="#102c34"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="200" cy="210" r="103" fill="none" stroke="#9cba7a" stroke-width="2" opacity=".6"/><path d="M35 440Q95 280 35 65Q0 270 50 440Z" fill="#163c37" /><path d="M95 440Q155 280 95 65Q60 270 110 440Z" fill="#163c37" /><path d="M310 440Q370 280 310 65Q275 270 325 440Z" fill="#163c37" /><path d="M367 440Q427 280 367 65Q332 270 382 440Z" fill="#163c37" /><path d="M200 355C100 285 150 167 202 130C252 207 282 283 200 355Z" fill="#82b882" opacity=".8"/><path d="M200 365Q180 240 202 155" fill="none" stroke="#e0e9af" stroke-width="3"/><circle cx="130" cy="130" r="3" fill="#e6e9b0" /><circle cx="270" cy="270" r="3" fill="#e6e9b0" /><circle cx="108" cy="315" r="3" fill="#e6e9b0" /><circle cx="289" cy="102" r="3" fill="#e6e9b0" /><circle cx="231" cy="370" r="3" fill="#e6e9b0" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#d9eeb1" opacity=".65"/>
+  <path d="M25 469H67" stroke="#d9eeb1" stroke-width="2"/>
+</svg>

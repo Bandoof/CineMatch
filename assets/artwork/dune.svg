@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Dune — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#755139"/><stop offset="1" stop-color="#211e28"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#edcc92" stop-opacity=".15"/><stop offset="1" stop-color="#edcc92" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#211e28" stop-opacity="0"/><stop offset="1" stop-color="#211e28"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="200" cy="150" r="76" fill="#c8a061" opacity=".8"/><path d="M0 337Q200 205 400 335V600H0Z" fill="#9c724a" /><path d="M0 389Q100 297 400 405V600H0Z" fill="#614930" /><path d="M0 459Q280 310 400 421V600H0Z" fill="#2b2b29" /><path d="M0 347Q170 267 400 362" fill="none" stroke="#ddbc80" stroke-width="1" opacity=".25"/><path d="M0 363Q170 283 400 378" fill="none" stroke="#ddbc80" stroke-width="1" opacity=".25"/><path d="M0 379Q170 299 400 394" fill="none" stroke="#ddbc80" stroke-width="1" opacity=".25"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#edcc92" opacity=".65"/>
+  <path d="M25 469H67" stroke="#edcc92" stroke-width="2"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Arrival — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#607272"/><stop offset="1" stop-color="#192d37"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#e2debf" stop-opacity=".15"/><stop offset="1" stop-color="#e2debf" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#192d37" stop-opacity="0"/><stop offset="1" stop-color="#192d37"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <path d="M0 372Q80 320 170 358T400 345V600H0Z" fill="#304c51" /><ellipse cx="206" cy="225" rx="63" ry="146" fill="#172b34" transform="rotate(14 206 225)"/><path d="M173 99Q105 230 172 354" fill="none" stroke="#bac5b7" stroke-width="2" opacity=".4"/><path d="M0 403Q180 363 400 403" fill="none" stroke="#a9bab0" stroke-width="28" opacity=".18"/><path d="M282 401L282 422" fill="none" stroke="#dddcc0" stroke-width="3" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#e2debf" opacity=".65"/>
+  <path d="M25 469H67" stroke="#e2debf" stroke-width="2"/>
+</svg>

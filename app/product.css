@@ -7,6 +7,8 @@ button:focus-visible, a:focus-visible, input:focus-visible {
   outline: 3px solid #e6b35a !important; outline-offset: 3px;
 }
 .st-key-brand { margin-bottom: 0; }
+.st-key-cinema_shell { margin-top: -2rem; }
+.st-key-cinema_shell > * { min-width: 0; }
 .st-key-brand h3 { margin: 0; font-size: 1.45rem; }
 /* Documented widget keys and ARIA state; never Streamlit's generated DOM classes. */
 .st-key-navigation_uk p, .st-key-navigation_en p { color: #edf1f7; }
@@ -16,11 +18,18 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .st-key-rating_search p, .st-key-rating_movies p, .st-key-rating_series p,
 .st-key-minimum p, .st-key-diversity p, [class*="st-key-guide_"] p { color: #edf1f7; }
 [class*="st-key-card_"] h3 {
-  font-size: 1.2rem; line-height: 1.3; min-height: 3.12rem;
+  font-size: 1.05rem; line-height: 1.3; min-height: 2.73rem;
   letter-spacing: -.015em; overflow-wrap: anywhere;
 }
-[class*="st-key-card_"] p { font-size: .9rem; color: #d5deeb; }
+[class*="st-key-card_"] p { font-size: .875rem; color: #d5deeb; }
 [class*="st-key-card_"] strong { color: #f4c76f; font-size: .95rem; }
+[class*="st-key-shelf_"] { max-width: 1088px; }
+[class*="st-key-shelf_"] > div { flex: 1 1 220px; max-width: 260px; }
+[class*="st-key-card_"]:not([class*="st-key-card_poster_"]) {
+  width: 100%; max-width: 100%;
+  background: #141e2b; border-color: #425166; border-radius: .85rem;
+}
+[class*="st-key-card_"] button { min-height: 2.75rem; }
 [class*="st-key-card_poster_"] img {
   width: 100%; aspect-ratio: 2 / 3; object-fit: contain;
   background: #131c2e; border-radius: .55rem;
@@ -35,15 +44,42 @@ button:focus-visible, a:focus-visible, input:focus-visible {
 .cinema-film-icon { font-size: 3rem; line-height: 1; color: #f4c76f; }
 .cinema-poster-title { font-size: 1rem; line-height: 1.4; overflow-wrap: anywhere; }
 .cinema-poster-notice { font-size: .8rem; color: #d5deeb; }
+.cinema-original-art {
+  position: relative; aspect-ratio: 2 / 3; width: 100%;
+  overflow: hidden; border-radius: .55rem; background: #131c2e;
+}
+.cinema-original-art img { display: block; width: 100%; height: 100%; }
+.cinema-art-caption {
+  position: absolute; inset: auto 0 0; padding: 1rem .9rem .85rem;
+  background: linear-gradient(transparent, #0b1018 45%);
+  display: flex; flex-direction: column; gap: .45rem;
+}
+.cinema-art-title {
+  color: #fff4df; font-size: clamp(1.05rem, 1.5vw, 1.3rem);
+  font-weight: 650; line-height: 1.2; letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+.cinema-art-notice { color: #d5deeb; font-size: .7rem; line-height: 1.4; }
+.st-key-cinema_detail_art { max-width: 320px; }
 .st-key-cinema_hero {
   background: #151f2c; border-radius: 1.25rem;
   border: 1px solid #2b394b; padding: clamp(1rem,2vw,1.5rem);
-  margin: .35rem 0 .5rem;
+  margin: 0 0 .35rem;
 }
 .st-key-cinema_hero h1 { font-size: clamp(1.8rem,3vw,2.8rem); line-height: 1.1; }
 @media (prefers-reduced-motion: reduce) { button, a { transition: none; } }
 @media (max-width: 640px) {
+  .st-key-cinema_shell { margin-top: -1.5rem; }
   .st-key-cinema_hero { padding: 1rem; }
+  [class*="st-key-shelf_"] > div {
+    flex: 1 1 calc(50% - 8px); max-width: calc(50% - 8px); min-width: 0;
+  }
+  .cinema-art-caption { padding: .7rem .55rem .6rem; }
+  .cinema-art-title { font-size: 1rem; }
+  .cinema-art-notice { font-size: .625rem; }
   h1 { overflow-wrap: anywhere; }
+}
+@media (max-width: 379px) {
+  [class*="st-key-shelf_"] > div { flex-basis: 100%; max-width: 100%; }
 }
 

@@ -14,8 +14,26 @@ the current theme foreground so the compatibility surface remains readable.
 Українська та англійська доступні в перемикачі мови. Пошук враховує обидві
 мови незалежно від мови інтерфейсу. Деталі показують лише доступні поля джерела,
 назву оригіналу, опис із мовним fallback, реальну оцінку та посилання на джерело.
-Відсутні постери мають нейтральну заглушку; постери можна вимкнути для роботи
-без інтернету. Немає вигаданих описів, оцінок чи дат перегляду.
+Для 22 фільмів демонстраційної добірки без постерів доступні локальні авторські
+SVG-обкладинки з позначкою «Оригінальна ілюстрація». Це не офіційні афіші.
+Інші відсутні постери мають нейтральну заглушку; перемикач постерів вимикає
+також ілюстрації. Немає вигаданих описів, оцінок чи дат перегляду.
+
+## Cinematic Artwork Update / v1.4.2
+
+Original compositions live in `assets/artwork/`; their explicit identity mapping
+is confined to `app/cinematic_artwork.py`. Existing provider posters take
+precedence, including the eight TVmaze series. No catalog fields, providers,
+data, recommendation logic or profile schemas change. Both cards and details
+use the same artwork path. Localized captions are escaped accessible HTML text;
+SVGs contain no external images, fonts, scripts or resource links.
+
+CSS-only injection uses `st.html` to avoid an empty layout block above the brand.
+The keyed application container reduces excess top space. Cards have smaller
+headings, clearer borders, 44px minimum buttons and a wrapping shelf capped at
+four columns. Phones from 380px through 640px use two columns; narrower phones
+use one. These rules target our keyed containers and their immediate wrappers,
+without generated Streamlit class names. See [validation](cinematic-artwork-v142.md).
 
 ## State and compatibility / Стан і сумісність
 
