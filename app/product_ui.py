@@ -10,6 +10,7 @@ import streamlit as st
 
 from app import memory as local_memory
 from app.catalog_explorer import provider_client, provider_credits, save_catalog
+from app.cinematic_artwork import original_artwork
 from app.recommender import ALGORITHMS
 from app.runtime import artifact_signature, load_runtime
 from src import portfolio
@@ -209,7 +210,19 @@ def artwork(view, mid, width=None):
             alt=s("Постер: ", "Poster: ") + view.display_title(mid, language()),
         )
     else:
-        poster_fallback(view.display_title(mid, language()))
+        original = (
+            original_artwork(
+                view.titles.get(mid),
+                card_title(view, mid),
+                s("Оригінальна ілюстрація", "Original artwork"),
+            )
+            if st.session_state.get("posters", True)
+            else ""
+        )
+        if original:
+            st.markdown(original, unsafe_allow_html=True)
+        else:
+            poster_fallback(view.display_title(mid, language()))
 
 
 def poster_fallback(title):
@@ -265,7 +278,7 @@ def cards(view, identities, prefix, reasons=None, empty_text=None):
         )
         return
     # Native wrapping flex layout: at most four cards, fewer when the parent narrows.
-    with st.container(horizontal=True, gap=16, width=1088):
+    with st.container(horizontal=True, gap=16, width="stretch", key=f"shelf_{prefix}"):
         for mid in ids:
             with st.container(border=True, width=260, gap="xsmall", key=f"card_{prefix}_{mid}"):
                 with st.container(key=f"card_poster_{prefix}_{mid}"):
@@ -620,7 +633,8 @@ def details(view, directory, mid):
         st.image(title.backdrop_url, width="stretch", alt=view.display_title(mid, language()))
     image, content = st.columns([1, 2], gap="large")
     with image:
-        artwork(view, mid, width=320)
+        with st.container(key="cinema_detail_art"):
+            artwork(view, mid, width=320)
     with content:
         st.title(view.display_title(mid, language()))
         if title and title.original_title != title.title(language()):
@@ -1232,7 +1246,8 @@ def session_controls(view, directory, memory):
 def main():
     memory = None if portfolio.enabled(st.session_state) else local_memory.initialize(ROOT)
     try:
-        _main(memory)
+        with st.container(key="cinema_shell"):
+            _main(memory)
     finally:
         local_memory.save(memory)
 
@@ -1240,9 +1255,8 @@ def main():
 def _main(memory):
     state = st.session_state
     state.setdefault("ui_language", os.environ.get("CINEMATCH_DEFAULT_LANGUAGE", "uk"))
-    st.markdown(
+    st.html(
         "<style>" + (ROOT / "app" / "product.css").read_text(encoding="utf-8") + "</style>",
-        unsafe_allow_html=True,
     )
     with st.container(key="brand", horizontal=True, vertical_alignment="center"):
         st.subheader("◉ CineMatch", width="stretch")

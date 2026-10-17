@@ -1,6 +1,7 @@
 """Optional real browser QA of the isolated portfolio entry point. Never owner profiles."""
 
 import argparse
+import base64
 import json
 import re
 import time
@@ -132,12 +133,89 @@ def verify(
                 label = name.split("-")[0]
                 layout = geometry(page, f"after-{label}")
                 assert not layout["overflow"], f"{label} overflow"
-                assert layout["first_row_cards"] == (1 if label == "mobile" else 4), layout
-                fallback = page.locator(".cinema-poster-fallback").first.bounding_box()
-                assert abs(fallback["width"] / fallback["height"] - 2 / 3) < 0.02
+                assert layout["first_row_cards"] == (2 if label == "mobile" else 4), layout
+                selector = ".cinema-poster-fallback" if no_artwork else ".cinema-original-art"
+                portraits(page.locator(selector))
                 if baseline_url and label != "mobile":
                     before = next(item for item in layouts if item["label"] == f"before-{label}")
                     assert layout["first_card_y"] < before["first_card_y"] - 150, (before, layout)
+
+        def portraits(elements):
+            """Check actual laid-out artwork, not the ratio declared in its CSS."""
+            expect(elements.first).to_be_visible()
+            assert elements.count() > 0
+            boxes = []
+            for element in elements.all():
+                box = element.bounding_box()
+                assert box and box["width"] > 0 and box["height"] > 0
+                assert abs(box["width"] / box["height"] - 2 / 3) < 0.02, box
+                boxes.append({key: round(box[key], 2) for key in ("width", "height")})
+            return boxes
+
+        def artwork_coverage():
+            """Exercise every bundled identity in an independent, unmodified session."""
+            from src.portfolio import sample_catalog
+
+            root = Path(__file__).resolve().parents[1]
+            catalog = sample_catalog(root)
+            films = [t for t in catalog.titles.values() if t.media_type == "Movie"]
+            series = [t for t in catalog.titles.values() if t.media_type == "Series"]
+            assert len(films) == 22 and len(series) == 8
+            checked = {"films": [], "series": []}
+            visitor = browser.new_context(viewport={"width": 1440, "height": 1000})
+            coverage = visitor.new_page()
+            observe(coverage)
+            try:
+                coverage.goto(url)
+                ready(coverage)
+                coverage.get_by_role("radio", name="Пошук", exact=True).click()
+                query = coverage.get_by_role(
+                    "textbox", name="Назва, рік або частина назви", exact=True
+                )
+                for title in [*films, *series]:
+                    query.fill(title.title("uk"))
+                    query.press("Enter")
+                    card = coverage.locator('[class*="st-key-card_search_"]').filter(
+                        has=coverage.get_by_role("heading", name=title.title("uk"), exact=True)
+                    )
+                    expect(card).to_have_count(1)
+                    settled(coverage)
+                    if title.media_type == "Movie":
+                        from app.cinematic_artwork import ARTWORK, ARTWORK_DIR
+
+                        assert not title.poster_url
+                        art = card.locator(".cinema-original-art")
+                        expect(art).to_have_count(1)
+                        expect(
+                            art.get_by_text("Оригінальна ілюстрація", exact=True)
+                        ).to_be_visible()
+                        image = art.locator("img")
+                        encoded = base64.b64encode(
+                            (ARTWORK_DIR / f"{ARTWORK[title.provider_id]}.svg").read_bytes()
+                        ).decode("ascii")
+                        expect(image).to_have_attribute(
+                            "src", f"data:image/svg+xml;base64,{encoded}"
+                        )
+                        expect(image).to_have_js_property("complete", True)
+                        expect(image).to_have_js_property("naturalWidth", 400)
+                        expect(image).to_have_js_property("naturalHeight", 600)
+                        expect(card.locator(".cinema-poster-fallback")).to_have_count(0)
+                        checked["films"].append(
+                            {"provider_id": title.provider_id, **portraits(art)[0]}
+                        )
+                    else:
+                        assert title.provider == "TVmaze" and title.poster_url
+                        expect(card.locator(".cinema-original-art")).to_have_count(0)
+                        expect(card.locator("img")).to_have_attribute("src", title.poster_url)
+                        checked["series"].append(
+                            {"provider_id": title.provider_id, "poster_url": title.poster_url}
+                        )
+            finally:
+                visitor.close()
+            (output / "artwork-results.json").write_text(
+                json.dumps(checked, ensure_ascii=False, indent=2), encoding="utf-8"
+            )
+            return checked
 
         def accessibility(page, name):
             if axe_script:
@@ -175,6 +253,7 @@ def verify(
                 "request_failures": failures,
             }
         screenshot(page, "desktop-discover.png")
+        artwork = artwork_coverage() if not no_artwork else {"skipped": "--no-artwork"}
         page.mouse.wheel(0, 760)
         page.wait_for_timeout(400)
         page.screenshot(path=str(output / "desktop-collections.png"), full_page=True)
@@ -300,6 +379,11 @@ def verify(
         expect(
             page.get_by_role("checkbox", name="Показувати постери", exact=True, include_hidden=True)
         ).not_to_be_checked()
+        settled(page)
+        # Neutral fallback is a separate regression, never a substitute for original art.
+        expect(page.locator(".cinema-original-art")).to_have_count(0)
+        expect(page.locator(".cinema-poster-notice").first).to_have_text("Постери вимкнено")
+        neutral_fallback = portraits(page.locator(".cinema-poster-fallback"))
         blocked = []
 
         def block_remote(route):
@@ -392,6 +476,8 @@ def verify(
         ],
         "timings": timings,
         "layouts": layouts,
+        "artwork": artwork,
+        "neutral_fallback": neutral_fallback,
         "page_errors": errors,
         "request_failures": failures,
         "accessibility": audit,

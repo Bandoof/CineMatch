@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>The Matrix — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#144137"/><stop offset="1" stop-color="#0b1720"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#a4f1bc" stop-opacity=".15"/><stop offset="1" stop-color="#a4f1bc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#0b1720" stop-opacity="0"/><stop offset="1" stop-color="#0b1720"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <path d="M30 45L30 430" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M65 45L65 320" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M100 45L100 390" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M135 45L135 250" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M170 45L170 370" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M205 45L205 190" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M240 45L240 410" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M275 45L275 310" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M310 45L310 430" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M345 45L345 270" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M380 45L380 390" fill="none" stroke="#7ad1a3" stroke-width="2" opacity=".3" stroke-dasharray="3 12 7 5"/><path d="M133 422V180H267V422H248V202H153V422Z" fill="#9ad4b2" opacity=".7"/><path d="M153 202L220 224V422H153Z" fill="#152f2c" /><path d="M153 422L71 470H306L248 422Z" fill="#48755e" opacity=".5"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#a4f1bc" opacity=".65"/>
+  <path d="M25 469H67" stroke="#a4f1bc" stroke-width="2"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>The Substance — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#213e2f"/><stop offset="1" stop-color="#0d161c"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#d6f27d" stop-opacity=".15"/><stop offset="1" stop-color="#d6f27d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#0d161c" stop-opacity="0"/><stop offset="1" stop-color="#0d161c"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="200" cy="240" r="115" fill="none" stroke="#9ec669" stroke-width="1"/><path d="M199 94C83 158 95 328 199 383C303 328 317 156 199 94Z" fill="#305b41" stroke="#b9dc7a" stroke-width="2"/><path d="M199 94C158 200 262 280 199 383" fill="#a3ca65" opacity=".75"/><circle cx="90" cy="110" r="8" fill="#dbf395" opacity=".5"/><circle cx="302" cy="326" r="12" fill="#dbf395" opacity=".5"/><circle cx="294" cy="154" r="5" fill="#dbf395" opacity=".5"/><circle cx="117" cy="356" r="6" fill="#dbf395" opacity=".5"/><circle cx="193" cy="230" r="20" fill="#dbf395" opacity=".5"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#d6f27d" opacity=".65"/>
+  <path d="M25 469H67" stroke="#d6f27d" stroke-width="2"/>
+</svg>

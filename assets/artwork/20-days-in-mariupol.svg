@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>20 днів у Маріуполі — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#4b5662"/><stop offset="1" stop-color="#1a2330"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#f0d9ad" stop-opacity=".15"/><stop offset="1" stop-color="#f0d9ad" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#1a2330" stop-opacity="0"/><stop offset="1" stop-color="#1a2330"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <rect x="115" y="92" width="170" height="270" fill="#18232d" stroke="#a5aaa1" stroke-width="2"/><rect x="129" y="106" width="142" height="240" fill="#687078" /><rect x="-8" y="282" width="22" height="166" fill="#354351" /><rect x="18" y="250" width="22" height="198" fill="#354351" /><rect x="44" y="215" width="22" height="233" fill="#354351" /><rect x="70" y="250" width="22" height="198" fill="#354351" /><rect x="96" y="222" width="22" height="226" fill="#354351" /><rect x="122" y="267" width="22" height="181" fill="#354351" /><rect x="148" y="242" width="22" height="206" fill="#354351" /><rect x="174" y="276" width="22" height="172" fill="#354351" /><rect x="200" y="202" width="22" height="246" fill="#354351" /><rect x="226" y="243" width="22" height="205" fill="#354351" /><rect x="252" y="200" width="22" height="248" fill="#354351" /><rect x="278" y="238" width="22" height="210" fill="#354351" /><rect x="304" y="280" width="22" height="168" fill="#354351" /><rect x="330" y="239" width="22" height="209" fill="#354351" /><rect x="356" y="236" width="22" height="212" fill="#354351" /><rect x="382" y="273" width="22" height="175" fill="#354351" /><rect x="408" y="203" width="22" height="245" fill="#354351" /><path d="M200 106L200 350" fill="none" stroke="#192832" stroke-width="6" /><path d="M129 225L271 225" fill="none" stroke="#192832" stroke-width="6" /><path d="M112 365L55 440H345L288 365Z" fill="#7e827d" opacity=".45"/><circle cx="243" cy="175" r="27" fill="#d8c39c" opacity=".65"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#f0d9ad" opacity=".65"/>
+  <path d="M25 469H67" stroke="#f0d9ad" stroke-width="2"/>
+</svg>

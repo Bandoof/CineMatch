@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>The Wild Robot — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#365b55"/><stop offset="1" stop-color="#112d35"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#e0e9b7" stop-opacity=".15"/><stop offset="1" stop-color="#e0e9b7" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#112d35" stop-opacity="0"/><stop offset="1" stop-color="#112d35"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="278" cy="132" r="66" fill="#b0c3a3" opacity=".55"/><path d="M35 75L45 430H25Z" fill="#183a39" /><path d="M80 75L90 430H70Z" fill="#183a39" /><path d="M316 75L326 430H306Z" fill="#183a39" /><path d="M367 75L377 430H357Z" fill="#183a39" /><path d="M0 435Q170 350 400 445V600H0Z" fill="#142d30" /><rect x="160" y="230" width="80" height="105" fill="#809d91" rx="27"/><rect x="170" y="182" width="60" height="47" fill="#b5c9a6" rx="15"/><circle cx="187" cy="205" r="5" fill="#243e3e" /><circle cx="214" cy="205" r="5" fill="#243e3e" /><path d="M165 250L137 307" fill="none" stroke="#abc0a5" stroke-width="9" /><path d="M235 250L264 292" fill="none" stroke="#abc0a5" stroke-width="9" /><path d="M181 333L173 375" fill="none" stroke="#abc0a5" stroke-width="10" /><path d="M219 333L230 375" fill="none" stroke="#abc0a5" stroke-width="10" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#e0e9b7" opacity=".65"/>
+  <path d="M25 469H67" stroke="#e0e9b7" stroke-width="2"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>One Battle After Another — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#57452b"/><stop offset="1" stop-color="#1c2027"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#ead29c" stop-opacity=".15"/><stop offset="1" stop-color="#ead29c" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#1c2027" stop-opacity="0"/><stop offset="1" stop-color="#1c2027"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="106" cy="135" r="67" fill="#ae8d51" opacity=".5"/><path d="M0 280L100 245 213 286 312 236 400 270V600H0Z" fill="#3b4236" /><path d="M0 380L120 330 228 367 400 300V600H0Z" fill="#242f2b" /><path d="M145 470L231 270 250 270 220 470Z" fill="#c5b177" /><path d="M241 277L180 456" fill="none" stroke="#544c38" stroke-width="2" stroke-dasharray="8 18"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#ead29c" opacity=".65"/>
+  <path d="M25 469H67" stroke="#ead29c" stroke-width="2"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>Inside Out 2 — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#484375"/><stop offset="1" stop-color="#171d37"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#ffe8bc" stop-opacity=".15"/><stop offset="1" stop-color="#ffe8bc" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#171d37" stop-opacity="0"/><stop offset="1" stop-color="#171d37"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <circle cx="104" cy="188" r="63" fill="#e8ae54" opacity=".85"/><circle cx="263" cy="155" r="58" fill="#ca7198" opacity=".85"/><circle cx="213" cy="286" r="80" fill="#5c9ecb" opacity=".85"/><circle cx="327" cy="290" r="43" fill="#89b69b" opacity=".85"/><circle cx="89" cy="332" r="48" fill="#b9a1db" opacity=".85"/><circle cx="104" cy="188" r="78" fill="none" stroke="#fff1d4" opacity=".6"/><circle cx="263" cy="155" r="73" fill="none" stroke="#fff1d4" opacity=".6"/><circle cx="213" cy="286" r="96" fill="none" stroke="#fff1d4" opacity=".6"/><path d="M0 434Q150 370 400 440V600H0Z" fill="#1a2338" />
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#ffe8bc" opacity=".65"/>
+  <path d="M25 469H67" stroke="#ffe8bc" stroke-width="2"/>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="400" height="600" viewBox="0 0 400 600">
+  <title>F1 — original CineMatch illustration</title>
+  <desc>Original geometric cinematic artwork. Not an official movie poster. No external images, logos or likenesses.</desc>
+  <defs>
+    <linearGradient id="sky" x2=".3" y2="1"><stop stop-color="#173d43"/><stop offset="1" stop-color="#0d1825"/></linearGradient>
+    <radialGradient id="light"><stop stop-color="#a9f5e1" stop-opacity=".15"/><stop offset="1" stop-color="#a9f5e1" stop-opacity="0"/></radialGradient>
+    <linearGradient id="shade" x2="0" y2="1"><stop offset=".48" stop-color="#0d1825" stop-opacity="0"/><stop offset="1" stop-color="#0d1825"/></linearGradient>
+  </defs>
+  <path fill="url(#sky)" d="M0 0h400v600H0z"/>
+  <circle cx="200" cy="200" r="240" fill="url(#light)"/>
+  <path d="M-40 450L280 70H346L30 450Z" fill="#577674" /><path d="M10 450L323 70H338L26 450Z" fill="#c6e1ca" /><path d="M58 450L370 70H382L72 450Z" fill="#d46f4c" /><path d="M-30 200L430 65" fill="none" stroke="#5a9c9c" stroke-width="1" opacity=".35"/><path d="M-30 260L430 125" fill="none" stroke="#5a9c9c" stroke-width="1" opacity=".35"/><path d="M-30 320L430 185" fill="none" stroke="#5a9c9c" stroke-width="1" opacity=".35"/><path d="M-30 380L430 245" fill="none" stroke="#5a9c9c" stroke-width="1" opacity=".35"/><path d="M177 255L217 208 233 220 195 270Z" fill="#0a131f" stroke="#cdf2df" stroke-width="2"/>
+  <path fill="url(#shade)" d="M0 0h400v600H0z"/>
+  <path d="M25 50V26H49M351 26H375V50" fill="none" stroke="#a9f5e1" opacity=".65"/>
+  <path d="M25 469H67" stroke="#a9f5e1" stroke-width="2"/>
+</svg>
