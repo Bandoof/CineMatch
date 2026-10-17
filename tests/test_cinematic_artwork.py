@@ -77,3 +77,32 @@ def test_cards_details_languages_and_poster_toggle(monkeypatch):
     app.checkbox(key="posters").check().run()
     assert any("Оригінальна ілюстрація" in m.value for m in app.markdown)
     assert not app.exception
+
+
+def test_missing_local_artwork_renders_neutral_fallback(monkeypatch, tmp_path):
+    """A missing asset with posters enabled must fall back without altering metadata."""
+    import app.cinematic_artwork as artwork
+
+    monkeypatch.setattr(artwork, "ARTWORK_DIR", tmp_path)
+    artwork._encoded_artwork.cache_clear()
+
+    def render(root):
+        import streamlit as st
+
+        from app.product_ui import artwork
+        from src.catalog_view import CatalogView
+        from src.portfolio import sample_catalog
+
+        st.session_state.update(ui_language="uk", posters=True)
+        view = CatalogView(None, sample_catalog(root))
+        mid = next(mid for mid, t in view.titles.items() if t.original_title == "Oppenheimer")
+        artwork(view, mid)
+
+    try:
+        app = AppTest.from_function(render, args=(str(ROOT),), default_timeout=30).run()
+        assert not app.exception
+        markup = next(m.value for m in app.markdown if "cinema-poster-fallback" in m.value)
+        assert "Постер недоступний" in markup and "Оппенгеймер" in markup
+        assert not any("cinema-original-art" in m.value for m in app.markdown)
+    finally:
+        artwork._encoded_artwork.cache_clear()

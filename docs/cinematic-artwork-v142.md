@@ -54,3 +54,25 @@ They are screenshots of the implemented application, not fabricated mockups.
 ![Mobile original artwork cards](../assets/v142/mobile-cards.png)
 
 No merge, release publication or deployment is part of this update.
+
+## Browser QA regression follow-up
+
+The portfolio browser verifier now checks `.cinema-original-art` and its actual
+2:3 rendered dimensions when artwork is enabled. Its 390px layout assertion
+expects the approved two-column grid. Neutral fallback remains a separate check
+with posters disabled; an AppTest also simulates missing local SVG files while
+posters are enabled and verifies the “Постер недоступний” fallback.
+
+An independent browser session searches every bundled identity and verifies all
+22 films against their exact local SVG contents and 400×600 intrinsic dimensions,
+plus the eight TVmaze series against their exact catalog poster URLs. CI evidence
+includes `artwork-results.json`, actual portrait dimensions in the layout checks,
+and separate neutral-fallback dimensions in `browser-results.json`.
+
+The updated verifier completed locally with Playwright 1.63.0, Chromium
+153.0.8010.12 and axe-core 4.14.0 in metadata-only mode: all browser journeys
+passed, all 22 illustrations and eight URLs checked, no page errors, failed
+requests or axe violations. The three responsive discovery layouts had 4/4/2
+cards at 1920/1366/390px and no horizontal overflow. The local profile database
+sentinel was not created. Targeted artwork/product/portfolio tests: **25 passed**.
+The GitHub workflow retains its full prepared-public-pack browser journey.
