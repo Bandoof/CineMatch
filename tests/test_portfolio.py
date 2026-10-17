@@ -1,5 +1,6 @@
 """Session isolation, default privacy and the original score formula in demo mode."""
 
+import os
 from pathlib import Path
 
 import numpy as np
@@ -10,7 +11,15 @@ from app.recommender import ALGORITHMS, Recommender
 from src.catalog_view import CatalogView
 from src.collaborative import BiasedMF
 from src.data import fingerprint
-from src.portfolio import PUBLIC_ARCHIVES, initial_profile, prepared_engine, reset, sample_catalog
+from src.portfolio import (
+    PACK_FILES,
+    PACK_SCHEMA,
+    PUBLIC_ARCHIVES,
+    initial_profile,
+    prepared_engine,
+    reset,
+    sample_catalog,
+)
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -160,7 +169,8 @@ def test_prepared_pack_rejects_unknown_provenance_and_symlinks(tmp_path):
     assert prepared_engine(tmp_path / "absent") is None
 
 
-def test_per_visitor_cache_uses_exact_original_formula(sample, tmp_path):
+@pytest.fixture
+def public_pack(sample, tmp_path):
     import hashlib
     import json
 
@@ -169,6 +179,7 @@ def test_per_visitor_cache_uses_exact_original_formula(sample, tmp_path):
     from src.catalog import canonical_catalog
 
     movies, ratings, _ = canonical_catalog(movies, ratings)
+    movies = movies[["movie_id", "title", "year", "genres", "aliases", "media_type", "source"]]
     document = {
         "movies": json.loads(movies.to_json(orient="records")),
         "ratings": json.loads(ratings.to_json(orient="records")),
@@ -181,19 +192,25 @@ def test_per_visitor_cache_uses_exact_original_formula(sample, tmp_path):
     movies["aliases"] = movies.aliases.map(tuple)
     model = BiasedMF(factors=4, epochs=3).fit(ratings, movies.movie_id.to_numpy())
     model.save(tmp_path / "model.npz", fingerprint(movies, ratings))
+    (tmp_path / "MOVIELENS-LICENSE.txt").write_text("Synthetic test fixture, not MovieLens data")
     (tmp_path / "manifest.json").write_text(
         json.dumps(
             {
-                "schema_version": 1,
+                "schema_version": PACK_SCHEMA,
                 "archives": PUBLIC_ARCHIVES,
                 "files": {
                     name: hashlib.sha256((tmp_path / name).read_bytes()).hexdigest()
-                    for name in ("dataset.json", "model.npz")
+                    for name in PACK_FILES
                 },
             }
         )
     )
-    first, second = prepared_engine(tmp_path), prepared_engine(tmp_path)
+    return tmp_path, movies, ratings, model
+
+
+def test_per_visitor_cache_uses_exact_original_formula(public_pack):
+    directory, movies, ratings, model = public_pack
+    first, second = prepared_engine(directory), prepared_engine(directory)
     reference = Recommender(movies, ratings, collaborative=model)
     profile = {1: 5, 2: 1, 3: 4}
     expected = reference.score_components(profile)
@@ -206,3 +223,135 @@ def test_per_visitor_cache_uses_exact_original_formula(sample, tmp_path):
         first._cached_components.cache_info().currsize == 1
         and second._cached_components.cache_info().currsize == 0
     )
+
+
+@pytest.mark.parametrize(
+    "damage",
+    ["old_schema", "integrity", "license", "private_field", "nan", "model_shape", "model_zip"],
+)
+def test_invalid_pack_is_rejected(public_pack, damage):
+    import hashlib
+    import json
+
+    directory, _, _, _ = public_pack
+    manifest_path = directory / "manifest.json"
+    manifest = json.loads(manifest_path.read_text())
+    if damage == "old_schema":
+        manifest["schema_version"] = 1
+    elif damage == "integrity":
+        (directory / "dataset.json").write_text("{}")
+    elif damage == "license":
+        (directory / "MOVIELENS-LICENSE.txt").unlink()
+    elif damage in {"private_field", "nan"}:
+        path = directory / "dataset.json"
+        document = json.loads(path.read_text())
+        if damage == "private_field":
+            document["ratings"][0]["email"] = "not-a-real-address"
+        else:
+            document["ratings"][0]["rating"] = float("nan")
+        path.write_text(json.dumps(document))
+        manifest["files"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    else:
+        path = directory / "model.npz"
+        if damage == "model_zip":
+            path.write_bytes(b"not a zip")
+        else:
+            with np.load(path, allow_pickle=False) as archive:
+                arrays = {name: archive[name] for name in archive.files}
+            arrays["item_factors"] = np.zeros((1, 4))
+            np.savez_compressed(path, **arrays)
+        manifest["files"][path.name] = hashlib.sha256(path.read_bytes()).hexdigest()
+    manifest_path.write_text(json.dumps(manifest))
+    with pytest.raises(ValueError):
+        prepared_engine(directory)
+
+
+def test_invalid_pack_falls_back_visibly(demo, public_pack, monkeypatch):
+    make, _ = demo
+    directory, _, _, _ = public_pack
+    (directory / "dataset.json").write_text("{}")
+    monkeypatch.setenv("CINEMATCH_PORTFOLIO_DATA_DIR", str(directory))
+    app = make()
+    healthy(app)
+    assert app.session_state["_portfolio_pack_error"]
+    assert app.session_state["_portfolio_view"].base is None
+    assert app.warning
+
+
+@pytest.mark.skipif(
+    not os.environ.get("CINEMATCH_TEST_PUBLIC_PACK"), reason="Explicit real pack required"
+)
+def test_real_pack_rating_changes_ml_only_in_visitor_session(demo, monkeypatch):
+    make, _ = demo
+    monkeypatch.setenv("CINEMATCH_PORTFOLIO_DATA_DIR", os.environ["CINEMATCH_TEST_PUBLIC_PACK"])
+    first, second = make(), make()
+    healthy(first)
+    healthy(second)
+    first_view = first.session_state["_portfolio_view"]
+    second_view = second.session_state["_portfolio_view"]
+    assert first_view.base is not None and second_view.base is not None
+    assert not first_view.base.has_learned_policy and first_view.base.semantic is None
+    baseline_profile = dict(second.session_state["ratings"])
+    assert baseline_profile and any(r <= 2 for r in baseline_profile.values())
+    baseline_scores = second_view.base.score_components(second_view.known_profile(baseline_profile))
+    first.button(key="portfolio_empty").click().run()
+    first.button_group(key="navigation_en").set_value("for_you").run()
+    assert first.selectbox(key="for_you_algorithm").value == "Collaborative"
+    assert any("Rate at least one" in item.value for item in first.info)
+    before = first_view.base.score_components({})["Collaborative"]
+    first.button_group(key="navigation_en").set_value("search").run()
+    first.text_input(key="query_search").set_value("Star Wars (1977)").run()
+    mid = next(
+        int(row.movie_id)
+        for row in first_view.base.movies.itertuples()
+        if row.imdb_id == "tt0076759"
+    )
+    first.button(key=f"details_search_{mid}").click().run()
+    first.select_slider(key=f"stars_{mid}").set_value(4.5)
+    next(b for b in first.button if b.label == "Save rating").click().run()
+    healthy(first)
+    assert first.session_state["ratings"] == {mid: 4.5}
+    after = first_view.base.score_components({mid: 4.5})["Collaborative"]
+    assert np.isfinite(after).all() and not np.allclose(before, after)
+    original = Recommender(
+        first_view.base.movies, first_view.base.ratings, collaborative=first_view.base.collaborative
+    )
+    np.testing.assert_array_equal(after, original.score_components({mid: 4.5})["Collaborative"])
+    first.button_group(key="navigation_en").set_value("for_you").run()
+    healthy(first)
+    assert not any("Rate at least one" in item.value for item in first.info)
+    assert second.session_state["ratings"] == baseline_profile
+    for name, scores in baseline_scores.items():
+        np.testing.assert_array_equal(
+            scores,
+            second_view.base.score_components(second_view.known_profile(baseline_profile))[name],
+        )
+    first.button(key="portfolio_reset").click().run()
+    assert first.session_state["ratings"] == baseline_profile
+    # Synthetic examples are resolved by IMDb identity in the latest-small namespace.
+    assert all(mid >= 1_000_000 for mid in first_view.known_profile(baseline_profile))
+
+
+def test_prepare_refuses_existing_destination_and_changed_source(tmp_path, monkeypatch):
+    import json
+
+    from scripts import prepare_portfolio
+
+    existing = tmp_path / "existing"
+    existing.mkdir()
+    marker = existing / "owner-file.txt"
+    marker.write_text("preserve")
+    with pytest.raises(ValueError, match="Destination exists"):
+        prepare_portfolio.prepare(existing)
+    assert marker.read_text() == "preserve"
+
+    def changed_source(directory):
+        directory.mkdir()
+        (directory / "source.json").write_text(json.dumps({"archive_sha256": "changed"}))
+
+    monkeypatch.setattr(prepare_portfolio, "download_latest", changed_source)
+    destination = tmp_path / "new-pack"
+    with pytest.raises(ValueError, match="archive changed"):
+        prepare_portfolio.prepare(destination)
+    assert not destination.exists()
+    assert not list(tmp_path.glob("cinematch-public-pack-*"))

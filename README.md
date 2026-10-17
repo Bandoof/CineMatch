@@ -188,3 +188,7 @@ and understanding are required before claims of personal authorship.
 [Українська локальна інструкція](Почати.md) ·
 [Historical/classic guide](docs/classic-guide.md) ·
 [v1.3 evidence](docs/release-v13.md) · [Recovery state](docs/progress-v14.md)
+
+### Public ML Integration (v1.5.0 preparation)
+
+The optional portfolio pack now uses only pinned MovieLens latest-small with its usage terms. Collaborative is the portfolio ML default; without a valid pack the metadata demo remains available. Preparation, limitations and the separate hosting approval are documented in [Public ML Integration](docs/public-ml-integration.md). This PR does not activate the public deployment.

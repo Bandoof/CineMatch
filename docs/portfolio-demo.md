@@ -21,16 +21,16 @@ OPENBLAS_NUM_THREADS=1 python -m scripts.prepare_portfolio --directory data/port
 PowerShell: `$env:OPENBLAS_NUM_THREADS="1"`; then run the Python command without
 the Unix environment prefix. Set `CINEMATCH_PORTFOLIO_DATA_DIR` only to another
 pack created by that script. Existing destinations are refused, never overwritten.
-Both official GroupLens archive hashes are verified. Only at most 250 real titles
+Only the pinned official ml-latest-small archive hash is verified; schema 2 excludes 100K. Only at most 250 real titles
 and 30,000 real development events enter the pack; the ordinary model defaults
 are fitted into a **separate demo artifact**, not existing production weights.
-Original numerical formulas/algorithms are reused. Duplicate canonical events
+Original numerical formulas/algorithms are reused. Adaptive without a learned policy remains community popularity; Semantic without text artifacts remains genre fallback. Duplicate canonical events
 are collapsed by the existing engine. No real research holdout is run.
-Retain GroupLens attribution/terms when preparing data; it is not redistributed
+The pack carries the complete latest-small README as MOVIELENS-LICENSE.txt, including attribution and noncommercial conditions; it is not redistributed
 in Git. No public release of the pack has been authorized.
 
 Without a valid prepared pack, For You explicitly shows genre/provider-quality
-heuristics. With it, Known catalog / Adaptive is the original engine; modern
+heuristics. With it, Known catalog defaults to Collaborative using the original engine; modern
 movies remain a separately disclosed heuristic. Neither is presented as a newly
 verified scientific improvement. Research repeats the +17.8% unverified warning.
 
@@ -76,3 +76,5 @@ the local SQLite entry point. No public URL, deployment or account has been crea
 провайдерам. Звичайний локальний режим з autosave збережено. Без підготовленого
 публічного ML-набору рекомендації чесно позначені як жанрові евристики; із ним
 показано вихідний engine на обмеженому development-наборі, без нового holdout.
+
+See [Public ML Integration](public-ml-integration.md) for the source review, pack contract, hosting proposal and approval boundary.

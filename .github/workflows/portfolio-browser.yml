@@ -39,6 +39,11 @@ jobs:
       - run: npm install --prefix "$RUNNER_TEMP/cinematch-qa" axe-core@4.14.0 --ignore-scripts --no-audit
       - if: env.CINEMATCH_QA_METADATA_ONLY != 'true'
         run: python -m scripts.prepare_portfolio --directory "$CINEMATCH_PORTFOLIO_DATA_DIR"
+      - name: Real public ML personalization and visitor isolation
+        if: env.CINEMATCH_QA_METADATA_ONLY != 'true'
+        run: python -m pytest tests/test_portfolio.py -q
+        env:
+          CINEMATCH_TEST_PUBLIC_PACK: ${{ env.CINEMATCH_PORTFOLIO_DATA_DIR }}
       - name: Local-only browser journeys and accessibility
         shell: bash
         run: |

@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — v1.5.0 Public ML Integration
+
+- Prepare schema-2 packs exclusively from pinned MovieLens latest-small; retain its full usage terms and reject legacy mixed-source packs.
+- Default portfolio recommendations to the existing Collaborative engine; disclose popularity for an empty known-film profile and retain Adaptive/Semantic fallbacks.
+- Resolve example ratings by IMDb identity; verify pack integrity, training fields and model bounds; test real-pack session isolation and score changes in browser CI.
+- Data/model hosting, deployment, release and merge require separate approval.
+
 Changes are recorded by engineering milestone; these headings are not published tags.
 
 ## Unreleased — v1.3 Modern Movie Discovery

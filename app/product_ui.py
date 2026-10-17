@@ -843,6 +843,8 @@ def for_you(view):
             )
     if view.base is not None:
         ui_language = language()
+        if portfolio.enabled(st.session_state) and "for_you_algorithm" not in st.session_state:
+            st.session_state.for_you_algorithm = "Collaborative"
         algorithm = st.selectbox(
             s("Алгоритм рекомендацій", "Recommendation algorithm"),
             ALGORITHMS,
@@ -873,6 +875,13 @@ def for_you(view):
                 s(
                     "Текстову модель не завантажено: Semantic використовує наявний жанровий резервний режим.",
                     "The text model is not loaded: Semantic uses the existing genre fallback.",
+                )
+            )
+        if portfolio.enabled(st.session_state) and not view.known_profile(st.session_state.ratings):
+            st.info(
+                s(
+                    "Оцініть хоча б один фільм зі знайомого каталогу для ML-персоналізації. Поки що показуємо популярне.",
+                    "Rate at least one known-catalog film for ML personalization. Showing popularity for now.",
                 )
             )
         st.caption(
@@ -1190,8 +1199,8 @@ def demo_information(view):
     else:
         st.caption(
             s(
-                "Історичні рекомендації: окрема модель на обмеженому публічному development-наборі. Це не оцінка якості на holdout.",
-                "Historical recommendations: a separate model on a bounded public development subset. This is not a holdout quality evaluation.",
+                "ML підключено: окрема модель MovieLens latest-small. Оцінки знайомих фільмів персоналізують Collaborative; нові назви й серіали використовують жанрові евристики. Якість на holdout не виміряна.",
+                "ML connected: a separate MovieLens latest-small model. Known-film ratings personalize Collaborative; new titles and series use genre heuristics. Holdout quality is not measured.",
             )
         )
     a, b = st.columns(2)
