@@ -3,10 +3,12 @@
 import hashlib
 import json
 import os
+import zipfile
 from functools import lru_cache
 from pathlib import Path
 from types import MethodType
 
+import numpy as np
 import pandas as pd
 
 from app.recommender import Recommender
@@ -15,9 +17,10 @@ from src.data import fingerprint
 from src.modern_catalog import ModernCatalog
 
 PUBLIC_ARCHIVES = {
-    "ml-100k": "50d2a982c66986937beb9ffb3aa76efe955bf3d5c6b761f4e3a7cd717c6a3229",
     "ml-latest-small": "696d65a3dfceac7c45750ad32df2c259311949efec81f0f144fdfb91ebc9e436",
 }
+PACK_SCHEMA = 2
+PACK_FILES = {"dataset.json": 8_000_000, "model.npz": 20_000_000, "MOVIELENS-LICENSE.txt": 50_000}
 SETS = ("blocked", "topic_blocked", "snoozed", "watched", "watchlist", "not_seen")
 
 
@@ -33,34 +36,100 @@ def prepared_engine(directory):
     """Read only a bounded explicitly prepared public pack; never ambient local data."""
     directory = Path(directory)
     manifest_path = directory / "manifest.json"
+    if directory.is_symlink():
+        raise ValueError("Symlinked public pack directory")
     if not manifest_path.exists():
         return None
     if manifest_path.is_symlink() or manifest_path.stat().st_size > 5000:
         raise ValueError("Invalid public pack manifest")
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    if manifest.get("schema_version") != 1 or manifest.get("archives") != PUBLIC_ARCHIVES:
+    if (
+        not isinstance(manifest, dict)
+        or manifest.get("schema_version") != PACK_SCHEMA
+        or manifest.get("archives") != PUBLIC_ARCHIVES
+    ):
         raise ValueError("Unverified public pack provenance")
     files = manifest.get("files")
-    if not isinstance(files, dict) or set(files) != {"dataset.json", "model.npz"}:
+    if not isinstance(files, dict) or set(files) != set(PACK_FILES):
         raise ValueError("Unexpected public pack files")
     for name, digest in files.items():
         path = directory / name
-        if path.is_symlink() or path.stat().st_size > (
-            8_000_000 if name == "dataset.json" else 20_000_000
-        ):
+        if path.is_symlink() or not path.is_file() or path.stat().st_size > PACK_FILES[name]:
             raise ValueError("Invalid public pack size")
         if hashlib.sha256(path.read_bytes()).hexdigest() != digest:
             raise ValueError("Public pack integrity mismatch")
     document = json.loads((directory / "dataset.json").read_text(encoding="utf-8"))
     if not isinstance(document, dict) or set(document) != {"movies", "ratings"}:
         raise ValueError("Unexpected public training fields")
+    if not all(isinstance(document[k], list) for k in ("movies", "ratings")):
+        raise ValueError("Invalid public training rows")
     if not 1 <= len(document["movies"]) <= 250 or not 1 <= len(document["ratings"]) <= 30000:
         raise ValueError("Public demo dataset exceeds limits")
+    if not all(isinstance(row, dict) for key in document for row in document[key]):
+        raise ValueError("Invalid public training rows")
+    if not all(
+        set(row) == {"user_id", "movie_id", "rating", "timestamp"} for row in document["ratings"]
+    ):
+        raise ValueError("Unexpected public rating fields")
     movies, ratings = pd.DataFrame(document["movies"]), pd.DataFrame(document["ratings"])
+    allowed = {
+        "movie_id",
+        "title",
+        "year",
+        "genres",
+        "media_type",
+        "source",
+        "imdb_id",
+        "source_url",
+        "imdb_url",
+        "aliases",
+        "alternate_title",
+    }
+    if not set(movies) <= allowed or not {"movie_id", "title", "year", "genres", "aliases"} <= set(
+        movies
+    ):
+        raise ValueError("Unexpected public movie fields")
+    if (
+        movies.movie_id.duplicated().any()
+        or ratings.duplicated(["user_id", "movie_id"]).any()
+        or not set(ratings.movie_id) <= set(movies.movie_id)
+        or not np.isfinite(ratings.rating).all()
+        or not ratings.rating.between(0.5, 5).all()
+    ):
+        raise ValueError("Invalid public observations")
     movies["genres"] = movies.genres.map(tuple)
     if "aliases" in movies:
         movies["aliases"] = movies.aliases.map(tuple)
+    # Bound decompressed NPZ size before numpy allocates arrays (no pickle).
+    try:
+        with zipfile.ZipFile(directory / "model.npz") as archive:
+            if (
+                len(archive.infolist()) > 20
+                or sum(m.file_size for m in archive.infolist()) > 20_000_000
+            ):
+                raise ValueError("Invalid public model archive")
+    except zipfile.BadZipFile as error:
+        raise ValueError("Invalid public model archive") from error
     model = BiasedMF.load(directory / "model.npz", fingerprint(movies, ratings))
+    if (
+        model.factors > 24
+        or len(model.user_ids) > 610
+        or model.item_factors.shape != (len(movies), model.factors)
+        or model.user_factors.shape != (len(model.user_ids), model.factors)
+        or model.item_bias.shape != (len(movies),)
+        or model.user_bias.shape != (len(model.user_ids),)
+        or not all(
+            np.isfinite(a).all()
+            for a in (
+                model.item_factors,
+                model.user_factors,
+                model.item_bias,
+                model.user_bias,
+                model.mean,
+            )
+        )
+    ):
+        raise ValueError("Invalid public model arrays")
     engine = Recommender(movies, ratings, collaborative=model)
     # The original method's class-level LRU retains profile keys globally. Bind
     # its identical underlying formula to an independent per-visitor LRU here.
@@ -78,11 +147,12 @@ def initial_profile(view):
         matches = [mid for mid, t in view.titles.items() if t.imdb_id == imdb]
         if len(matches) == 1:
             values["ratings"][matches[0]] = rating
-    # Familiar historical IDs come from the pinned public MovieLens catalog.
+    # Resolve identities, never reinterpret 100K IDs in a different dataset.
     if view.base is not None:
-        for mid, rating in ((50, 4.5), (174, 4), (118, 1.5)):
-            if mid in view.base.positions:
-                values["ratings"][mid] = rating
+        examples = {"tt0076759": 4.5, "tt0080684": 4, "tt0116629": 1.5}
+        for row in view.base.movies.itertuples():
+            if getattr(row, "imdb_id", "") in examples:
+                values["ratings"][int(row.movie_id)] = examples[row.imdb_id]
     values["watched"] = set(values["ratings"])
     for mid in view.rows:
         title = view.titles.get(mid)

@@ -310,9 +310,14 @@ def verify(
         expect(page.get_by_text("Ваша оцінка · ★ 4.5/5", exact=True)).to_be_visible()
         page.get_by_text("Для вас", exact=True).first.click()
         if not metadata_only:
-            page.get_by_role("heading", name="Знайомий каталог · Adaptive", exact=True).wait_for()
+            page.get_by_role(
+                "heading", name="Знайомий каталог · Collaborative", exact=True
+            ).wait_for()
         page.get_by_role("heading", name="Нові можливості", exact=True).wait_for()
         if not metadata_only:
+            open_choice(page.get_by_role("combobox", name=re.compile(r"Алгоритм рекомендацій$")))
+            page.get_by_role("option", name=re.compile(r"^Adaptive ·")).click()
+            page.get_by_role("heading", name="Знайомий каталог · Adaptive", exact=True).wait_for()
             open_choice(page.get_by_role("combobox", name=re.compile(r"Алгоритм рекомендацій$")))
             page.get_by_role("option", name=re.compile(r"^Collaborative ·")).click()
             page.get_by_role(

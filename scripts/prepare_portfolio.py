@@ -8,11 +8,11 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts.download_data import download as download_100k
 from scripts.download_movies import download as download_latest
 from src.collaborative import BiasedMF
-from src.data import fingerprint, load_app_movies
-from src.portfolio import PUBLIC_ARCHIVES
+from src.data import fingerprint
+from src.movies import extend_movies
+from src.portfolio import PACK_FILES, PACK_SCHEMA, PUBLIC_ARCHIVES, prepared_engine
 
 
 def prepare(directory):
@@ -22,7 +22,6 @@ def prepare(directory):
     directory.parent.mkdir(parents=True, exist_ok=True)
     with TemporaryDirectory(prefix="cinematch-public-pack-", dir=directory.parent) as temporary:
         staging = Path(temporary)
-        download_100k(staging / "ml-100k")
         download_latest(staging / "ml-latest-small")
         for name, digest in PUBLIC_ARCHIVES.items():
             source = json.loads((staging / name / "source.json").read_text(encoding="utf-8"))
@@ -30,16 +29,40 @@ def prepare(directory):
                 raise ValueError(
                     "Public archive changed; re-review provenance before preparing a demo."
                 )
-        movies, ratings = load_app_movies(staging / "ml-100k")
+        # Reuse the existing adapter with an empty base: no 100K data or identities.
+        columns = ["movie_id", "title", "year", "genres", "aliases"]
+        movies, ratings = extend_movies(
+            pd.DataFrame(columns=columns),
+            pd.DataFrame(columns=["user_id", "movie_id", "rating", "timestamp"]),
+            staging / "ml-latest-small",
+        )
+        movies = movies[
+            [
+                "movie_id",
+                "title",
+                "year",
+                "genres",
+                "media_type",
+                "source",
+                "imdb_id",
+                "source_url",
+                "imdb_url",
+                "aliases",
+                "alternate_title",
+            ]
+        ]
+        ratings = ratings.astype(
+            {"user_id": "int64", "movie_id": "int64", "rating": "float64", "timestamp": "int64"}
+        )
         counts = ratings.movie_id.value_counts()
         selected = list(counts.sort_values(ascending=False, kind="stable").index[:220])
-        selected += [50, 174, 118]
         sample = json.loads(
             (Path(__file__).resolve().parents[1] / "assets/demo/catalog.json").read_text(
                 encoding="utf-8"
             )
         )
         known_imdb = {t["imdb_id"] for t in sample["titles"] if t["media_type"] == "Movie"}
+        known_imdb |= {"tt0076759", "tt0080684", "tt0116629"}
         selected += movies.loc[movies.imdb_id.isin(known_imdb), "movie_id"].tolist()
         movies = (
             movies[movies.movie_id.isin(set(selected))].sort_values("movie_id").head(250).copy()
@@ -63,6 +86,9 @@ def prepare(directory):
         restored_movies["aliases"] = restored_movies.aliases.map(tuple)
         output = staging / "pack"
         output.mkdir()
+        (output / "MOVIELENS-LICENSE.txt").write_bytes(
+            (staging / "ml-latest-small/README.txt").read_bytes()
+        )
         (output / "dataset.json").write_text(
             json.dumps(document, ensure_ascii=False, allow_nan=False, separators=(",", ":")),
             encoding="utf-8",
@@ -71,11 +97,11 @@ def prepare(directory):
         model = BiasedMF().fit(restored_ratings, restored_movies.movie_id.to_numpy())
         model.save(output / "model.npz", fingerprint(restored_movies, restored_ratings))
         manifest = {
-            "schema_version": 1,
+            "schema_version": PACK_SCHEMA,
             "archives": PUBLIC_ARCHIVES,
             "files": {
                 name: hashlib.sha256((output / name).read_bytes()).hexdigest()
-                for name in ("dataset.json", "model.npz")
+                for name in PACK_FILES
             },
             "movies": len(restored_movies),
             "events": len(restored_ratings),
@@ -84,6 +110,8 @@ def prepare(directory):
         (output / "manifest.json").write_text(
             json.dumps(manifest, indent=2) + "\n", encoding="utf-8"
         )
+        # Validate exactly what the runtime will read before installing it atomically.
+        prepared_engine(output)
         output.rename(directory)
     return manifest
 
