@@ -6,3 +6,6 @@ pytest-cov==7.1.0
 pip-audit==2.10.1
 mypy==2.4.0
 pre-commit==4.5.1
+# Transitive via pre-commit -> virtualenv (development only). filelock 4.1.0 has
+# known CVEs fixed in 4.2.1+, which require Python >=3.11; 3.10 keeps the resolver default.
+filelock==4.2.10; python_version >= "3.11"
