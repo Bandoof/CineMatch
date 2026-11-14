@@ -11,7 +11,6 @@ from tests.test_modern_catalog import synthetic_title, tv_show
 
 def explorer(directory, monkeypatch):
     monkeypatch.setenv("CINEMATCH_DISCOVERY_DIR", str(directory))
-    monkeypatch.delenv("TMDB_READ_ACCESS_TOKEN", raising=False)
     return AppTest.from_file(
         str(Path(__file__).parents[1] / "app/catalog_explorer.py"), default_timeout=30
     ).run()
@@ -23,16 +22,16 @@ def test_offline_first_launch_and_saved_attributed_metadata(tmp_path, monkeypatc
     ModernCatalog([synthetic_title()]).save(tmp_path / "catalog.json")
     app.run()
     assert not app.exception and any(x.value == "Синтетичне прибуття" for x in app.subheader)
-    assert any("not endorsed or certified" in x.value for x in app.caption)
+    assert any("CC0" in x.value for x in app.caption)
+    assert not any("not endorsed" in x.value for x in app.caption)  # No TMDB attribution.
 
 
-def test_explicit_provider_search_works_without_movie_credentials(tmp_path, monkeypatch):
+def test_explicit_provider_search_uses_only_keyless_providers(tmp_path, monkeypatch):
+    requested = []
+
     def fetch(self, provider, endpoint, params=None, online=False):
-        return (
-            FetchResult([{"show": tv_show()}], "fetched", 1_000_000)
-            if provider == "TVmaze"
-            else FetchResult(None, "missing_credentials")
-        )
+        requested.append(provider)
+        return FetchResult([{"show": tv_show()}], "fetched", 1_000_000)
 
     monkeypatch.setattr(ProviderClient, "fetch", fetch)
     app = explorer(tmp_path, monkeypatch)
@@ -40,7 +39,8 @@ def test_explicit_provider_search_works_without_movie_credentials(tmp_path, monk
     app.button[0].click().run()
     assert not app.exception
     assert len(ModernCatalog.load(tmp_path / "catalog.json").titles) == 1
-    assert any("missing_credentials" in x.value for x in app.caption)
+    assert requested == ["TVmaze"]
+    assert any("TVmaze: fetched" in x.value for x in app.caption)
 
 
 def test_corrupt_snapshot_and_api_failure_remain_usable(tmp_path, monkeypatch):

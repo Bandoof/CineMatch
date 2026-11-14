@@ -42,8 +42,8 @@ its v3 validation/test target overlap is disclosed and it is not fresh holdout e
 
 The v1.3 facade retains the exact training-engine catalog/features/scores. Modern
 metadata only overlays presentation or adds separate cold identities. TVmaze keeps
-negative show IDs; TMDB movies use `-1_000_000_000_000-id`, series use
-`-2_000_000_000_000-id`. Mapping requires established provider identity or unique
+negative show IDs; Wikidata movies use `-3_000_000_000_000-id`, series use
+`-4_000_000_000_000-id` (TMDB is disabled; its former ranges stay reserved). Mapping requires established provider identity or unique
 IMDb + media type + release year; names never establish identity.
 
 Search postings/trigrams are built once per session view revision. Only the active
@@ -56,7 +56,7 @@ missing keys, invalid API responses and storage failures preserve existing data.
 ```mermaid
 flowchart LR
   ML[MovieLens development data] --> Engine[Original fixed training engine]
-  Providers[TVmaze / optional TMDB] --> Cache[Validated bounded metadata cache]
+  Providers[TVmaze / Wikidata] --> Cache[Validated bounded metadata cache]
   Engine --> View[Per-session catalog facade]
   Cache --> View
   View --> UI[Native active-page Streamlit UI]

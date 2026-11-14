@@ -171,6 +171,15 @@ EN.update({
     "go_recs": "Open the Recommendations tab for your picks.",
     "guide_all": "The recognition queue uses the media filter; recommendation filters won't prevent you from rating older favourites.",
 })
+# TMDB is disabled; old local records are hidden, never shown or used.
+EN.update({
+    "legacy_tmdb_profile": "Hidden {count} old TMDB entries (provider disabled). Original profile copy: {path}",
+    "legacy_tmdb_catalog": "Hidden {count} old TMDB records in the local catalog (provider disabled).",
+})
+UK.update({
+    "legacy_tmdb_profile": "Приховано старих записів TMDB: {count} (провайдера вимкнено). Копія профілю: {path}",
+    "legacy_tmdb_catalog": "Приховано старих записів TMDB у локальному каталозі: {count} (провайдера вимкнено).",
+})
 UK.update({
     "guided": "Підбір смаку", "guide_heading": "Дивилися цю історію?",
     "guide_hint": "1 — не сподобалось · 3 — нейтрально · 5 — улюблене",

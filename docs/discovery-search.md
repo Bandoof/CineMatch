@@ -36,7 +36,7 @@ works without providers, credentials or embeddings.
 These are disclosed discovery heuristics, not new benchmark winners or live trends.
 Rated/watched/dismissed/snoozed titles are excluded from recommendation shelves;
 ordinary search still finds them for editing. A missing or empty feed has an honest
-empty state. Upcoming films require valid cached metadata or the optional TMDB token.
+empty state. There is no upcoming-films feed: TMDB is disabled (see catalog-providers.md).
 
 Українською: пошук працює за оригінальною, українською, англійською та перевіреними
 альтернативними назвами, підтримує помилки й практичну транслітерацію. Ремейки та
