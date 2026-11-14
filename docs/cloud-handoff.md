@@ -47,7 +47,7 @@ docs/ml-v3-model-card.md; local execution record: docs/verification.md.
 
 ## Setup
 
-Use Python 3.10/3.11, requirements-dev.txt for checks; set OPENBLAS_NUM_THREADS=1.
+Use Python 3.11/3.12, requirements-dev.txt for checks; set OPENBLAS_NUM_THREADS=1.
 Run `python -m pytest -q` and `python -m ruff check .` first. Tests use synthetic
 fixtures and need no private profiles or network. Run data/download/training
 commands in README only when actual app data are needed. PyArrow is pinned to
