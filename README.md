@@ -52,7 +52,7 @@ fallbacks are implemented UI. [Capture provenance](assets/v14/README.md).
 
 ## Quick start / Швидкий старт
 
-Use Python **3.10 or 3.11**. No GPU, LLM, API token or account is required.
+Use Python **3.11 or 3.12**. No GPU, LLM, API token or account is required.
 
 ```bash
 python -m venv .venv
@@ -128,7 +128,7 @@ an offline research workflow. [Implemented architecture](docs/architecture-v14.m
 ## Quality and measured limits / Якість і вимірювання
 
 233 local tests passed with cached optional CPU weights; Docker/default CI use
-231 passed and two explicit skips. Linux 3.10/3.11 and Windows 3.11, Ruff,
+231 passed and two explicit skips. Linux 3.11/3.12 and Windows 3.11, Ruff,
 configured Mypy, pre-commit, audits and CodeQL are checked. Real browser coverage
 includes desktop/mobile/tablet, Ukrainian search, filters, rating, Undo, two
 visitors, reset, refresh and internet-offline metadata. Basic axe checks do not

@@ -7,7 +7,7 @@ not a fresh v1.3 checkout. Current setup and limitations are in the root README.
 # 🎬 CineMatch
 
 [![Tests](https://github.com/Bandoof/CineMatch/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/Bandoof/CineMatch/actions/workflows/ci.yml)
-![Python 3.10–3.11](https://img.shields.io/badge/Python-3.10%E2%80%933.11-blue)
+![Python 3.11–3.12](https://img.shields.io/badge/Python-3.11%E2%80%933.12-blue)
 [![MIT License](https://img.shields.io/badge/License-MIT-green)](../LICENSE)
 
 **Recognise a story. Rate it. Find your next favourite.**
@@ -27,7 +27,7 @@ included in the source package apart from screenshots of the application.
 
 ## Quick start / Швидкий старт
 
-Python 3.10/3.11: create a virtual environment, install `requirements.txt`, run
+Python 3.11/3.12: create a virtual environment, install `requirements.txt`, run
 `python -m scripts.download_data` and `python -m scripts.train`, then
 `python -m streamlit run app/streamlit_app.py --server.address=127.0.0.1`.
 This starts the minimal film catalog; verified Ukrainian names, series and expanded
@@ -283,7 +283,7 @@ Users see **Maintenance in progress** without loading the catalog or models.
 Run `python -m scripts.maintenance off` when ready, restart the app after code
 changes, then refresh. The maintenance flag is local and excluded from the archive.
 
-Python 3.10 or 3.11, from this directory:
+Python 3.11 or 3.12, from this directory:
 
 ```bash
 python -m venv .venv
@@ -379,7 +379,7 @@ boundaries, rated/hidden exclusion, item-KNN, series filtering and fallbacks,
 profile validation/persistence, recognition skips/undo/reload, localized-title identity
 and model-score invariance, paired bootstrap, onboarding user exclusion,
 artifact cache refresh, and interactive Ukrainian/English workflows.
-GitHub Actions is configured for Python 3.10/3.11 with synthetic data. The equivalent
+GitHub Actions is configured for Python 3.11/3.12 with synthetic data. The equivalent
 checks passed locally and in Linux Docker. The first hosted GitHub Actions run
 also passed Ruff and pytest on Python 3.10 and 3.11:
 [verified run](https://github.com/Bandoof/CineMatch/actions/runs/37924477380).
