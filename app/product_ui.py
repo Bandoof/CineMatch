@@ -354,12 +354,12 @@ def provider_controls(view, directory):
             )
         st.caption(
             s(
-                "Нові фільми: необов’язковий TMDB. Серіали: TVmaze без ключа.",
-                "New movies: optional TMDB. Series: TVmaze, no key required.",
+                "Фільми: Wikidata (CC0). Серіали: TVmaze (CC BY-SA). Без ключів; TMDB вимкнено.",
+                "Films: Wikidata (CC0). Series: TVmaze (CC BY-SA). No keys; TMDB is disabled.",
             )
         )
         if st.button(s("Оновити каталог", "Refresh catalog"), key="refresh_catalog"):
-            client = provider_client(str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", ""))
+            client = provider_client(str(directory))
             titles, statuses = refresh_catalog(client, online=True)
             if titles:
                 view.add_titles(titles)
@@ -375,6 +375,8 @@ def provider_controls(view, directory):
                         "Some sources are unavailable; saved data remains available.",
                     )
                 )
+        if getattr(view.catalog, "legacy_hidden", 0):
+            st.caption(tr("legacy_tmdb_catalog", language(), count=view.catalog.legacy_hidden))
         stamps = [t.fetched_utc[:10] for t in view.titles.values() if t.fetched_utc]
         if stamps:
             st.caption(
@@ -386,9 +388,6 @@ def provider_controls(view, directory):
 def provider_feedback():
     statuses = st.session_state.get("provider_status", {})
     messages = {
-        "missing_credentials": s(
-            "не налаштовано необов’язковий токен", "optional token is not configured"
-        ),
         "offline": s("офлайн; збережені назви доступні", "offline; saved titles remain available"),
         "stale": s("використано давніший кеш", "older cached metadata was used"),
         "rate_limited": s("ліміт запитів; повторіть пізніше", "rate limited; try later"),
@@ -399,9 +398,7 @@ def provider_feedback():
     failures = [
         f"{source}: {messages[value]}"
         for source, value in statuses.items()
-        if value in messages
-        and source
-        in {"TVmaze", "TVmaze schedule", "TMDB", "TMDB now_playing", "TMDB upcoming", "Wikidata"}
+        if value in messages and source in {"TVmaze", "TVmaze schedule", "Wikidata"}
     ]
     if failures:
         st.warning(" · ".join(failures))
@@ -605,9 +602,7 @@ def browse(view, directory, page):
                 )
             )
             if st.button(s("Пошук у джерелах", "Search providers"), key=f"remote_{page}"):
-                client = provider_client(
-                    str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", "")
-                )
+                client = provider_client(str(directory))
                 titles, statuses = provider_search(client, query, media_type=media, online=True)
                 if titles:
                     view.add_titles(titles)
@@ -689,9 +684,7 @@ def details(view, directory, mid):
             if not portfolio.enabled(st.session_state) and st.button(
                 s("Оновити деталі", "Refresh details"), key="refresh_details"
             ):
-                client = provider_client(
-                    str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", "")
-                )
+                client = provider_client(str(directory))
                 refreshed, status = title_details(client, title, online=True)
                 if refreshed.fetched_utc:
                     view.add_titles([refreshed])

@@ -25,8 +25,8 @@ predictions or invented popularity.
 The credential-free fixture has 22 real films and eight TVmaze series; all 30
 have source-linked Ukrainian labels, 25 have Ukrainian short descriptions, 19
 have release years from 2023. Wikidata CC0 labels are not machine translations.
-TVmaze remains the series provider; optional TMDB remains available in local
-mode. No token was available, so live TMDB success is **not** claimed.
+TVmaze remains the series provider. TMDB is disabled because its API terms
+forbid use in ML/AI applications ([details](catalog-providers.md)).
 
 Навчальні дані не підмінено сучасним каталогом. Добірка з 30 назв невелика й
 датована; це не оцінка покриття всього світового кінематографа. Опис Wikidata

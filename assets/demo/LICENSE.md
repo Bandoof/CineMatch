@@ -21,5 +21,5 @@ This is a 30-title dated selection, not a complete catalog or a live release fee
 Conflicting release statements separated by more than 180 days are omitted;
 day-precision source dates do not guarantee local theatrical/streaming availability.
 Short Wikidata descriptions are labeled as such, not presented as film synopses.
-Optional TMDB integration remains separately licensed/configured; this sample
+TMDB is disabled in CineMatch (its API terms forbid ML/AI applications); this sample
 contains no TMDB metadata, API key, private profile or individual training ratings.

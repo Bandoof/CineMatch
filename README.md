@@ -9,20 +9,52 @@ familiar films, compare recommender algorithms and keep a local library.
 Двомовний локальний застосунок для відкриття фільмів і серіалів: справжні
 метадані, український та англійський пошук, прозорі рекомендації й особиста бібліотека.
 
-**Status / Статус:** v1.4.0 release code is integrated and verified; PR #20–#23
-are merged. **[Live portfolio demo / Живе демо](https://try-cinematch.streamlit.app/)**
-was verified on 2026-10-10: anonymous startup, health, Ukrainian search,
-recommendations, reset/refresh and independent visitor sessions.
-**Hosted scope:** real metadata and genre heuristics; the public ML pack is not yet
-provisioned. Preferences are synthetic and temporary. No visitor account is required.
-[GitHub release v1.4.0](https://github.com/Bandoof/CineMatch/releases/tag/v1.4.0).
-Run the safe demonstration locally; paid services, accounts and TMDB are optional.
+**Status / Статус:** latest release
+[v1.4.2](https://github.com/Bandoof/CineMatch/releases/tag/v1.4.2); v1.5.0 (an
+optional public MovieLens ML pack) is prepared in code but not deployed or released.
+**[Live portfolio demo / Живе демо](https://try-cinematch.streamlit.app/)** shows real
+metadata and genre heuristics only; the ML pack is not provisioned on the host.
+Live checks were done on 2026-10-10 (start, Ukrainian search, recommendations,
+reset, independent visitor sessions). The free host sleeps when idle; on 2026-11-13
+the first visit needed a wake-up click. Preferences are synthetic and temporary.
+Catalog sources: Wikidata (CC0) and TVmaze (CC BY-SA); TMDB is disabled because its
+API terms forbid ML/AI applications ([details](docs/catalog-providers.md)).
+Tests: 254 passed, 3 skipped (local Windows, Python 3.10, 2026-11-14).
 
 [Quick start / Запуск](#quick-start--швидкий-старт) ·
 [Engineering case study / Кейс](docs/portfolio-case-study.md) ·
 [Architecture / Архітектура](docs/architecture-v14.md) ·
 [QA evidence / Перевірка](docs/qa-v14.md) ·
-[Four-minute demo / Показ](docs/demo-video-v14.md)
+[Demo script, video not recorded / Сценарій демо, відео не записане](docs/demo-video-v14.md)
+
+### Measured ML results / Виміряні результати ML
+
+Offline experiment on **MovieLens 1M** ([report](reports/ml_v3.md),
+[model card](docs/ml-v3-model-card.md)): simulated new users, **600 test users**,
+global time split, NDCG@10. Paired 95% bootstrap intervals are differences from
+Popularity.
+
+| Ratings given | Popularity | Collaborative (ALS) | Adaptive | Adaptive policy | Adaptive − Popularity | Collaborative − Popularity |
+|---:|---:|---:|---:|---|---|---|
+| 3 | 0.0657 | 0.0614 | **0.0744** | 50% Popularity · 25% ALS · 25% LSA | **[+0.0031, +0.0144]** | [−0.0095, +0.0008] |
+| 5 | 0.0657 | 0.0659 | 0.0657 | 100% Popularity | [0, 0] | [−0.0057, +0.0055] |
+| 10 | 0.0663 | 0.0684 | 0.0663 | 100% Popularity | [0, 0] | [−0.0048, +0.0087] |
+
+- After **3 ratings** the mixed Adaptive policy beats Popularity; the interval excludes zero.
+- Collaborative alone has a lower raw NDCG than Popularity after 3 ratings
+  (0.0614 vs 0.0657), but its interval includes zero, as it does after 5 and 10
+  ratings (0.0659 and 0.0684): **no established difference** from Popularity.
+- After **5 and 10 ratings** validation selected 100% Popularity, so Adaptive equals Popularity.
+- Limits: metadata is retrospective, these numbers are not app or series accuracy,
+  and the intervals do not cover shift after deployment. The demo app does not run
+  this experiment.
+
+Українською: персоналізація перемагає популярність лише після 3 оцінок (змішана
+політика Adaptive); окремий ALS статистично не відрізняється від популярності.
+
+Dataset: F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets:
+History and Context. *ACM Transactions on Interactive Intelligent Systems (TiiS)*
+5, 4, Article 19. <https://doi.org/10.1145/2827872>
 
 ![Real running v1.4 discovery interface, synthetic profile](assets/v14/desktop-discover.png)
 
@@ -45,8 +77,8 @@ fallbacks are implemented UI. [Capture provenance](assets/v14/README.md).
   ratings, watched/watchlist/exclusions, Undo, local JSON backup and compatible profiles.
 - **Portfolio demo / Деморежим:** reproducible synthetic preferences, independent
   visitor state, reset and refresh, no local profile stores or provider credentials.
-- **Research / Дослідження:** original methodology, explanations and surviving
-  evidence, including the **unverified historical +17.8% Adaptive claim**.
+- **Research / Дослідження:** methodology, explanations, measured results and
+  their limits.
 
 ![Original Collaborative mode and real title cards](assets/v14/desktop-ml-cards.png)
 
@@ -100,8 +132,8 @@ python -m scripts.train
 python -m scripts.sync_catalog --directory data/discovery --pages 1
 ```
 
-The local entry preserves SQLite/CAS, schemas 2–6, JSON import/export and optional
-TMDB. It is **not** a secure anonymous multiuser service. The portfolio entry
+The local entry preserves SQLite/CAS, schemas 2–6 and JSON import/export.
+It is **not** a secure anonymous multiuser service. The portfolio entry
 never overwrites its profiles. Metadata remains usable offline; disable posters
 for browsing without external image requests. [Demo setup and threat model](docs/portfolio-demo.md).
 
@@ -142,9 +174,8 @@ Five bounded public-pack service sessions peak around 122 MiB; this is not a
 concurrent hosted-load guarantee. Historical v1.3 engineering results remain intact.
 
 Українською: тести перевіряють функціональність і відтворюваність, а не доводять
-якість ранжування. Історичні **+17,8% не підтверджено**; cohort v1.2 із 326
-користувачів уже використано. Новий final holdout не запускався. Майбутній приріст
-потребує нового протоколу, невикористаних даних і статистичних інтервалів.
+якість ранжування. Ранній експеримент v1.2 не має перевірених фінальних результатів
+([звіт про відновлення](reports/ml_v12.md)); його цифри не використовуються.
 
 ## Privacy and licensing / Приватність і ліцензії
 
@@ -152,7 +183,7 @@ Code is [MIT](LICENSE). Data, artwork and provider marks have separate terms:
 [MovieLens/provider guide](docs/catalog-providers.md),
 [Wikidata CC0 / TVmaze CC BY-SA snapshot](assets/demo/LICENSE.md).
 The 30-title fixture is dated and deliberately small; all labels are traceable,
-not generated translations. Live TMDB was not tested because no token was available.
+not generated translations.
 No API keys, private SQLite files or owner history are included.
 
 Local data stays local. Portfolio preferences live in one visitor session; the

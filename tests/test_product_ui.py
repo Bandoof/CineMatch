@@ -217,7 +217,6 @@ def test_provider_failure_keeps_cached_titles_and_private_ratings(product, monke
     client = ProviderClient(
         JsonCache(paths["CINEMATCH_DISCOVERY_DIR"] / "responses"),
         transport=unavailable,
-        token="",
         sleep=lambda _: None,
     )
     monkeypatch.setattr(ui, "provider_client", lambda *args: client)
