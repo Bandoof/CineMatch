@@ -6,6 +6,12 @@
 - Old local TMDB records are skipped with a short notice; an autosaved profile is copied once to `*.pre-tmdb-removal.json` before it is rewritten. The cache is never deleted automatically; see docs/catalog-providers.md for manual removal.
 - README states the current status and the measured MovieLens 1M (v3) results; the unverified historical claim moves out of the summary.
 
+## Unreleased — Python 3.11+ and Pillow security update
+
+- Require Python 3.11 or 3.12; Python 3.10 is no longer supported (Streamlit 1.66 and Pillow 13 dropped it).
+- Update Streamlit 1.65.0 → 1.66.1 and Pillow 12.3.0 → 13.0.0 to close known Pillow CVEs reported by pip-audit.
+- CI matrix: Linux 3.11/3.12 and Windows 3.11. NumPy, SciPy, PyArrow and recommendation algorithms are unchanged.
+
 ## Unreleased — v1.5.0 Public ML Integration
 
 - Prepare schema-2 packs exclusively from pinned MovieLens latest-small; retain its full usage terms and reject legacy mixed-source packs.
