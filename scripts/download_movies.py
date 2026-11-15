@@ -3,6 +3,7 @@
 import hashlib
 import io
 import json
+import os
 import ssl
 import urllib.request
 import zipfile
@@ -21,11 +22,17 @@ def download(directory=None):
     if all((directory / name).is_file() for name in names):
         print("Extended movie catalog is already installed.")
         return
-    context = ssl.create_default_context()
-    context.load_verify_locations(cafile=certifi.where())
-    request = urllib.request.Request(URL, headers={"User-Agent": "CineMatch/4.0"})
-    with urllib.request.urlopen(request, timeout=60, context=context) as response:
-        blob = response.read(10_000_001)
+    # CI restores the official ZIP from its Actions cache; callers still verify its SHA-256.
+    local = os.environ.get("CINEMATCH_MOVIELENS_ARCHIVE")
+    if local:
+        with open(local, "rb") as handle:
+            blob = handle.read(10_000_001)
+    else:
+        context = ssl.create_default_context()
+        context.load_verify_locations(cafile=certifi.where())
+        request = urllib.request.Request(URL, headers={"User-Agent": "CineMatch/4.0"})
+        with urllib.request.urlopen(request, timeout=60, context=context) as response:
+            blob = response.read(10_000_001)
     if len(blob) > 10_000_000:
         raise ValueError("Movie catalog archive is too large.")
     with zipfile.ZipFile(io.BytesIO(blob)) as archive:

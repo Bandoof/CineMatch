@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "about": "Single source of truth for BiasedMF (ALS) hyperparameters. Each dataset keeps its own section: the 1M values were used for the measured ml_v3 experiment; the demo pack keeps the library defaults because no experiment has shown 32/10 to be better on the 222-film development subset. Integer vs float values are deliberate: they reproduce the previous calls byte for byte in saved model files.",
+  "benchmark_1m": {
+    "dataset": "MovieLens 1M",
+    "used_by": ["scripts/benchmark_v3.py", "scripts/reproduce_ml_v3.py"],
+    "factors": 32,
+    "epochs": 15,
+    "regularization": 10,
+    "bias_regularization": 5.0,
+    "random_state": 42
+  },
+  "demo_pack": {
+    "dataset": "MovieLens latest-small (bounded 222-film demo subset)",
+    "used_by": ["scripts/prepare_portfolio.py"],
+    "factors": 24,
+    "epochs": 15,
+    "regularization": 5.0,
+    "bias_regularization": 5.0,
+    "random_state": 42
+  }
+}

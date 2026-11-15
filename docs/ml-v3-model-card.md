@@ -76,6 +76,27 @@ The app catalog and background interactions differ from the 1M experiment.
 Transferring a mixing policy is explicitly disclosed. 1M numbers are not app,
 mixed-catalog or series accuracy. Old 100K/expanded reports are archived separately.
 
+## Reproduction (15 November 2026)
+
+`python -m scripts.reproduce_ml_v3` re-runs this protocol from a fresh download and
+writes [ml_v3_repro.md](../reports/ml_v3_repro.md); the recorded `reports/ml_v3.*`
+evidence is not modified. ALS hyperparameters come from `configs/ml.json` (`benchmark_1m`).
+
+- The MovieLens 1M archive SHA-256, events, split, validation/test users and ALS
+  parameters are identical to the recorded run.
+- Popularity, Collaborative and Genres reproduce exactly after 3, 5 and 10 ratings
+  (maximum absolute difference 0 for every metric).
+- The content snapshot cannot be reproduced byte for byte: it was rebuilt from live
+  Wikipedia/Wikidata/TVmaze (SHA-256 `7a007e1c8332…`, recorded `903ac59408da…`).
+  Semantic changes slightly, and validation now selects 50% ALS, 25% LSA, 25%
+  Popularity after 3 ratings (recorded: 25%, 25%, 50%). Adaptive after 3 ratings:
+  NDCG@10 0.0736 (recorded 0.0744); paired Adaptive − Popularity interval
+  [+0.0019, +0.0140] (recorded [+0.0031, +0.0144]); both exclude zero. Its Recall@10
+  difference [−0.0007, +0.0079] includes zero.
+- Recall@10, NDCG@10, novelty and diversity have user-bootstrap intervals and paired
+  differences from Popularity. Catalog coverage is reported without an interval: it is
+  a union over users, so a with-replacement user bootstrap biases it downward.
+
 ## Feedback and explanations
 
 Title-only feedback excludes that ID without changing others' scores. Topic

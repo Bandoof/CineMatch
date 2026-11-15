@@ -37,8 +37,27 @@ jobs:
       - run: python -m pip install -r requirements-dev.txt playwright==1.63.0
       - run: python -m playwright install --with-deps chromium
       - run: npm install --prefix "$RUNNER_TEMP/cinematch-qa" axe-core@4.14.0 --ignore-scripts --no-audit
+      # TD-14: the pinned MovieLens archive comes from the Actions cache; GroupLens is
+      # contacted only on a cache miss. The SHA-256 matches src/portfolio.py PUBLIC_ARCHIVES.
+      - name: Restore pinned MovieLens latest-small archive
+        id: movielens
+        if: env.CINEMATCH_QA_METADATA_ONLY != 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: ${{ runner.temp }}/movielens/ml-latest-small.zip
+          key: movielens-latest-small-696d65a3dfceac7c45750ad32df2c259311949efec81f0f144fdfb91ebc9e436
+      - name: Download MovieLens latest-small on cache miss
+        if: env.CINEMATCH_QA_METADATA_ONLY != 'true' && steps.movielens.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p "$RUNNER_TEMP/movielens"
+          curl --fail --silent --show-error --location --retry 3 --retry-delay 15 --max-time 120 \
+            --output "$RUNNER_TEMP/movielens/ml-latest-small.zip" \
+            https://files.grouplens.org/datasets/movielens/ml-latest-small.zip
+          echo "696d65a3dfceac7c45750ad32df2c259311949efec81f0f144fdfb91ebc9e436  $RUNNER_TEMP/movielens/ml-latest-small.zip" | sha256sum --check -
       - if: env.CINEMATCH_QA_METADATA_ONLY != 'true'
         run: python -m scripts.prepare_portfolio --directory "$CINEMATCH_PORTFOLIO_DATA_DIR"
+        env:
+          CINEMATCH_MOVIELENS_ARCHIVE: ${{ runner.temp }}/movielens/ml-latest-small.zip
       - name: Real public ML personalization and visitor isolation
         if: env.CINEMATCH_QA_METADATA_ONLY != 'true'
         run: python -m pytest tests/test_portfolio.py -q

@@ -11,6 +11,7 @@ import pandas as pd
 from scripts.download_movies import download as download_latest
 from src.collaborative import BiasedMF
 from src.data import fingerprint
+from src.ml_config import model_parameters
 from src.movies import extend_movies
 from src.portfolio import PACK_FILES, PACK_SCHEMA, PUBLIC_ARCHIVES, prepared_engine
 
@@ -93,8 +94,10 @@ def prepare(directory):
             json.dumps(document, ensure_ascii=False, allow_nan=False, separators=(",", ":")),
             encoding="utf-8",
         )
-        # Ordinary model defaults, independent demo artifact; no production weights/policy replaced.
-        model = BiasedMF().fit(restored_ratings, restored_movies.movie_id.to_numpy())
+        # configs/ml.json "demo_pack": the library defaults, kept separate from the 1M benchmark.
+        model = BiasedMF(**model_parameters("demo_pack")).fit(
+            restored_ratings, restored_movies.movie_id.to_numpy()
+        )
         model.save(output / "model.npz", fingerprint(restored_movies, restored_ratings))
         manifest = {
             "schema_version": PACK_SCHEMA,

@@ -16,8 +16,11 @@ from scripts.download_benchmark import load
 from src.catalog import canonical_catalog, latest_ratings
 from src.collaborative import BiasedMF
 from src.data import ROOT, temporal_split
-from src.evaluation import bootstrap_intervals, ranking_metrics
+from src.evaluation import bootstrap_intervals, catalog_coverage, novelty_bits, ranking_metrics
+from src.ml_config import model_parameters
 from src.semantic import SemanticContent
+
+MODEL = model_parameters("benchmark_1m")  # configs/ml.json: 32 factors, 15 epochs, reg 10, seed 42
 
 
 def targets(past, heldout, maximum):
@@ -38,7 +41,7 @@ def targets(past, heldout, maximum):
 def build(movies, past, users):
     ids = {uid for uid, _, _ in users}
     background = latest_ratings(past[~past.user_id.isin(ids)])
-    model = BiasedMF(factors=32, regularization=10).fit(background, movies.movie_id.to_numpy())
+    model = BiasedMF(**MODEL).fit(background, movies.movie_id.to_numpy())
     engine = Recommender(movies, background, collaborative=model)
     semantic = SemanticContent.load(engine.movies, ROOT / "data/metadata/content.json",
                                     train_ids=set(background.movie_id))
@@ -63,23 +66,27 @@ def cohort(engine, users, count):
 
 
 def evaluate(engine, rows, weights=None, component=None):
-    per_user, unique, distances, novelties = [], set(), [], []
+    per_user, lists, distances, novelties = [], [], [], []
     counts = engine.popularity.counts
     probabilities = (counts+1)/(counts.sum()+len(counts))
     for candidates, components, relevant in rows:
         score = components[component] if component is not None else sum(w*c for w, c in zip(weights, components))
         order = candidates[np.lexsort((engine.movie_ids[candidates], -score[candidates]))[:10]]
-        per_user.append(ranking_metrics(engine.movie_ids[order], relevant))
-        unique.update(engine.movie_ids[order])
+        row = ranking_metrics(engine.movie_ids[order], relevant)
+        lists.append(engine.movie_ids[order])
         distances.append(engine.content.diversity(order))
-        novelties.append(float((-np.log2(probabilities[order])).mean()))
+        novelties.append(novelty_bits(probabilities[order]))
+        # Per-user extras for user-bootstrap intervals; summary values are unchanged.
+        row.update(diversity=distances[-1], novelty_bits=novelties[-1])
+        per_user.append(row)
     summary = {name+"@10": float(np.mean([row[name] for row in per_user])) for name in ("precision", "recall", "ndcg")}
-    summary.update(coverage=len(unique)/len(engine.movie_ids), diversity=float(np.mean(distances)),
+    summary.update(coverage=catalog_coverage(lists, len(engine.movie_ids)), diversity=float(np.mean(distances)),
                    novelty_bits=float(np.mean(novelties)))
     return summary, per_user
 
 
-def run():
+def experiment():
+    """Run protocol 3 once; return the report document and test-time per-user rows."""
     started = time.perf_counter()
     movies, events = load()
     movies, events, _ = canonical_catalog(movies, events)
@@ -101,10 +108,10 @@ def run():
     test_users = targets(past, test, 600)
     print(f"Independent test: {len(test_users)} users; refitting without their histories", flush=True)
     final = build(movies, past, test_users)
-    records, intervals, paired = [], {}, {}
+    records, intervals, paired, test_rows = [], {}, {}, {}
     for count in (3, 5, 10):
         rows = cohort(final, test_users, count)
-        per_user = {}
+        per_user = test_rows[str(count)] = {}
         for name, component in (("Popularity", 2), ("Collaborative", 0), ("Semantic", 1), ("Genres", 3)):
             metrics, values = evaluate(final, rows, component=component)
             records.append({"seed_ratings": count, "algorithm": name, **metrics})
@@ -124,7 +131,7 @@ def run():
         "validation_user_ids": [uid for uid, _, _ in val_users], "test_user_ids": [uid for uid, _, _ in test_users],
         "validation_test_user_overlap": len({u for u, _, _ in val_users} & {u for u, _, _ in test_users}),
         "background_events": {"validation": len(engine.ratings), "test": len(final.ratings)},
-        "model": {"factors": 32, "epochs": 15, "regularization": 10, "random_state": 42},
+        "model": {name: MODEL[name] for name in ("factors", "epochs", "regularization", "random_state")},
         "content_model": {"method": "TF-IDF + TruncatedSVD (LSA)", "max_features": 24000,
                           "dimensions": final.semantic.dimensions, "random_state": 42},
         "selected_policy": policies, "validation_trials": trials, "results": records,
@@ -133,9 +140,14 @@ def run():
         "text_coverage": int(final.semantic.covered.sum()), "latent_dimensions": final.semantic.dimensions,
         "seconds": time.perf_counter()-started,
         "scope": "Simulated new users; entire target histories removed from background training. Last N pre-boundary ratings are seeds. Full catalog candidates exclude seeds; positives exclude all earlier history. 300 validation / max 600 test users selected by fixed ID hash. Current Wikipedia/TVmaze metadata is retrospective; not an as-of historical metadata guarantee. Series/negative-feedback/live satisfaction not measured. Mixing policy transfers to the separate expanded app; deployment quality must be checked independently."}
+    return document, test_rows
+
+
+def run():
+    document, _ = experiment()
     destination = ROOT / "reports/ml_v3.json"
     destination.write_text(json.dumps(document, indent=2), encoding="utf-8")
-    pd.DataFrame(records).to_csv(ROOT / "reports/ml_v3.csv", index=False)
+    pd.DataFrame(document["results"]).to_csv(ROOT / "reports/ml_v3.csv", index=False)
     print("Saved:", destination, flush=True)
 
 
