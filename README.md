@@ -19,7 +19,7 @@ reset, independent visitor sessions). The free host sleeps when idle; on 2026-11
 the first visit needed a wake-up click. Preferences are synthetic and temporary.
 Catalog sources: Wikidata (CC0) and TVmaze (CC BY-SA); TMDB is disabled because its
 API terms forbid ML/AI applications ([details](docs/catalog-providers.md)).
-Tests: 254 passed, 3 skipped (local Windows, Python 3.10, 2026-11-14).
+Tests: 254 passed, 3 skipped (local Windows, Python 3.11, 2026-11-14).
 
 [Quick start / Запуск](#quick-start--швидкий-старт) ·
 [Engineering case study / Кейс](docs/portfolio-case-study.md) ·
@@ -159,8 +159,8 @@ an offline research workflow. [Implemented architecture](docs/architecture-v14.m
 
 ## Quality and measured limits / Якість і вимірювання
 
-233 local tests passed with cached optional CPU weights; Docker/default CI use
-231 passed and two explicit skips. Linux 3.11/3.12 and Windows 3.11, Ruff,
+254 local tests passed and 3 skipped (Windows, Python 3.11, 2026-11-14; the skips
+need the real public pack or optional weights). Linux 3.11/3.12 and Windows 3.11, Ruff,
 configured Mypy, pre-commit, audits and CodeQL are checked. Real browser coverage
 includes desktop/mobile/tablet, Ukrainian search, filters, rating, Undo, two
 visitors, reset, refresh and internet-offline metadata. Basic axe checks do not
