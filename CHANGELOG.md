@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Stage 2: reproducible ML foundation
+
+- `python -m scripts.reproduce_ml_v3` reruns the MovieLens 1M experiment in one command into `reports/ml_v3_repro.{json,md}`; the recorded `reports/ml_v3.*` stay unchanged. Popularity, Collaborative and Genres match exactly; Semantic and Adaptive after 3 ratings depend on the rebuilt Wikipedia snapshot (Adaptive − Popularity NDCG@10 [+0.0019, +0.0140], recorded [+0.0031, +0.0144]).
+- `configs/ml.json` is the single source of ALS hyperparameters (`benchmark_1m`: 32 factors, reg 10; `demo_pack`: 24 factors, reg 5). The demo pack builds byte-identical to the previous code.
+- Reports add bootstrap intervals for Recall@10, novelty and diversity, with paired differences; catalog coverage stays a point estimate (a union over users has no valid user-bootstrap interval). Metric tests use small hand-computed examples.
+- Browser CI restores the pinned MovieLens latest-small archive from the Actions cache and downloads it only on a cache miss (TD-14).
+
 ## Unreleased — Stage 1: TMDB disabled, README facts
 
 - Disable TMDB everywhere (requests, token, image host, parser, feeds, attribution logo): its API terms, read on 2026-11-14, forbid use in ML/AI applications. Sources are Wikidata (CC0) and TVmaze (CC BY-SA).

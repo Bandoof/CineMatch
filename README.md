@@ -45,12 +45,19 @@ Popularity.
   (0.0614 vs 0.0657), but its interval includes zero, as it does after 5 and 10
   ratings (0.0659 and 0.0684): **no established difference** from Popularity.
 - After **5 and 10 ratings** validation selected 100% Popularity, so Adaptive equals Popularity.
+- Reproduced on 2026-11-15 with `python -m scripts.reproduce_ml_v3`
+  ([report](reports/ml_v3_repro.md)): Popularity and Collaborative match exactly. The
+  rebuilt Wikipedia snapshot differs, so after 3 ratings Adaptive gives 0.0736 with
+  interval [+0.0019, +0.0140]; it still excludes zero.
 - Limits: metadata is retrospective, these numbers are not app or series accuracy,
   and the intervals do not cover shift after deployment. The demo app does not run
   this experiment.
 
 Українською: персоналізація перемагає популярність лише після 3 оцінок (змішана
 політика Adaptive); окремий ALS статистично не відрізняється від популярності.
+Відтворення 15.11.2026 однією командою дало ті самі числа для Popularity і ALS;
+через новий знімок Вікіпедії Adaptive після 3 оцінок має 0.0736, інтервал
+[+0.0019, +0.0140] — нуль, як і раніше, не входить.
 
 Dataset: F. Maxwell Harper and Joseph A. Konstan. 2015. The MovieLens Datasets:
 History and Context. *ACM Transactions on Interactive Intelligent Systems (TiiS)*

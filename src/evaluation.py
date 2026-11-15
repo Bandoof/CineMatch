@@ -109,6 +109,56 @@ def bootstrap_intervals(per_user, resamples=1000, seed=42):
     return intervals, paired
 
 
+def novelty_bits(probabilities):
+    """Mean self-information -log2 p of recommended items (higher = less popular)."""
+    probabilities = np.asarray(probabilities, dtype=float)
+    if probabilities.size == 0 or not ((probabilities > 0) & (probabilities <= 1)).all():
+        raise ValueError("Probabilities must be in (0, 1].")
+    return float((-np.log2(probabilities)).mean())
+
+
+def catalog_coverage(item_lists, catalog_size):
+    """Share of the catalog that appears in at least one recommendation list."""
+    if catalog_size < 1:
+        raise ValueError("Catalog size must be positive.")
+    return len({item for items in item_lists for item in items}) / catalog_size
+
+
+def bootstrap_all_metrics(per_user, resamples=1000, seed=42, k=10):
+    """User bootstrap for every per-user metric, using the same draws as bootstrap_intervals.
+
+    Rows hold precision/recall/ndcg plus per-user novelty_bits and diversity.
+    Paired differences use identical users for each model and Popularity.
+    Catalog coverage gets no interval: it is a union over users, not a per-user mean,
+    and a resample with replacement holds only ~63% distinct users, so resampled
+    coverage is biased downward and its percentile interval can exclude the estimate.
+    """
+    sizes = {len(rows) for rows in per_user.values()}
+    if len(sizes) != 1 or min(sizes) < 1:
+        raise ValueError("All models need the same nonempty ordered user cohort.")
+    n = min(sizes)
+    draws = np.random.default_rng(seed).integers(0, n, (resamples, n))
+    names = {"precision": f"precision@{k}", "recall": f"recall@{k}", "ndcg": f"ndcg@{k}",
+             "novelty_bits": "novelty_bits", "diversity": "diversity"}
+    sampled, intervals = {}, {}
+    for model, rows in per_user.items():
+        sampled[model] = {}
+        for key, label in names.items():
+            values = np.asarray([row[key] for row in rows], dtype=float)
+            sampled[model][label] = values[draws].mean(axis=1)
+        intervals[model] = {label: [float(v) for v in np.quantile(values, [.025, .975])]
+                            for label, values in sampled[model].items()}
+    paired = {}
+    if "Popularity" in sampled:
+        for model in sampled:
+            paired[model] = {
+                label: [float(v) for v in np.quantile(values - sampled["Popularity"][label],
+                                                      [.025, .975])]
+                for label, values in sampled[model].items()}
+    return {"resamples": resamples, "seed": seed, "users": n,
+            "confidence_95": intervals, "paired_vs_popularity_95": paired}
+
+
 def onboarding_evaluation(movies, past, heldout, alpha, seed_counts=(3, 5, 10),
                           popularity_weight=0, model_parameters=None):
     """Remove every target user's history from training before new-user fold-in."""
