@@ -2,7 +2,7 @@
 
 ## Isolated setup
 
-Clone the repository and create an environment with Python 3.10 or 3.11:
+Clone the repository and create an environment with Python 3.11 or 3.12:
 
 ```bash
 git clone https://github.com/Bandoof/CineMatch.git
@@ -22,7 +22,7 @@ python -m pip_audit -r requirements-dev.txt
 ```
 
 Set `OPENBLAS_NUM_THREADS=1` before numerical tests for predictable timing.
-CI covers Linux Python 3.10/3.11 and Windows Python 3.11. Coverage is measured,
+CI covers Linux Python 3.11/3.12 and Windows Python 3.11. Coverage is measured,
 not claimed as a proxy for correctness and not forced to an arbitrary percentage.
 Tests use generated data and temporary files; they require no catalog download or
 owner profile. The historical [verification](verification.md) records earlier runs;
