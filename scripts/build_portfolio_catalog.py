@@ -16,9 +16,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def build(output, cache, online=False):
     manifest = json.loads((ROOT / "assets/demo/sources.json").read_text(encoding="utf-8"))
     entries = manifest["titles"]
-    client = ProviderClient(
-        JsonCache(cache), token=""
-    )  # This workflow never uses TMDB credentials.
+    client = ProviderClient(JsonCache(cache))  # Keyless Wikidata/TVmaze only.
     wiki, status = wikidata_titles(
         client, [(t["wikidata"], t["media_type"]) for t in entries], online
     )

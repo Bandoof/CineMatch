@@ -17,8 +17,8 @@ from src.providers import JsonCache, ProviderClient, provider_search, refresh_ca
 
 
 @st.cache_resource(show_spinner=False, max_entries=3)
-def provider_client(directory, token):
-    return ProviderClient(JsonCache(Path(directory) / "responses"), token=token)
+def provider_client(directory):
+    return ProviderClient(JsonCache(Path(directory) / "responses"))
 
 
 def save_catalog(catalog, directory):
@@ -41,10 +41,6 @@ def provider_credits(catalog):
             "Wikidata structured metadata / UK labels · CC0 · Dated sample, not a live release feed"
         )
         st.link_button("Wikidata · CC0", "https://www.wikidata.org/wiki/Wikidata:Licensing")
-    if any(title.provider == "TMDB" for title in catalog.titles.values()):
-        st.image(str(ROOT / "assets" / "tmdb-approved.svg"), width=90)
-        st.caption("This product uses the TMDB API but is not endorsed or certified by TMDB.")
-        st.link_button("TMDB · attribution", "https://www.themoviedb.org/about/logos-attribution")
 
 
 def main():
@@ -56,10 +52,10 @@ def main():
     except (ValueError, OSError):
         catalog = ModernCatalog()
         st.warning("The saved catalog could not be read. Existing data was preserved.")
-    client = provider_client(str(directory), os.environ.get("TMDB_READ_ACCESS_TOKEN", ""))
-    st.info(
-        "TVmaze requires no key. TMDB movies require optional TMDB_READ_ACCESS_TOKEN. Cached titles work offline."
-    )
+    client = provider_client(str(directory))
+    if catalog.legacy_hidden:
+        st.caption(f"Hidden {catalog.legacy_hidden} old TMDB records (provider disabled).")
+    st.info("TVmaze and Wikidata require no key. TMDB is disabled. Cached titles work offline.")
     with st.form("catalog_query"):
         query = st.text_input("Title / Назва", max_chars=160)
         submitted = st.form_submit_button("Search providers / Пошук у джерелах")

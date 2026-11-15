@@ -9,7 +9,7 @@ import streamlit as st
 
 from src.i18n import tr
 from src.memory import MemoryConflict, MemoryStore, preferences
-from src.profiles import export_profile, import_library_profile, import_topics
+from src.profiles import export_profile, import_library_profile, import_topics, strip_legacy_tmdb
 
 
 def initialize(root):
@@ -34,15 +34,32 @@ def initialize(root):
     return {"store": store, "ready": False}
 
 
+def backup_before_tmdb_removal(memory):
+    """Keep the stored document once, before autosave rewrites it without TMDB entries."""
+    store_path = Path(memory["store"].path)
+    backup = store_path.with_name(store_path.name + ".pre-tmdb-removal.json")
+    try:
+        with open(backup, "x", encoding="utf-8") as handle:
+            json.dump(st.session_state.get("_memory_document"), handle, ensure_ascii=False, indent=2)
+    except FileExistsError:
+        pass  # The first copy is the original; never overwrite it.
+    return backup
+
+
 def restore(memory, engine):
     if memory is None or st.session_state.get("_memory_error"):
         return
     payload = st.session_state.pop("_memory_pending", None)
     if payload is not None:
         try:
+            _, removed = strip_legacy_tmdb(payload)
+            if removed:
+                backup = backup_before_tmdb_removal(memory)
+                st.session_state._legacy_tmdb_notice = {"count": removed, "path": str(backup)}
             ratings, blocked, not_seen, watched, watchlist = import_library_profile(engine, payload)
             topics = import_topics(engine, payload)
-        except (ValueError, TypeError, UnicodeError):
+        except (OSError, ValueError, TypeError, UnicodeError):
+            # Without a verified backup nothing is restored, so autosave cannot overwrite.
             st.session_state._memory_error = "memory_failed"
             return
         for key, value in zip(("ratings", "blocked", "not_seen", "watched", "watchlist"),
@@ -50,6 +67,9 @@ def restore(memory, engine):
             st.session_state[key] = value
         st.session_state.topic_blocked = topics
     memory.update(ready=True, engine=engine)
+    notice = st.session_state.get("_legacy_tmdb_notice")
+    if notice:
+        st.caption(tr("legacy_tmdb_profile", st.session_state.get("ui_language", "uk"), **notice))
 
 
 def save(memory):

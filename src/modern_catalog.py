@@ -9,13 +9,29 @@ from pathlib import Path
 
 from src.metadata import trusted_url
 
-TMDB_MOVIE_OFFSET = 1_000_000_000_000
-TMDB_TV_OFFSET = 2_000_000_000_000
+# TMDB is disabled: its API terms forbid use in ML/AI applications (docs/catalog-providers.md).
+# Its former ID ranges stay reserved and recognisable, so old local records can be skipped
+# and are never reissued to another provider.
+LEGACY_TMDB_OFFSETS = (1_000_000_000_000, 2_000_000_000_000)
+LEGACY_PROVIDERS = {"TMDB"}
 WIKIDATA_OFFSET = 3_000_000_000_000
 WIKIDATA_TV_OFFSET = 4_000_000_000_000
 MAX_PROVIDER_ID = 999_999_999
 MAX_TITLES = 5000
-IMAGE_HOSTS = {"image.tmdb.org", "static.tvmaze.com", "upload.wikimedia.org", "thumb.wikimedia.org"}
+IMAGE_HOSTS = {"static.tvmaze.com", "upload.wikimedia.org", "thumb.wikimedia.org"}
+
+
+def is_legacy_tmdb_id(value):
+    """True for canonical IDs from the retired TMDB namespace."""
+    if isinstance(value, bool):
+        return False
+    try:
+        mid = int(value)
+    except (TypeError, ValueError):
+        return False
+    return any(
+        -(offset + MAX_PROVIDER_ID) <= mid <= -(offset + 1) for offset in LEGACY_TMDB_OFFSETS
+    )
 
 
 def canonical_provider_id(provider, provider_id, media_type):
@@ -23,9 +39,6 @@ def canonical_provider_id(provider, provider_id, media_type):
         raise ValueError("Invalid provider identity.")
     if provider == "TVmaze" and media_type == "Series":
         return -provider_id  # Preserve the established TVmaze profile namespace.
-    if provider == "TMDB" and media_type in ("Movie", "Series"):
-        offset = TMDB_MOVIE_OFFSET if media_type == "Movie" else TMDB_TV_OFFSET
-        return -offset - provider_id
     if provider == "Wikidata" and media_type in ("Movie", "Series"):
         return -(WIKIDATA_OFFSET if media_type == "Movie" else WIKIDATA_TV_OFFSET) - provider_id
     raise ValueError("Unsupported provider or media type.")
@@ -176,10 +189,7 @@ class CatalogTitle:
     def source_url(self):
         if self.provider == "Wikidata":
             return f"https://www.wikidata.org/wiki/Q{self.provider_id}"
-        if self.provider == "TVmaze":
-            return f"https://www.tvmaze.com/shows/{self.provider_id}"
-        kind = "movie" if self.media_type == "Movie" else "tv"
-        return f"https://www.themoviedb.org/{kind}/{self.provider_id}"
+        return f"https://www.tvmaze.com/shows/{self.provider_id}"
 
     def title(self, language="en"):
         return (self.title_uk if language == "uk" else "") or self.title_en or self.original_title
@@ -215,6 +225,7 @@ class ModernCatalog:
 
     def __init__(self, titles=()):
         self.titles = {}
+        self.legacy_hidden = 0  # Old TMDB records skipped while loading a local snapshot.
         self.update(titles)
 
     def update(self, titles):
@@ -243,10 +254,18 @@ class ModernCatalog:
             raise ValueError("Unsupported modern catalog snapshot.")
         if len(document["titles"]) > MAX_TITLES:
             raise ValueError("Catalog snapshot is too large.")
-        titles = [CatalogTitle.from_dict(item) for item in document["titles"]]
+        titles, legacy = [], 0
+        for item in document["titles"]:
+            if isinstance(item, dict) and item.get("provider") in LEGACY_PROVIDERS:
+                legacy += 1
+                continue
+            titles.append(CatalogTitle.from_dict(item))
         if len({t.external_key for t in titles}) != len(titles):
             raise ValueError("Duplicate provider identity in snapshot.")
-        return cls(titles)
+        catalog = cls(titles)
+        # Loading never rewrites the file; an explicit refresh/save drops the skipped records.
+        catalog.legacy_hidden = legacy
+        return catalog
 
     def save(self, path):
         path = Path(path)

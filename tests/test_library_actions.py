@@ -69,7 +69,7 @@ def test_unwatch_never_erases_ratings_and_undo_restores_activity():
 def test_modern_profile_roundtrip_and_old_schemas_keep_format(sample):
     base = Recommender(*sample)
     title = CatalogTitle(
-        "TMDB", 90, "Movie", "Synthetic Modern", title_uk="Синтетична назва", genres=("Drama",)
+        "Wikidata", 90, "Movie", "Synthetic Modern", title_uk="Синтетична назва", genres=("Drama",)
     )
     view = CatalogView(base, ModernCatalog([title]))
     mid = title.canonical_id

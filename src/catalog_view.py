@@ -35,7 +35,7 @@ class CatalogView:
         indexed = identity_index(original)
         known = set(original.movie_id)
         self.titles, self.mapping_provenance, self.external_ids = {}, {}, {}
-        priority = {"TVmaze": 0, "TMDB": 1, "Wikidata": 2}
+        priority = {"TVmaze": 0, "Wikidata": 1}
         titles = sorted(
             self.catalog.titles.values(), key=lambda t: (priority[t.provider], t.provider_id)
         )

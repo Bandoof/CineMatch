@@ -53,14 +53,12 @@ def test_real_fields_missing_data_and_separate_namespaces():
                 canonical_provider_id(p, 42, k)
                 for p, k in [
                     ("TVmaze", "Series"),
-                    ("TMDB", "Movie"),
-                    ("TMDB", "Series"),
                     ("Wikidata", "Movie"),
                     ("Wikidata", "Series"),
                 ]
             }
         )
-        == 5
+        == 3
     )
 
 
@@ -82,9 +80,7 @@ def test_only_bounded_read_api_and_offline_cache_no_credentials(tmp_path):
         calls.append((url, headers))
         return {"entities": {"Q42": entity()}}
 
-    client = ProviderClient(
-        JsonCache(tmp_path), token="must-not-forward", transport=transport, sleep=lambda _: None
-    )
+    client = ProviderClient(JsonCache(tmp_path), transport=transport, sleep=lambda _: None)
     records, stamps, status = read_entities(client, ["Q42"], online=True)
     assert status == "fetched" and records["Q42"]["id"] == "Q42" and stamps["Q42"]
     assert "Authorization" not in calls[0][1] and "www.wikidata.org/w/api.php" in calls[0][0]
@@ -96,28 +92,34 @@ def test_only_bounded_read_api_and_offline_cache_no_credentials(tmp_path):
 
 
 def test_cross_provider_identity_dedup_preserves_remakes_and_profile_roundtrip():
-    wiki = parse_entity(entity(), "Movie", {})
-    tmdb = CatalogTitle(
-        "TMDB", 42, "Movie", "Synthetic title", imdb_id=wiki.imdb_id, release_date=wiki.release_date
+    # TMDB is disabled; TVmaze and Wikidata still share series identities by IMDb.
+    wiki = parse_entity(entity(), "Series", {})
+    show = CatalogTitle(
+        "TVmaze",
+        42,
+        "Series",
+        "Synthetic title",
+        imdb_id=wiki.imdb_id,
+        release_date=wiki.release_date,
     )
     remake = CatalogTitle(
-        "TMDB", 43, "Movie", "Synthetic title", imdb_id=wiki.imdb_id, release_date="1990-01-01"
+        "TVmaze", 43, "Series", "Synthetic title", imdb_id=wiki.imdb_id, release_date="1990-01-01"
     )
-    view = CatalogView(None, ModernCatalog([wiki, tmdb, remake]))
-    assert len(view.rows) == 2 and view.normalize_id(wiki.canonical_id) == tmdb.canonical_id
-    assert view.display_title(tmdb.canonical_id, "uk").startswith(wiki.title_uk)
+    view = CatalogView(None, ModernCatalog([wiki, show, remake]))
+    assert len(view.rows) == 2 and view.normalize_id(wiki.canonical_id) == show.canonical_id
+    assert view.display_title(show.canonical_id, "uk").startswith(wiki.title_uk)
     payload = export_profile(view, {wiki.canonical_id: 5}, set())
     fresh = CatalogView(None)
-    assert import_library_profile(fresh, payload)[0] == {tmdb.canonical_id: 5}
+    assert import_library_profile(fresh, payload)[0] == {show.canonical_id: 5}
     duplicate = CatalogTitle(
         "Wikidata",
         43,
-        "Movie",
+        "Series",
         "Synthetic duplicate",
         imdb_id=wiki.imdb_id,
         release_date=wiki.release_date,
     )
-    ambiguous = CatalogView(None, ModernCatalog([wiki, tmdb, duplicate]))
+    ambiguous = CatalogView(None, ModernCatalog([wiki, show, duplicate]))
     assert len(ambiguous.rows) == 3
 
 

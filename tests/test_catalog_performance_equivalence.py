@@ -37,13 +37,23 @@ def test_indexed_mapping_exactly_matches_original_evidence_rules(duplicate):
     indexed = identity_index(movies)
     for title in (
         CatalogTitle(
-            "TMDB", 1, "Movie", "Synthetic Current", release_date="2024-01-01", imdb_id="tt1234567"
+            "Wikidata",
+            1,
+            "Movie",
+            "Synthetic Current",
+            release_date="2024-01-01",
+            imdb_id="tt1234567",
         ),
         CatalogTitle(
-            "TMDB", 2, "Movie", "Synthetic Remake", release_date="1990-01-01", imdb_id="tt1234567"
+            "Wikidata",
+            2,
+            "Movie",
+            "Synthetic Remake",
+            release_date="1990-01-01",
+            imdb_id="tt1234567",
         ),
         CatalogTitle(
-            "TMDB",
+            "Wikidata",
             3,
             "Series",
             "Synthetic Type Mismatch",

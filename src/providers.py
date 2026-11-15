@@ -1,8 +1,11 @@
-"""Optional bounded provider access. No profiles, ratings or credentials enter caches."""
+"""Optional bounded provider access. No profiles, ratings or credentials enter caches.
+
+Providers: TVmaze (CC BY-SA) and Wikidata (CC0), both without keys. TMDB is disabled
+because its API terms forbid use in ML/AI applications; see docs/catalog-providers.md.
+"""
 
 import hashlib
 import json
-import os
 import re
 import ssl
 import threading
@@ -21,31 +24,6 @@ from src.modern_catalog import CatalogTitle, clean_text, valid_date
 MAX_RESPONSE_BYTES = 4_000_000
 CACHE_TTL = 6 * 3600
 STALE_LIMIT = 14 * 86400
-TMDB_GENRES = {
-    28: "Action",
-    12: "Adventure",
-    16: "Animation",
-    35: "Comedy",
-    80: "Crime",
-    99: "Documentary",
-    18: "Drama",
-    10751: "Family",
-    14: "Fantasy",
-    36: "History",
-    27: "Horror",
-    10402: "Music",
-    9648: "Mystery",
-    10749: "Romance",
-    878: "Sci-Fi",
-    10770: "TV Movie",
-    53: "Thriller",
-    10752: "War",
-    37: "Western",
-    10759: "Action",
-    10765: "Sci-Fi",
-    10768: "War",
-    10762: "Children's",
-}
 
 
 @dataclass(frozen=True)
@@ -129,9 +107,8 @@ def http_json(url, headers):
 
 
 class ProviderClient:
-    def __init__(self, cache, token=None, transport=http_json, clock=time.time, sleep=time.sleep):
+    def __init__(self, cache, transport=http_json, clock=time.time, sleep=time.sleep):
         self.cache = cache
-        self.token = token if token is not None else os.environ.get("TMDB_READ_ACCESS_TOKEN", "")
         self.transport, self.clock, self.sleep = transport, clock, sleep
         self._lock = threading.Lock()
         self._last_request = 0.0
@@ -141,7 +118,6 @@ class ProviderClient:
     def fetch(self, provider, endpoint, params=None, online=False):
         patterns = {
             "TVmaze": r"/(shows(?:/\d+(?:/crew)?)?|search/shows|schedule/web|schedule)",
-            "TMDB": r"/(movie/(now_playing|upcoming|\d+)|tv/\d+|search/(movie|tv))",
             "Wikidata": r"/w/api\.php",
         }
         if provider not in patterns or not re.fullmatch(patterns[provider], endpoint):
@@ -149,13 +125,9 @@ class ProviderClient:
         params = dict(params or {})
         if not set(params) <= {
             "q",
-            "query",
             "page",
             "date",
             "country",
-            "language",
-            "include_adult",
-            "append_to_response",
             "embed",
             "action",
             "ids",
@@ -191,21 +163,16 @@ class ProviderClient:
         fetched_at = now - cached[1] if cached else None
         if not online:
             return FetchResult(fallback, "stale" if cached else "offline", fetched_at)
-        if provider == "TMDB" and not self.token:
-            return FetchResult(fallback, "stale" if cached else "missing_credentials", fetched_at)
         if now < self._cooldown.get(provider, 0):
             return FetchResult(fallback, "stale" if cached else "rate_limited", fetched_at)
         base = {
             "TVmaze": "https://api.tvmaze.com",
-            "TMDB": "https://api.themoviedb.org/3",
             "Wikidata": "https://www.wikidata.org",
         }[provider]
         headers = {
             "User-Agent": "CineMatch/1.4 (https://github.com/Bandoof/CineMatch)",
             "Accept": "application/json",
         }
-        if provider == "TMDB":
-            headers["Authorization"] = "Bearer " + self.token
         try:
             # Serialize requests and stay below TVmaze's 20 requests / 10 seconds.
             with self._lock:
@@ -323,135 +290,12 @@ def parse_tvmaze(show, cast=(), crew=()):
     )
 
 
-def tmdb_image(path, size="w500"):
-    return (
-        f"https://image.tmdb.org/t/p/{size}{path}"
-        if isinstance(path, str) and re.fullmatch(r"/[A-Za-z0-9_-]+\.(jpg|png|webp)", path)
-        else ""
-    )
-
-
-def parse_tmdb(item, media_type="Movie", uk=None):
-    if not isinstance(item, dict) or media_type not in ("Movie", "Series"):
-        raise ValueError("Invalid TMDB item.")
-    uk = (
-        uk
-        if isinstance(uk, dict) and type(uk.get("id")) is int and uk.get("id") == item.get("id")
-        else {}
-    )
-    title_key, original_key, date_key = (
-        ("title", "original_title", "release_date")
-        if media_type == "Movie"
-        else ("name", "original_name", "first_air_date")
-    )
-    credits = item.get("credits") or {}
-    videos = item.get("videos") or {}
-    external = item.get("external_ids") or {}
-    if not all(isinstance(v, dict) for v in (credits, videos, external)):
-        raise ValueError("Invalid provider details.")
-    raw_genres = item.get("genres") or []
-    ids = item.get("genre_ids") or []
-    if not isinstance(raw_genres, list) or not isinstance(ids, list):
-        raise ValueError("Invalid provider genres.")
-    genres = tuple(
-        clean_text(g.get("name"), 80)
-        for g in raw_genres[:30]
-        if isinstance(g, dict) and clean_text(g.get("name"), 80)
-    )
-    genres = genres or tuple(
-        TMDB_GENRES[g] for g in ids[:30] if type(g) is int and g in TMDB_GENRES
-    )
-    genres = tuple("Sci-Fi" if g == "Science Fiction" else g for g in genres)
-    cast = credits.get("cast") or []
-    crew = credits.get("crew") or []
-    if not isinstance(cast, list) or not isinstance(crew, list):
-        raise ValueError("Invalid provider credits.")
-    cast_names = tuple(
-        clean_text(c.get("name"), 150)
-        for c in cast[:20]
-        if isinstance(c, dict) and clean_text(c.get("name"), 150)
-    )
-    creators = tuple(
-        clean_text(c.get("name"), 150)
-        for c in crew
-        if isinstance(c, dict) and c.get("job") == "Director" and clean_text(c.get("name"), 150)
-    )[:10]
-    if media_type == "Series":
-        raw = item.get("created_by") or []
-        if isinstance(raw, list):
-            creators = tuple(
-                clean_text(c.get("name"), 150)
-                for c in raw[:10]
-                if isinstance(c, dict) and clean_text(c.get("name"), 150)
-            )
-    trailer = ""
-    results = videos.get("results") or []
-    if isinstance(results, list):
-        for video in results:
-            if (
-                isinstance(video, dict)
-                and video.get("official") is True
-                and video.get("site") == "YouTube"
-                and video.get("type") == "Trailer"
-                and isinstance(video.get("key"), str)
-                and re.fullmatch(r"[A-Za-z0-9_-]{11}", video["key"])
-            ):
-                trailer = "https://www.youtube.com/watch?v=" + video["key"]
-                break
-    vote_count = item.get("vote_count")
-    average = item.get("vote_average") if type(vote_count) is int and vote_count > 0 else None
-    return CatalogTitle(
-        provider="TMDB",
-        provider_id=item.get("id"),
-        media_type=media_type,
-        original_title=clean_text(item.get(original_key) or item.get(title_key)),
-        title_en=clean_text(item.get(title_key)),
-        title_uk=clean_text(uk.get(title_key)),
-        release_date=valid_date(item.get(date_key)),
-        genres=genres,
-        summary_en=clean_text(item.get("overview"), 5000),
-        summary_uk=clean_text(uk.get("overview"), 5000),
-        poster_url=tmdb_image(item.get("poster_path")),
-        backdrop_url=tmdb_image(item.get("backdrop_path"), "w1280"),
-        community_rating=average,
-        vote_count=vote_count,
-        runtime=item.get("runtime"),
-        cast=cast_names,
-        creators=creators,
-        trailer_url=trailer,
-        imdb_id=item.get("imdb_id") or external.get("imdb_id") or "",
-        status=clean_text(item.get("status"), 100),
-        fetched_utc=stamp(),
-        original_language=clean_text(item.get("original_language"), 3),
-    )
-
-
 def dated_title(title, response):
     if response.fetched_at is None:
         return title
     return replace(
         title, fetched_utc=datetime.fromtimestamp(response.fetched_at, timezone.utc).isoformat()
     )
-
-
-def localized_list(client, endpoint, params, kind, online):
-    en = client.fetch("TMDB", endpoint, {**params, "language": "en-US"}, online)
-    uk = client.fetch("TMDB", endpoint, {**params, "language": "uk-UA"}, online)
-    local = {}
-    if isinstance(uk.payload, dict) and isinstance(uk.payload.get("results"), list):
-        local = {
-            r["id"]: r
-            for r in uk.payload["results"][:20]
-            if isinstance(r, dict) and type(r.get("id")) is int
-        }
-    titles = []
-    if isinstance(en.payload, dict) and isinstance(en.payload.get("results"), list):
-        for item in en.payload["results"][:20]:
-            try:
-                titles.append(dated_title(parse_tmdb(item, kind, local.get(item.get("id"))), en))
-            except (ValueError, TypeError, AttributeError):
-                continue
-    return titles, en.status
 
 
 def provider_search(client, query, media_type="All", online=False):
@@ -468,19 +312,7 @@ def provider_search(client, query, media_type="All", online=False):
                     titles.append(dated_title(parse_tvmaze(row.get("show")), response))
                 except (ValueError, TypeError, AttributeError):
                     continue
-    for kind in ("Movie", "Series"):
-        if media_type not in ("All", kind):
-            continue
-        path = "movie" if kind == "Movie" else "tv"
-        extra, status = localized_list(
-            client,
-            f"/search/{path}",
-            {"query": query, "include_adult": "false", "page": 1},
-            kind,
-            online,
-        )
-        statuses["TMDB"] = status
-        titles.extend(extra)
+    # No keyless provider offers movie search here; films come from the curated snapshot.
     return titles, statuses
 
 
@@ -508,10 +340,6 @@ def refresh_catalog(client, pages=1, online=False, today=None):
                 )
             except (ValueError, TypeError, AttributeError):
                 continue
-    for endpoint in ("now_playing", "upcoming"):
-        extra, status = localized_list(client, f"/movie/{endpoint}", {"page": 1}, "Movie", online)
-        statuses["TMDB " + endpoint] = status
-        titles.extend(extra)
     return titles, statuses
 
 
@@ -543,18 +371,4 @@ def title_details(client, title, online=False):
             except (ValueError, TypeError):
                 pass
         return title, response.status
-    kind = "movie" if title.media_type == "Movie" else "tv"
-    path = f"/{kind}/{title.provider_id}"
-    en = client.fetch(
-        "TMDB",
-        path,
-        {"language": "en-US", "append_to_response": "credits,videos,external_ids"},
-        online,
-    )
-    uk = client.fetch("TMDB", path, {"language": "uk-UA"}, online)
-    if isinstance(en.payload, dict) and en.payload.get("id") == title.provider_id:
-        try:
-            return dated_title(parse_tmdb(en.payload, title.media_type, uk.payload), en), en.status
-        except (ValueError, TypeError):
-            pass
-    return title, en.status
+    return title, "unavailable"

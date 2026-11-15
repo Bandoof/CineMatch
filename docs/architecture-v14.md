@@ -21,7 +21,6 @@ flowchart TD
     Cache --> Catalog
     Refresh --> TV[TVmaze public series API]
     Refresh --> Wiki[Wikidata labels and structured statements]
-    Refresh --> TMDB[Optional TMDB<br/>environment credential / no offline dependency]
     Research[Offline research scripts<br/>train / validation / frozen evidence integrity] --> Evidence[Archived research reports / manifests<br/>historical claims and limitations]
     Research --> Embeddings[Optional cached MiniLM<br/>TF-IDF + LSA artifacts]
     Embeddings -. explicitly attached local artifacts .-> Historical

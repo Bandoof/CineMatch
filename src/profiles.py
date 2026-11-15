@@ -5,7 +5,10 @@ import sqlite3
 from contextlib import contextmanager
 from pathlib import Path
 
+from src.modern_catalog import LEGACY_PROVIDERS, is_legacy_tmdb_id
+
 MAX_PROFILE_BYTES = 1_000_000
+ID_LISTS = ("blocked", "not_seen", "watched", "watchlist", "topic_blocked")
 
 
 def parse_profile(payload, max_bytes=MAX_PROFILE_BYTES):
@@ -36,6 +39,49 @@ def parse_profile(payload, max_bytes=MAX_PROFILE_BYTES):
     if not isinstance(document, dict):
         raise ValueError("A profile must be a JSON object.")
     return document
+
+
+def strip_legacy_tmdb(payload):
+    """Drop identities of the disabled TMDB provider; return (payload, removed IDs count).
+
+    The payload is returned unchanged when it has no such identities. Callers that may
+    overwrite stored data must keep the original first (see app/memory.py).
+    """
+    document = parse_profile(payload)
+    removed = set()
+
+    def keep(value):
+        if is_legacy_tmdb_id(value):
+            removed.add(int(value))
+            return False
+        return True
+
+    if "schema_version" not in document:
+        document = {key: value for key, value in document.items() if keep(key)}
+    else:
+        rows = document.get("ratings")
+        if isinstance(rows, list):
+            document["ratings"] = [
+                row for row in rows if not isinstance(row, dict) or keep(row.get("item_id"))
+            ]
+        for name in ID_LISTS:
+            if isinstance(document.get(name), list):
+                document[name] = [value for value in document[name] if keep(value)]
+        references = document.get("catalog_refs")
+        if isinstance(references, dict):
+            document["catalog_refs"] = {
+                key: record
+                for key, record in references.items()
+                if keep(key)
+                and not (isinstance(record, dict) and record.get("provider") in LEGACY_PROVIDERS)
+            }
+    if not removed:
+        return payload, 0
+    if document.get("schema_version") == 6 and not document.get("catalog_refs"):
+        # export_profile writes schema 6 only when references remain; match that format.
+        document.pop("catalog_refs", None)
+        document["schema_version"] = 5
+    return json.dumps(document, ensure_ascii=False, indent=2), len(removed)
 
 
 def export_profile(engine, ratings, blocked, not_seen=None, watched=None, watchlist=None, topic_blocked=None):
@@ -72,7 +118,7 @@ def import_discovery_profile(engine, payload):
 
 
 def import_library_profile(engine, payload):
-    document = parse_profile(payload)
+    document = parse_profile(strip_legacy_tmdb(payload)[0])
     candidate = engine
     if document.get("schema_version") == 6:
         if not hasattr(engine, "with_references"):
@@ -117,7 +163,7 @@ def _import_library_document(engine, document):
 
 
 def import_topics(engine, payload):
-    document = parse_profile(payload)
+    document = parse_profile(strip_legacy_tmdb(payload)[0])
     if document.get("schema_version") == 6:
         if not hasattr(engine, "with_references"):
             raise ValueError("This catalog cannot restore provider references.")

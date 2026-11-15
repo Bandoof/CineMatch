@@ -46,7 +46,7 @@ compromise and malicious hosting administrators are outside this design.
 - No SQLite initialization/read/write, named profiles or profile import in demo.
   File export contains only that visitor's current synthetic/edited preferences.
 - CatalogView, synthetic profile and optional Recommender are created separately
-  for each Streamlit session. Provider clients and TMDB token reads are absent.
+  for each Streamlit session. Provider clients are absent; TMDB is disabled everywhere.
 - No writable global visitor cache: the original score formula is bound to a
   **per-instance bounded LRU**, avoiding the original class-level profile-key LRU.
   Exact numerical equivalence is regression-tested. No shared `cache_resource`

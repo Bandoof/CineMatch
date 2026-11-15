@@ -9,14 +9,19 @@ import pytest
 
 from app.recommender import Recommender
 from src.catalog_view import CatalogView
-from src.modern_catalog import CatalogTitle, ModernCatalog, canonical_provider_id, resolve_mapping
+from src.modern_catalog import (
+    CatalogTitle,
+    ModernCatalog,
+    canonical_provider_id,
+    is_legacy_tmdb_id,
+    resolve_mapping,
+)
 from src.providers import (
     CACHE_TTL,
     STALE_LIMIT,
     JsonCache,
     NoRedirect,
     ProviderClient,
-    parse_tmdb,
     parse_tvmaze,
     provider_search,
     refresh_catalog,
@@ -26,7 +31,7 @@ from src.providers import (
 
 def synthetic_title(**changes):
     values = dict(
-        provider="TMDB",
+        provider="Wikidata",
         provider_id=42,
         media_type="Movie",
         original_title="Synthetic arrival",
@@ -63,14 +68,37 @@ def test_namespaces_never_alias_equal_numeric_ids_or_media_types():
         len(
             {
                 canonical_provider_id(p, 42, kind)
-                for p, kind in [("TVmaze", "Series"), ("TMDB", "Movie"), ("TMDB", "Series")]
+                for p, kind in [("TVmaze", "Series"), ("Wikidata", "Movie"), ("Wikidata", "Series")]
             }
         )
         == 3
     )
     for value in (True, 0, -1, 1_000_000_000, "42"):
         with pytest.raises(ValueError):
-            canonical_provider_id("TMDB", value, "Movie")
+            canonical_provider_id("Wikidata", value, "Movie")
+
+
+def test_tmdb_is_disabled_but_its_old_id_ranges_stay_reserved():
+    for kind in ("Movie", "Series"):
+        with pytest.raises(ValueError, match="Unsupported provider"):
+            canonical_provider_id("TMDB", 42, kind)
+    # Former TMDB canonical IDs are recognised only so old local data can be skipped.
+    assert is_legacy_tmdb_id(-1_000_000_000_042) and is_legacy_tmdb_id("-2000000000042")
+    for other in (-42, -3_000_000_000_042, 1, -1_000_000_000_000, True, "x", None):
+        assert not is_legacy_tmdb_id(other)
+
+
+def test_loading_old_snapshot_skips_tmdb_records_without_rewriting_file(tmp_path):
+    path = tmp_path / "catalog.json"
+    ModernCatalog([synthetic_title()]).save(path)
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    legacy = dict(raw["titles"][0], provider="TMDB", provider_id=7)
+    raw["titles"].append(legacy)
+    path.write_text(json.dumps(raw), encoding="utf-8")
+    before = path.read_bytes()
+    loaded = ModernCatalog.load(path)
+    assert [t.provider for t in loaded.titles.values()] == ["Wikidata"]
+    assert loaded.legacy_hidden == 1 and path.read_bytes() == before
 
 
 def test_mapping_requires_unique_imdb_type_and_year(sample):
@@ -140,25 +168,6 @@ def test_provider_text_and_language_fallback_are_real_not_generated():
         and missing.community_rating is None
         and missing.summary("uk") == ""
     )
-    fixture = {
-        "id": 1,
-        "title": "English fixture",
-        "original_title": "Original fixture",
-        "overview": "English synopsis",
-        "vote_count": 0,
-        "vote_average": 0,
-        "release_date": "2026-10-01",
-        "videos": {
-            "results": [
-                {"site": "YouTube", "type": "Trailer", "official": False, "key": "abcdefghijk"},
-                {"site": "YouTube", "type": "Trailer", "official": True, "key": "lmnopqrstuv"},
-            ]
-        },
-    }
-    parsed = parse_tmdb(fixture, uk={"id": 1, "title": "Українська назва", "overview": ""})
-    assert parsed.title("uk") == "Українська назва" and parsed.summary("uk") == "English synopsis"
-    assert parsed.community_rating is None and parsed.trailer_url.endswith("lmnopqrstuv")
-    assert parse_tmdb(fixture, uk={"id": 2, "title": "Wrong identity"}).title_uk == ""
 
 
 def test_cache_expiration_offline_failure_and_original_fetch_time(tmp_path):
@@ -198,22 +207,17 @@ def test_rate_limit_cooldown_no_credential_leak_or_redirect(tmp_path):
 
     client = ProviderClient(
         JsonCache(tmp_path),
-        token="test-secret",
         transport=limited,
         clock=lambda: 100_000,
         sleep=lambda _: None,
     )
-    first = client.fetch("TMDB", "/movie/42", online=True)
+    first = client.fetch("TVmaze", "/shows/42", online=True)
     assert (
         first.status == "rate_limited"
-        and client.fetch("TMDB", "/movie/43", online=True).status == "rate_limited"
+        and client.fetch("TVmaze", "/shows/43", online=True).status == "rate_limited"
     )
-    assert len(calls) == 1 and "test-secret" not in calls[0][0]
-    assert not list(tmp_path.glob("*.json")) and "test-secret" not in str(first)
-    assert (
-        ProviderClient(JsonCache(tmp_path), token="").fetch("TMDB", "/movie/42", online=True).status
-        == "missing_credentials"
-    )
+    assert len(calls) == 1 and "Authorization" not in calls[0][1]
+    assert not list(tmp_path.glob("*.json"))
     assert NoRedirect().redirect_request(None, None, 302, None, None, "https://evil.test") is None
     with pytest.raises(ValueError):
         client.fetch("TVmaze", "https://evil.test")
@@ -236,21 +240,33 @@ def test_cache_capacity_corruption_and_feed_item_validation(tmp_path):
             return [tv_show(), tv_show(id=-1)]
         return []
 
-    client = ProviderClient(cache, token="", transport=transport, sleep=lambda _: None)
+    client = ProviderClient(cache, transport=transport, sleep=lambda _: None)
     titles, statuses = provider_search(client, "fixture", online=True)
-    assert len(titles) == 1 and statuses["TMDB"] == "missing_credentials"
+    assert len(titles) == 1 and set(statuses) == {"TVmaze"}
     assert len(refresh_catalog(client, online=True)[0]) == 1
 
 
 def test_details_must_match_requested_provider_id(tmp_path):
     client = ProviderClient(
         JsonCache(tmp_path),
-        token="test-secret",
-        transport=lambda *_: {"id": 999, "title": "Other title"},
+        transport=lambda *_: {"id": 999, "name": "Other title"},
         sleep=lambda _: None,
     )
-    title = synthetic_title()
+    title = parse_tvmaze(tv_show())
     assert title_details(client, title, online=True)[0] == title
+
+
+def test_tmdb_cannot_be_requested_even_with_a_token_in_the_environment(tmp_path, monkeypatch):
+    monkeypatch.setenv("TMDB_READ_ACCESS_TOKEN", "must-not-be-used")
+    calls = []
+    client = ProviderClient(
+        JsonCache(tmp_path), transport=lambda *a: calls.append(a), sleep=lambda _: None
+    )
+    for endpoint in ("/movie/42", "/movie/now_playing", "/search/movie"):
+        with pytest.raises(ValueError, match="Unsupported provider"):
+            client.fetch("TMDB", endpoint, online=True)
+    titles, statuses = refresh_catalog(client, online=False)
+    assert not calls and not any("TMDB" in key for key in statuses)
 
 
 def test_facade_does_not_refit_or_change_production_models(sample):
@@ -266,7 +282,7 @@ def test_facade_does_not_refit_or_change_production_models(sample):
     )
     results = view.modern_recommend({1: 5})
     assert results and results[0][0] == synthetic_title().canonical_id
-    assert view.normalize_id(-1_000_000_000_042) == -1_000_000_000_042
+    assert view.normalize_id(synthetic_title().canonical_id) == synthetic_title().canonical_id
 
 
 def test_saved_identity_references_restore_without_metadata_or_mutation(sample):
